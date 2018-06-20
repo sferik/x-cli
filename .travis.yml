@@ -3,17 +3,15 @@ language: ruby
 sudo: false
 
 rvm:
-  - 2.0.0
-  - 2.1
-  - 2.2
-  - 2.3.3
-  - rbx-2
+  - 2.4
+  - 2.5
+  - 2.6
+  - 2.7
   - ruby-head
 
 bundler_args: --without development --jobs=3 --retry=3
 
 matrix:
   allow_failures:
-    - rvm: rbx-2
     - rvm: ruby-head
   fast_finish: true

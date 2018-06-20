@@ -201,7 +201,7 @@ example, here's how to send a user a direct message only if they already follow 
 
 #### Search Tweets in your home timeline that match a specified query
     t search timeline "query"
-**Note**: In Twitter API parlance, your “home timeline” is your “Newsfeed” whereas your “user timeline” are the tweets tweeted (and retweeted) by you. 
+**Note**: In Twitter API parlance, your “home timeline” is your “Newsfeed” whereas your “user timeline” are the tweets tweeted (and retweeted) by you.
 
 #### Search Tweets in a specified user’s timeline
     t search timeline @sferik "query"
@@ -290,10 +290,10 @@ the original code.
 This library aims to support and is [tested against][travis] the following Ruby
 implementations:
 
-* Ruby 2.0.0
-* Ruby 2.1
-* Ruby 2.2
-* Ruby 2.3
+* Ruby 2.4
+* Ruby 2.5
+* Ruby 2.6
+* Ruby 2.7
 
 If something doesn't work on one of these Ruby versions, it's a bug.
 

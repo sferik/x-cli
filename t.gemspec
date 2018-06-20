@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.licenses = %w(MIT)
   spec.name = 't'
   spec.require_paths = %w(lib)
-  spec.required_ruby_version = '>= 2'
+  spec.required_ruby_version = '>= 2.3'
   spec.summary = 'CLI for Twitter'
   spec.version = T::Version
 end
