@@ -31,6 +31,7 @@ If the output looks something like this, you're in good shape:
     ruby 2.3.1p112 (2016-04-26 revision 54768) [x86_64-darwin15]
 
 If the output looks more like this, you need to [install Ruby][ruby]:
+
 [ruby]: https://www.ruby-lang.org/en/downloads/
 
     ruby: command not found
@@ -45,7 +46,8 @@ or for Red Hat-based distros like Fedora and CentOS, type:
 
 (if necessary, adapt for your package manager)
 
-**On Windows**, you can install Ruby with [RubyInstaller][].
+**On Windows**, you can install Ruby with [RubyInstaller][rubyinstaller].
+
 [rubyinstaller]: http://rubyinstaller.org/downloads/
 
 ## Installation
