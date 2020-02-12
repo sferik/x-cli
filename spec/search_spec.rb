@@ -44,12 +44,12 @@ describe T::Search do
    RT @heartCOBOYJR: @AlvaroMaldini1 :-) http://t.co/Oxce0Tob3n
 
    @BPDPipesDrums
-   Here is a picture of us getting ready to Santa into @CITCBoston! #Boston 
+   Here is a picture of us getting ready to Santa into @CITCBoston! #Boston
    http://t.co/INACljvLLC
 
    @yunistosun6034
-   RT @sevilayyaziyor: gerçekten @ademyavuza ?Nasıl elin vardı böyle bi twit 
-   atmaya?Yolsuzlukla olmadı terörle mi şantaj yaparız diyosunuz? 
+   RT @sevilayyaziyor: gerçekten @ademyavuza ?Nasıl elin vardı böyle bi twit
+   atmaya?Yolsuzlukla olmadı terörle mi şantaj yaparız diyosunuz?
    http://t.co/YPtNVYhLxl
 
    @_KAIRYALS
@@ -59,20 +59,20 @@ describe T::Search do
    RT @LouisTexts: whos tessa? http://t.co/7DJQlmCfuu
 
    @MIKEFANTASMA
-   Pues nada, aquí armando mi regalo de navidad solo me falta la cara y ya hago 
-   mi pedido con santa!.. http://t.co/iDC7bE9o4M
+   Pues nada, aquí armando mi regalo de navidad solo me falta la cara y ya hago mi
+   pedido con santa!.. http://t.co/iDC7bE9o4M
 
    @EleManera
-   RT @xmyband: La gente che si arrabbia perché Harry non ha fatto gli auguri a 
+   RT @xmyband: La gente che si arrabbia perché Harry non ha fatto gli auguri a
    Lou su Twitter. Non vorrei smontarvi, ma esistono i cellulari e i messaggi.
 
    @BigAlFerguson
-   “@IrishRace; Merry Christmas to all our friends and followers from all 
-   @IrishRaceRally have a good one! http://t.co/rXFsC2ncFo” @Danloi1
+   “@IrishRace; Merry Christmas to all our friends and followers from all @IrishRaceRally
+   have a good one! http://t.co/rXFsC2ncFo” @Danloi1
 
    @goksantezgel
-   RT @nederlandline: Tayyip bey evladımızı severiz Biz ona dua 
-   ediyoruz.Fitnelere SAKIN HA! Mahmud Efndi (ks) #BedduayaLanetDuayaDavet 
+   RT @nederlandline: Tayyip bey evladımızı severiz Biz ona dua
+   ediyoruz.Fitnelere SAKIN HA! Mahmud Efndi (ks) #BedduayaLanetDuayaDavet
    http://t.co/h6MUyHxr9x"
 
    @MaimounaLvb
@@ -97,7 +97,7 @@ describe T::Search do
    @Ashton5SOS http://t.co/uhYwoRY0Iz
 
    @seyfullaharpaci
-   RT @Dedekorkut11: Utanmadıktan sonra... #CamiayaİftiraYolsuzluğuÖrtmez 
+   RT @Dedekorkut11: Utanmadıktan sonra... #CamiayaİftiraYolsuzluğuÖrtmez
    http://t.co/sXPn17D2md
 
    @NNGrilli
@@ -211,8 +211,8 @@ ID                  Posted at     Screen name       Text
       @search.favorites('twitter')
       expect($stdout.string).to eq <<-eos
    @sferik
-   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem 
-   to be missing "1.1" from the URL.
+   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
+   missing "1.1" from the URL.
 
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
@@ -284,8 +284,8 @@ ID                  Posted at     Screen name  Text
         @search.favorites('sferik', 'twitter')
         expect($stdout.string).to eq <<-eos
    @sferik
-   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem 
-   to be missing "1.1" from the URL.
+   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
+   missing "1.1" from the URL.
 
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
@@ -307,8 +307,8 @@ ID                  Posted at     Screen name  Text
           @search.favorites('7505382', 'twitter')
           expect($stdout.string).to eq <<-eos
    @sferik
-   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem 
-   to be missing "1.1" from the URL.
+   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
+   missing "1.1" from the URL.
 
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
@@ -333,8 +333,8 @@ ID                  Posted at     Screen name  Text
       @search.mentions('twitter')
       expect($stdout.string).to eq <<-eos
    @sferik
-   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem 
-   to be missing "1.1" from the URL.
+   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
+   missing "1.1" from the URL.
 
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
@@ -408,8 +408,8 @@ ID                  Posted at     Screen name  Text
       @search.list('presidents', 'twitter')
       expect($stdout.string).to eq <<-eos
    @sferik
-   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem 
-   to be missing "1.1" from the URL.
+   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
+   missing "1.1" from the URL.
 
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
@@ -609,8 +609,8 @@ ID                  Posted at     Screen name   Text
       @search.timeline('twitter')
       expect($stdout.string).to eq <<-eos
    @sferik
-   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem 
-   to be missing "1.1" from the URL.
+   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
+   missing "1.1" from the URL.
 
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
@@ -728,8 +728,8 @@ ID                  Posted at     Screen name  Text
         @search.timeline('sferik', 'twitter')
         expect($stdout.string).to eq <<-eos
    @sferik
-   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem 
-   to be missing "1.1" from the URL.
+   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
+   missing "1.1" from the URL.
 
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?

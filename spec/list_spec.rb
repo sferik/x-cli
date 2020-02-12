@@ -340,12 +340,12 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
    Happy Birthday @imdane. Watch out for those @rally pranksters!
 
    @ironicsans
-   If you like good real-life stories, check out @NarrativelyNY's just-launched 
+   If you like good real-life stories, check out @NarrativelyNY's just-launched
    site http://t.co/wiUL07jE (and also visit http://t.co/ZoyQxqWA)
 
    @pat_shaughnessy
-   Something else to vote for: "New Rails workshops to bring more women into the 
-   Boston software scene" http://t.co/eNBuckHc /cc @bostonrb
+   Something else to vote for: "New Rails workshops to bring more women into the Boston
+   software scene" http://t.co/eNBuckHc /cc @bostonrb
 
    @calebelston
    Pushing the button to launch the site. http://t.co/qLoEn5jG
@@ -354,16 +354,16 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
    RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
 
    @fivethirtyeight
-   The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book, 
+   The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book,
    THE SIGNAL AND THE NOISE (http://t.co/fNXj8vCE)
 
    @codeforamerica
-   RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, 
-   Sep 8 http://t.co/Sk5BM7U3 We'll see y'all there! #rhok @codeforamerica 
+   RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep
+   8 http://t.co/Sk5BM7U3 We'll see y'all there! #rhok @codeforamerica
    @TheaClay
 
    @fbjork
-   RT @jondot: Just published: "Pragmatic Concurrency With #Ruby" 
+   RT @jondot: Just published: "Pragmatic Concurrency With #Ruby"
    http://t.co/kGEykswZ /cc @JRuby @headius
 
    @mbostock
@@ -373,43 +373,42 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
    "Write drunk. Edit sober."—Ernest Hemingway
 
    @al3x
-   RT @wcmaier: Better banking through better ops: build something new with us 
+   RT @wcmaier: Better banking through better ops: build something new with us
    @Simplify (remote, PDX) http://t.co/8WgzKZH3
 
    @calebelston
-   We just announced Mosaic, what we've been working on since the Yobongo 
+   We just announced Mosaic, what we've been working on since the Yobongo
    acquisition. My personal post, http://t.co/ELOyIRZU @heymosaic
 
    @BarackObama
-   Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2 
+   Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2
    #Obama2012
 
    @JEG2
-   RT @tenderlove: If corporations are people, can we use them to drive in the 
+   RT @tenderlove: If corporations are people, can we use them to drive in the
    carpool lane?
 
    @eveningedition
-   LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake 
-   China; Canada cuts Iran ties; weekend read: http://t.co/OFs6dVW4
+   LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake China; Canada
+   cuts Iran ties; weekend read: http://t.co/OFs6dVW4
 
    @dhh
-   RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest 
+   RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest
    achievement: why this goulish jingoism is so warped http://t.co/kood278s
 
    @jasonfried
-   The story of Mars Curiosity's gears, made by a factory in Rockford, IL: 
+   The story of Mars Curiosity's gears, made by a factory in Rockford, IL:
    http://t.co/MwCRsHQg
 
    @sferik
-   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem 
-   to be missing "1.1" from the URL.
+   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
+   missing "1.1" from the URL.
 
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
 
    @dwiskus
-   Gentlemen, you can't fight in here! This is the war room! 
-   http://t.co/kMxMYyqF
+   Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF
 
       eos
     end
@@ -424,12 +423,12 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
    Happy Birthday @imdane. Watch out for those @rally pranksters!
 
    @ironicsans
-   If you like good real-life stories, check out @NarrativelyNY's just-launched 
+   If you like good real-life stories, check out @NarrativelyNY's just-launched
    site http://t.co/wiUL07jE (and also visit http://t.co/ZoyQxqWA)
 
    @pat_shaughnessy
-   Something else to vote for: "New Rails workshops to bring more women into the 
-   Boston software scene" http://t.co/eNBuckHc /cc @bostonrb
+   Something else to vote for: "New Rails workshops to bring more women into the Boston
+   software scene" http://t.co/eNBuckHc /cc @bostonrb
 
    @calebelston
    Pushing the button to launch the site. http://t.co/qLoEn5jG
@@ -438,16 +437,16 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
    RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
 
    @fivethirtyeight
-   The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book, 
+   The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book,
    THE SIGNAL AND THE NOISE (http://t.co/fNXj8vCE)
 
    @codeforamerica
-   RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, 
-   Sep 8 http://t.co/Sk5BM7U3 We'll see y'all there! #rhok @codeforamerica 
+   RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep
+   8 http://t.co/Sk5BM7U3 We'll see y'all there! #rhok @codeforamerica
    @TheaClay
 
    @fbjork
-   RT @jondot: Just published: "Pragmatic Concurrency With #Ruby" 
+   RT @jondot: Just published: "Pragmatic Concurrency With #Ruby"
    http://t.co/kGEykswZ /cc @JRuby @headius
 
    @mbostock
@@ -457,43 +456,42 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
    "Write drunk. Edit sober."—Ernest Hemingway
 
    @al3x
-   RT @wcmaier: Better banking through better ops: build something new with us 
+   RT @wcmaier: Better banking through better ops: build something new with us
    @Simplify (remote, PDX) http://t.co/8WgzKZH3
 
    @calebelston
-   We just announced Mosaic, what we've been working on since the Yobongo 
+   We just announced Mosaic, what we've been working on since the Yobongo
    acquisition. My personal post, http://t.co/ELOyIRZU @heymosaic
 
    @BarackObama
-   Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2 
+   Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2
    #Obama2012
 
    @JEG2
-   RT @tenderlove: If corporations are people, can we use them to drive in the 
+   RT @tenderlove: If corporations are people, can we use them to drive in the
    carpool lane?
 
    @eveningedition
-   LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake 
-   China; Canada cuts Iran ties; weekend read: http://t.co/OFs6dVW4
+   LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake China; Canada
+   cuts Iran ties; weekend read: http://t.co/OFs6dVW4
 
    @dhh
-   RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest 
+   RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest
    achievement: why this goulish jingoism is so warped http://t.co/kood278s
 
    @jasonfried
-   The story of Mars Curiosity's gears, made by a factory in Rockford, IL: 
+   The story of Mars Curiosity's gears, made by a factory in Rockford, IL:
    http://t.co/MwCRsHQg
 
    @sferik
-   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem 
-   to be missing "1.1" from the URL.
+   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
+   missing "1.1" from the URL.
 
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
 
    @dwiskus
-   Gentlemen, you can't fight in here! This is the war room! 
-   http://t.co/kMxMYyqF
+   Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF
 
         eos
       end
@@ -509,12 +507,12 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
    Happy Birthday @imdane. Watch out for those @rally pranksters!
 
    @ironicsans
-   If you like good real-life stories, check out @NarrativelyNY's just-launched 
+   If you like good real-life stories, check out @NarrativelyNY's just-launched
    site http://t.co/wiUL07jE (and also visit http://t.co/ZoyQxqWA)
 
    @pat_shaughnessy
-   Something else to vote for: "New Rails workshops to bring more women into the 
-   Boston software scene" http://t.co/eNBuckHc /cc @bostonrb
+   Something else to vote for: "New Rails workshops to bring more women into the Boston
+   software scene" http://t.co/eNBuckHc /cc @bostonrb
 
    @calebelston
    Pushing the button to launch the site. http://t.co/qLoEn5jG
@@ -523,16 +521,16 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
    RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
 
    @fivethirtyeight
-   The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book, 
+   The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book,
    THE SIGNAL AND THE NOISE (http://t.co/fNXj8vCE)
 
    @codeforamerica
-   RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, 
-   Sep 8 http://t.co/Sk5BM7U3 We'll see y'all there! #rhok @codeforamerica 
+   RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep
+   8 http://t.co/Sk5BM7U3 We'll see y'all there! #rhok @codeforamerica
    @TheaClay
 
    @fbjork
-   RT @jondot: Just published: "Pragmatic Concurrency With #Ruby" 
+   RT @jondot: Just published: "Pragmatic Concurrency With #Ruby"
    http://t.co/kGEykswZ /cc @JRuby @headius
 
    @mbostock
@@ -542,43 +540,42 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
    "Write drunk. Edit sober."—Ernest Hemingway
 
    @al3x
-   RT @wcmaier: Better banking through better ops: build something new with us 
+   RT @wcmaier: Better banking through better ops: build something new with us
    @Simplify (remote, PDX) http://t.co/8WgzKZH3
 
    @calebelston
-   We just announced Mosaic, what we've been working on since the Yobongo 
+   We just announced Mosaic, what we've been working on since the Yobongo
    acquisition. My personal post, http://t.co/ELOyIRZU @heymosaic
 
    @BarackObama
-   Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2 
+   Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2
    #Obama2012
 
    @JEG2
-   RT @tenderlove: If corporations are people, can we use them to drive in the 
+   RT @tenderlove: If corporations are people, can we use them to drive in the
    carpool lane?
 
    @eveningedition
-   LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake 
-   China; Canada cuts Iran ties; weekend read: http://t.co/OFs6dVW4
+   LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake China; Canada
+   cuts Iran ties; weekend read: http://t.co/OFs6dVW4
 
    @dhh
-   RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest 
+   RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest
    achievement: why this goulish jingoism is so warped http://t.co/kood278s
 
    @jasonfried
-   The story of Mars Curiosity's gears, made by a factory in Rockford, IL: 
+   The story of Mars Curiosity's gears, made by a factory in Rockford, IL:
    http://t.co/MwCRsHQg
 
    @sferik
-   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem 
-   to be missing "1.1" from the URL.
+   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
+   missing "1.1" from the URL.
 
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
 
    @dwiskus
-   Gentlemen, you can't fight in here! This is the war room! 
-   http://t.co/kMxMYyqF
+   Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF
 
         eos
       end
@@ -590,12 +587,12 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
    Happy Birthday @imdane. Watch out for those @rally pranksters!
 
 \e[1m\e[33m   @ironicsans\e[0m
-   If you like good real-life stories, check out @NarrativelyNY's just-launched 
+   If you like good real-life stories, check out @NarrativelyNY's just-launched
    site http://t.co/wiUL07jE (and also visit http://t.co/ZoyQxqWA)
 
 \e[1m\e[33m   @pat_shaughnessy\e[0m
-   Something else to vote for: "New Rails workshops to bring more women into the 
-   Boston software scene" http://t.co/eNBuckHc /cc @bostonrb
+   Something else to vote for: "New Rails workshops to bring more women into the Boston
+   software scene" http://t.co/eNBuckHc /cc @bostonrb
 
 \e[1m\e[33m   @calebelston\e[0m
    Pushing the button to launch the site. http://t.co/qLoEn5jG
@@ -604,16 +601,16 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
    RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
 
 \e[1m\e[33m   @fivethirtyeight\e[0m
-   The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book, 
+   The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book,
    THE SIGNAL AND THE NOISE (http://t.co/fNXj8vCE)
 
 \e[1m\e[33m   @codeforamerica\e[0m
-   RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, 
-   Sep 8 http://t.co/Sk5BM7U3 We'll see y'all there! #rhok @codeforamerica 
+   RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep
+   8 http://t.co/Sk5BM7U3 We'll see y'all there! #rhok @codeforamerica
    @TheaClay
 
 \e[1m\e[33m   @fbjork\e[0m
-   RT @jondot: Just published: "Pragmatic Concurrency With #Ruby" 
+   RT @jondot: Just published: "Pragmatic Concurrency With #Ruby"
    http://t.co/kGEykswZ /cc @JRuby @headius
 
 \e[1m\e[33m   @mbostock\e[0m
@@ -623,43 +620,42 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
    "Write drunk. Edit sober."—Ernest Hemingway
 
 \e[1m\e[33m   @al3x\e[0m
-   RT @wcmaier: Better banking through better ops: build something new with us 
+   RT @wcmaier: Better banking through better ops: build something new with us
    @Simplify (remote, PDX) http://t.co/8WgzKZH3
 
 \e[1m\e[33m   @calebelston\e[0m
-   We just announced Mosaic, what we've been working on since the Yobongo 
+   We just announced Mosaic, what we've been working on since the Yobongo
    acquisition. My personal post, http://t.co/ELOyIRZU @heymosaic
 
 \e[1m\e[33m   @BarackObama\e[0m
-   Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2 
+   Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2
    #Obama2012
 
 \e[1m\e[33m   @JEG2\e[0m
-   RT @tenderlove: If corporations are people, can we use them to drive in the 
+   RT @tenderlove: If corporations are people, can we use them to drive in the
    carpool lane?
 
 \e[1m\e[33m   @eveningedition\e[0m
-   LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake 
-   China; Canada cuts Iran ties; weekend read: http://t.co/OFs6dVW4
+   LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake China; Canada
+   cuts Iran ties; weekend read: http://t.co/OFs6dVW4
 
 \e[1m\e[33m   @dhh\e[0m
-   RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest 
+   RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest
    achievement: why this goulish jingoism is so warped http://t.co/kood278s
 
 \e[1m\e[33m   @jasonfried\e[0m
-   The story of Mars Curiosity's gears, made by a factory in Rockford, IL: 
+   The story of Mars Curiosity's gears, made by a factory in Rockford, IL:
    http://t.co/MwCRsHQg
 
 \e[1m\e[33m   @sferik\e[0m
-   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem 
-   to be missing "1.1" from the URL.
+   @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
+   missing "1.1" from the URL.
 
 \e[1m\e[33m   @sferik\e[0m
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
 
 \e[1m\e[33m   @dwiskus\e[0m
-   Gentlemen, you can't fight in here! This is the war room! 
-   http://t.co/kMxMYyqF
+   Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF
 
         eos
       end
@@ -787,7 +783,7 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
         eos
       end
     end
-    
+
     context '--csv' do
       before do
         @list.options = @list.options.merge('csv' => true)
