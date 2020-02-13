@@ -90,11 +90,11 @@ module BashCompletion
       cmd.options.collect { |_, o| option_str(o) }.concat(global_options)
     end
 
-    def option_str(o)
-      if o.aliases
-        "--#{o.name} #{o.aliases.join(' ')}"
+    def option_str(opt)
+      if opt.aliases
+        "--#{opt.name} #{o.aliases.join(' ')}"
       else
-        "--#{o.name}"
+        "--#{opt.name}"
       end
     end
 
@@ -103,7 +103,7 @@ module BashCompletion
     end
 
     def global_options
-      %w(-H --host -C --color -P --profile)
+      %w[-H --host -C --color -P --profile]
     end
 
     def global_options_args

@@ -22,21 +22,21 @@ rescue Interrupt
   pute 'Quitting...'
 rescue OAuth::Unauthorized
   pute 'Authorization failed'
-rescue Twitter::Error::TooManyRequests => error
-  pute error.message, "The rate limit for this request will reset in #{error.rate_limit.reset_in} #{error.rate_limit.reset_in == 1 ? 'second' : 'seconds'}."
-rescue Twitter::Error::BadRequest => error
-  pute error.message, 'Run `t authorize` to authorize.'
-rescue Twitter::Error::Forbidden, Twitter::Error::Unauthorized => error
-  if error.message == 'Error processing your OAuth request: Read-only application cannot POST' ||
-     error.message == 'This application is not allowed to access or delete your direct messages'
-    $stderr.puts(%q(Make sure to set your Twitter application's Access Level to "Read, Write and Access direct messages".))
+rescue Twitter::Error::TooManyRequests => e
+  pute e.message, "The rate limit for this request will reset in #{e.rate_limit.reset_in} #{e.rate_limit.reset_in == 1 ? 'second' : 'seconds'}."
+rescue Twitter::Error::BadRequest => e
+  pute e.message, 'Run `t authorize` to authorize.'
+rescue Twitter::Error::Forbidden, Twitter::Error::Unauthorized => e
+  if e.message == 'Error processing your OAuth request: Read-only application cannot POST' ||
+     e.message == 'This application is not allowed to access or delete your direct messages'
+    warn(%q(Make sure to set your Twitter application's Access Level to "Read, Write and Access direct messages".))
     require 'thor'
     Thor::Shell::Basic.new.ask 'Press [Enter] to open the Twitter Developer site.'
     require 'launchy'
-    Launchy.open('https://dev.twitter.com/apps') { |u, _, _| $stderr.puts "Manually open #{u}" }
+    Launchy.open('https://dev.twitter.com/apps') { |u, _, _| warn "Manually open #{u}" }
   else
-    pute error.message
+    pute e.message
   end
-rescue Twitter::Error => error
-  pute error.message
+rescue Twitter::Error => e
+  pute e.message
 end

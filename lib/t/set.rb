@@ -22,7 +22,7 @@ module T
       @rcfile.active_profile = {'username' => @rcfile[screen_name][consumer_key]['username'], 'consumer_key' => consumer_key}
       say "Active account has been updated to #{@rcfile.active_profile[0]}."
     end
-    map %w(account default) => :active
+    map %w[account default] => :active
 
     desc 'bio DESCRIPTION', 'Edits your Bio information on your Twitter profile.'
     def bio(description)
@@ -54,14 +54,14 @@ module T
       client.update_profile_background_image(File.new(File.expand_path(file)), tile: options['tile'], skip_status: true)
       say "@#{@rcfile.active_profile[0]}'s background image has been updated."
     end
-    map %w(background background_image) => :profile_background_image
+    map %w[background background_image] => :profile_background_image
 
     desc 'profile_image FILE', 'Sets the image on your Twitter profile.'
     def profile_image(file)
       client.update_profile_image(File.new(File.expand_path(file)))
       say "@#{@rcfile.active_profile[0]}'s image has been updated."
     end
-    map %w(avatar image) => :profile_image
+    map %w[avatar image] => :profile_image
 
     desc 'website URI', 'Sets the website field on your profile.'
     def website(uri)

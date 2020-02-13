@@ -157,7 +157,7 @@ describe T::Stream do
     end
     it 'prints the tweet' do
       expect(@stream).to receive(:print_message)
-      @stream.search(%w(twitter gem))
+      @stream.search(%w[twitter gem])
     end
     context '--csv' do
       before do
@@ -166,7 +166,7 @@ describe T::Stream do
       it 'outputs in CSV format' do
         allow(@streaming_client).to receive(:before_request)
         expect(@stream).to receive(:print_csv_tweet).with(any_args)
-        @stream.search(%w(twitter gem))
+        @stream.search(%w[twitter gem])
       end
     end
     context '--long' do
@@ -177,7 +177,7 @@ describe T::Stream do
         allow(@streaming_client).to receive(:before_request)
         allow(@streaming_client).to receive(:filter).with(track: 'twitter,gem').and_yield(@tweet)
         expect(@stream).to receive(:print_table).with(any_args)
-        @stream.search(%w(twitter gem))
+        @stream.search(%w[twitter gem])
       end
     end
     it 'performs a REST search when the stream initializes' do
@@ -190,7 +190,7 @@ describe T::Stream do
     it 'invokes Twitter::Streaming::Client#filter' do
       allow(@streaming_client).to receive(:filter)
       expect(@streaming_client).to receive(:filter).with(track: 'twitter,gem')
-      @stream.search(%w(twitter gem))
+      @stream.search(%w[twitter gem])
     end
   end
 

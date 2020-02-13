@@ -7,7 +7,7 @@ SimpleCov.formatters = [SimpleCov::Formatter::HTMLFormatter, Coveralls::SimpleCo
 
 SimpleCov.start do
   add_filter '/spec'
-  minimum_coverage(99.27)
+  minimum_coverage(99.18)
 end
 
 require 't'
@@ -59,11 +59,11 @@ def stub_put(path, endpoint = 'https://api.twitter.com')
 end
 
 def project_path
-  File.expand_path('../..', __FILE__)
+  File.expand_path('..', __dir__)
 end
 
 def fixture_path
-  File.expand_path('../fixtures', __FILE__)
+  File.expand_path('fixtures', __dir__)
 end
 
 def fixture(file)

@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 require 'helper'
 
 describe T::Search do
@@ -38,7 +39,7 @@ describe T::Search do
     end
     it 'has the correct output' do
       @search.all('twitter')
-      expect($stdout.string).to eq <<-eos
+      expect($stdout.string).to eq <<-EOS
 
    @amaliasafitri2
    RT @heartCOBOYJR: @AlvaroMaldini1 :-) http://t.co/Oxce0Tob3n
@@ -109,7 +110,7 @@ describe T::Search do
    @bryony_thfc
    merry christmas you arse X http://t.co/yRiWFgqr7p
 
-      eos
+      EOS
     end
     context '--csv' do
       before do
@@ -117,33 +118,33 @@ describe T::Search do
       end
       it 'outputs in CSV format' do
         @search.all('twitter')
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-415600159511158784,2013-12-24 21:49:34 +0000,amaliasafitri2,RT @heartCOBOYJR: @AlvaroMaldini1 :-) http://t.co/Oxce0Tob3n
-415600159490580480,2013-12-24 21:49:34 +0000,BPDPipesDrums,Here is a picture of us getting ready to Santa into @CITCBoston! #Boston http://t.co/INACljvLLC
-415600159486406656,2013-12-24 21:49:34 +0000,yunistosun6034,RT @sevilayyaziyor: gerçekten @ademyavuza ?Nasıl elin vardı böyle bi twit atmaya?Yolsuzlukla olmadı terörle mi şantaj yaparız diyosunuz? http://t.co/YPtNVYhLxl
-415600159486005248,2013-12-24 21:49:34 +0000,_KAIRYALS,My birthday cake was bomb http://t.co/LquXc7JXj4
-415600159456632832,2013-12-24 21:49:34 +0000,frozenharryx,RT @LouisTexts: whos tessa? http://t.co/7DJQlmCfuu
-415600159452438528,2013-12-24 21:49:34 +0000,MIKEFANTASMA,"Pues nada, aquí armando mi regalo de navidad solo me falta la cara y ya hago mi pedido con santa!.. http://t.co/iDC7bE9o4M"
-415600159444439040,2013-12-24 21:49:34 +0000,EleManera,"RT @xmyband: La gente che si arrabbia perché Harry non ha fatto gli auguri a Lou su Twitter.
-Non vorrei smontarvi, ma esistono i cellulari e i messaggi."
-415600159444434944,2013-12-24 21:49:34 +0000,BigAlFerguson,“@IrishRace; Merry Christmas to all our friends and followers from all @IrishRaceRally have a good one! http://t.co/rXFsC2ncFo” @Danloi1
-415600159436066816,2013-12-24 21:49:34 +0000,goksantezgel,"RT @nederlandline: Tayyip bey evladımızı severiz Biz ona dua ediyoruz.Fitnelere SAKIN HA!
-Mahmud Efndi (ks)
-#BedduayaLanetDuayaDavet 
-http://t.co/h6MUyHxr9x"""
-415600159427670016,2013-12-24 21:49:34 +0000,MaimounaLvb,RT @sissokodiaro: Miss mali pa pour les moche mon ga http://t.co/4WnwzoLgAD
-415600159423483904,2013-12-24 21:49:34 +0000,MrSilpy,@MrKATANI http://t.co/psk7K8rcND
-415600159423094784,2013-12-24 21:49:34 +0000,hunterdl19,RT @MadisonBertini: Jakes turnt http://t.co/P60gYZNL8z
-415600159419277312,2013-12-24 21:49:34 +0000,jayjay42__,RT @SteveStfler: Megan Fox Naked >> http://t.co/hMKlUMydFp
-415600159415103488,2013-12-24 21:49:34 +0000,Bs1972Bill,RT @erorin691: おはよう♪ http://t.co/v5YIFriCW3
-415600159415091200,2013-12-24 21:49:34 +0000,naked_gypsy,All my friends are here 😂 http://t.co/w66iG4XXpL
-415600159398313984,2013-12-24 21:49:34 +0000,whoa_lashton,@Ashton5SOS http://t.co/uhYwoRY0Iz
-415600159389937664,2013-12-24 21:49:34 +0000,seyfullaharpaci,RT @Dedekorkut11: Utanmadıktan sonra... #CamiayaİftiraYolsuzluğuÖrtmez http://t.co/sXPn17D2md
-415600159389519872,2013-12-24 21:49:34 +0000,NNGrilli,esperando la Navidad :D http://t.co/iwBL2Xj3g7
-415600159373144064,2013-12-24 21:49:34 +0000,omersafak74,RT @1903Rc: Ben Beşiktaşlıyım.. http://t.co/qnEpDJwI3b
-415600159372767232,2013-12-24 21:49:34 +0000,bryony_thfc,merry christmas you arse X http://t.co/yRiWFgqr7p
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text
+          415600159511158784,2013-12-24 21:49:34 +0000,amaliasafitri2,RT @heartCOBOYJR: @AlvaroMaldini1 :-) http://t.co/Oxce0Tob3n
+          415600159490580480,2013-12-24 21:49:34 +0000,BPDPipesDrums,Here is a picture of us getting ready to Santa into @CITCBoston! #Boston http://t.co/INACljvLLC
+          415600159486406656,2013-12-24 21:49:34 +0000,yunistosun6034,RT @sevilayyaziyor: gerçekten @ademyavuza ?Nasıl elin vardı böyle bi twit atmaya?Yolsuzlukla olmadı terörle mi şantaj yaparız diyosunuz? http://t.co/YPtNVYhLxl
+          415600159486005248,2013-12-24 21:49:34 +0000,_KAIRYALS,My birthday cake was bomb http://t.co/LquXc7JXj4
+          415600159456632832,2013-12-24 21:49:34 +0000,frozenharryx,RT @LouisTexts: whos tessa? http://t.co/7DJQlmCfuu
+          415600159452438528,2013-12-24 21:49:34 +0000,MIKEFANTASMA,"Pues nada, aquí armando mi regalo de navidad solo me falta la cara y ya hago mi pedido con santa!.. http://t.co/iDC7bE9o4M"
+          415600159444439040,2013-12-24 21:49:34 +0000,EleManera,"RT @xmyband: La gente che si arrabbia perché Harry non ha fatto gli auguri a Lou su Twitter.
+          Non vorrei smontarvi, ma esistono i cellulari e i messaggi."
+          415600159444434944,2013-12-24 21:49:34 +0000,BigAlFerguson,“@IrishRace; Merry Christmas to all our friends and followers from all @IrishRaceRally have a good one! http://t.co/rXFsC2ncFo” @Danloi1
+          415600159436066816,2013-12-24 21:49:34 +0000,goksantezgel,"RT @nederlandline: Tayyip bey evladımızı severiz Biz ona dua ediyoruz.Fitnelere SAKIN HA!
+          Mahmud Efndi (ks)
+          #BedduayaLanetDuayaDavet 
+          http://t.co/h6MUyHxr9x"""
+          415600159427670016,2013-12-24 21:49:34 +0000,MaimounaLvb,RT @sissokodiaro: Miss mali pa pour les moche mon ga http://t.co/4WnwzoLgAD
+          415600159423483904,2013-12-24 21:49:34 +0000,MrSilpy,@MrKATANI http://t.co/psk7K8rcND
+          415600159423094784,2013-12-24 21:49:34 +0000,hunterdl19,RT @MadisonBertini: Jakes turnt http://t.co/P60gYZNL8z
+          415600159419277312,2013-12-24 21:49:34 +0000,jayjay42__,RT @SteveStfler: Megan Fox Naked >> http://t.co/hMKlUMydFp
+          415600159415103488,2013-12-24 21:49:34 +0000,Bs1972Bill,RT @erorin691: おはよう♪ http://t.co/v5YIFriCW3
+          415600159415091200,2013-12-24 21:49:34 +0000,naked_gypsy,All my friends are here 😂 http://t.co/w66iG4XXpL
+          415600159398313984,2013-12-24 21:49:34 +0000,whoa_lashton,@Ashton5SOS http://t.co/uhYwoRY0Iz
+          415600159389937664,2013-12-24 21:49:34 +0000,seyfullaharpaci,RT @Dedekorkut11: Utanmadıktan sonra... #CamiayaİftiraYolsuzluğuÖrtmez http://t.co/sXPn17D2md
+          415600159389519872,2013-12-24 21:49:34 +0000,NNGrilli,esperando la Navidad :D http://t.co/iwBL2Xj3g7
+          415600159373144064,2013-12-24 21:49:34 +0000,omersafak74,RT @1903Rc: Ben Beşiktaşlıyım.. http://t.co/qnEpDJwI3b
+          415600159372767232,2013-12-24 21:49:34 +0000,bryony_thfc,merry christmas you arse X http://t.co/yRiWFgqr7p
+        EOS
       end
     end
     context '--long' do
@@ -152,29 +153,29 @@ http://t.co/h6MUyHxr9x"""
       end
       it 'outputs in long format' do
         @search.all('twitter')
-        expect($stdout.string).to eq <<-eos
-ID                  Posted at     Screen name       Text
-415600159511158784  Dec 24 13:49  @amaliasafitri2   RT @heartCOBOYJR: @Alvaro...
-415600159490580480  Dec 24 13:49  @BPDPipesDrums    Here is a picture of us g...
-415600159486406656  Dec 24 13:49  @yunistosun6034   RT @sevilayyaziyor: gerçe...
-415600159486005248  Dec 24 13:49  @_KAIRYALS        My birthday cake was bomb...
-415600159456632832  Dec 24 13:49  @frozenharryx     RT @LouisTexts: whos tess...
-415600159452438528  Dec 24 13:49  @MIKEFANTASMA     Pues nada, aquí armando m...
-415600159444439040  Dec 24 13:49  @EleManera        RT @xmyband: La gente che...
-415600159444434944  Dec 24 13:49  @BigAlFerguson    “@IrishRace; Merry Christ...
-415600159436066816  Dec 24 13:49  @goksantezgel     RT @nederlandline: Tayyip...
-415600159427670016  Dec 24 13:49  @MaimounaLvb      RT @sissokodiaro: Miss ma...
-415600159423483904  Dec 24 13:49  @MrSilpy          @MrKATANI http://t.co/psk...
-415600159423094784  Dec 24 13:49  @hunterdl19       RT @MadisonBertini: Jakes...
-415600159419277312  Dec 24 13:49  @jayjay42__       RT @SteveStfler: Megan Fo...
-415600159415103488  Dec 24 13:49  @Bs1972Bill       RT @erorin691: おはよう♪ http...
-415600159415091200  Dec 24 13:49  @naked_gypsy      All my friends are here 😂...
-415600159398313984  Dec 24 13:49  @whoa_lashton     @Ashton5SOS http://t.co/u...
-415600159389937664  Dec 24 13:49  @seyfullaharpaci  RT @Dedekorkut11: Utanmad...
-415600159389519872  Dec 24 13:49  @NNGrilli         esperando la Navidad :D h...
-415600159373144064  Dec 24 13:49  @omersafak74      RT @1903Rc: Ben Beşiktaşl...
-415600159372767232  Dec 24 13:49  @bryony_thfc      merry christmas you arse ...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID                  Posted at     Screen name       Text
+          415600159511158784  Dec 24 13:49  @amaliasafitri2   RT @heartCOBOYJR: @Alvaro...
+          415600159490580480  Dec 24 13:49  @BPDPipesDrums    Here is a picture of us g...
+          415600159486406656  Dec 24 13:49  @yunistosun6034   RT @sevilayyaziyor: gerçe...
+          415600159486005248  Dec 24 13:49  @_KAIRYALS        My birthday cake was bomb...
+          415600159456632832  Dec 24 13:49  @frozenharryx     RT @LouisTexts: whos tess...
+          415600159452438528  Dec 24 13:49  @MIKEFANTASMA     Pues nada, aquí armando m...
+          415600159444439040  Dec 24 13:49  @EleManera        RT @xmyband: La gente che...
+          415600159444434944  Dec 24 13:49  @BigAlFerguson    “@IrishRace; Merry Christ...
+          415600159436066816  Dec 24 13:49  @goksantezgel     RT @nederlandline: Tayyip...
+          415600159427670016  Dec 24 13:49  @MaimounaLvb      RT @sissokodiaro: Miss ma...
+          415600159423483904  Dec 24 13:49  @MrSilpy          @MrKATANI http://t.co/psk...
+          415600159423094784  Dec 24 13:49  @hunterdl19       RT @MadisonBertini: Jakes...
+          415600159419277312  Dec 24 13:49  @jayjay42__       RT @SteveStfler: Megan Fo...
+          415600159415103488  Dec 24 13:49  @Bs1972Bill       RT @erorin691: おはよう♪ http...
+          415600159415091200  Dec 24 13:49  @naked_gypsy      All my friends are here 😂...
+          415600159398313984  Dec 24 13:49  @whoa_lashton     @Ashton5SOS http://t.co/u...
+          415600159389937664  Dec 24 13:49  @seyfullaharpaci  RT @Dedekorkut11: Utanmad...
+          415600159389519872  Dec 24 13:49  @NNGrilli         esperando la Navidad :D h...
+          415600159373144064  Dec 24 13:49  @omersafak74      RT @1903Rc: Ben Beşiktaşl...
+          415600159372767232  Dec 24 13:49  @bryony_thfc      merry christmas you arse ...
+        EOS
       end
     end
     context '--number' do
@@ -209,7 +210,7 @@ ID                  Posted at     Screen name       Text
     end
     it 'has the correct output' do
       @search.favorites('twitter')
-      expect($stdout.string).to eq <<-eos
+      expect($stdout.string).to eq <<-EOS
    @sferik
    @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
    missing "1.1" from the URL.
@@ -217,7 +218,7 @@ ID                  Posted at     Screen name       Text
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
 
-      eos
+      EOS
     end
     context '--csv' do
       before do
@@ -225,11 +226,11 @@ ID                  Posted at     Screen name       Text
       end
       it 'outputs in CSV format' do
         @search.favorites('twitter')
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
-244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text
+          244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
+          244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
+        EOS
       end
     end
     context '--decode-uris' do
@@ -254,11 +255,11 @@ ID,Posted at,Screen name,Text
       end
       it 'outputs in long format' do
         @search.favorites('twitter')
-        expect($stdout.string).to eq <<-eos
-ID                  Posted at     Screen name  Text
-244102209942458368  Sep  7 07:57  @sferik      @episod @twitterapi now https:...
-244100411563339777  Sep  7 07:50  @sferik      @episod @twitterapi Did you ca...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID                  Posted at     Screen name  Text
+          244102209942458368  Sep  7 07:57  @sferik      @episod @twitterapi now https:...
+          244100411563339777  Sep  7 07:50  @sferik      @episod @twitterapi Did you ca...
+        EOS
       end
     end
     context 'Twitter is down' do
@@ -282,7 +283,7 @@ ID                  Posted at     Screen name  Text
       end
       it 'has the correct output' do
         @search.favorites('sferik', 'twitter')
-        expect($stdout.string).to eq <<-eos
+        expect($stdout.string).to eq <<-EOS
    @sferik
    @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
    missing "1.1" from the URL.
@@ -290,7 +291,7 @@ ID                  Posted at     Screen name  Text
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
 
-        eos
+        EOS
       end
       context '--id' do
         before do
@@ -305,7 +306,7 @@ ID                  Posted at     Screen name  Text
         end
         it 'has the correct output' do
           @search.favorites('7505382', 'twitter')
-          expect($stdout.string).to eq <<-eos
+          expect($stdout.string).to eq <<-EOS
    @sferik
    @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
    missing "1.1" from the URL.
@@ -313,7 +314,7 @@ ID                  Posted at     Screen name  Text
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
 
-          eos
+          EOS
         end
       end
     end
@@ -331,7 +332,7 @@ ID                  Posted at     Screen name  Text
     end
     it 'has the correct output' do
       @search.mentions('twitter')
-      expect($stdout.string).to eq <<-eos
+      expect($stdout.string).to eq <<-EOS
    @sferik
    @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
    missing "1.1" from the URL.
@@ -339,7 +340,7 @@ ID                  Posted at     Screen name  Text
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
 
-      eos
+      EOS
     end
     context '--csv' do
       before do
@@ -347,11 +348,11 @@ ID                  Posted at     Screen name  Text
       end
       it 'outputs in CSV format' do
         @search.mentions('twitter')
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
-244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text
+          244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
+          244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
+        EOS
       end
     end
     context '--decode-uris' do
@@ -376,11 +377,11 @@ ID,Posted at,Screen name,Text
       end
       it 'outputs in long format' do
         @search.mentions('twitter')
-        expect($stdout.string).to eq <<-eos
-ID                  Posted at     Screen name  Text
-244102209942458368  Sep  7 07:57  @sferik      @episod @twitterapi now https:...
-244100411563339777  Sep  7 07:50  @sferik      @episod @twitterapi Did you ca...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID                  Posted at     Screen name  Text
+          244102209942458368  Sep  7 07:57  @sferik      @episod @twitterapi now https:...
+          244100411563339777  Sep  7 07:50  @sferik      @episod @twitterapi Did you ca...
+        EOS
       end
     end
     context 'Twitter is down' do
@@ -406,7 +407,7 @@ ID                  Posted at     Screen name  Text
     end
     it 'has the correct output' do
       @search.list('presidents', 'twitter')
-      expect($stdout.string).to eq <<-eos
+      expect($stdout.string).to eq <<-EOS
    @sferik
    @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
    missing "1.1" from the URL.
@@ -414,7 +415,7 @@ ID                  Posted at     Screen name  Text
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
 
-      eos
+      EOS
     end
     context '--csv' do
       before do
@@ -422,11 +423,11 @@ ID                  Posted at     Screen name  Text
       end
       it 'outputs in CSV format' do
         @search.list('presidents', 'twitter')
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
-244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text
+          244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
+          244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
+        EOS
       end
     end
     context '--decode-uris' do
@@ -451,11 +452,11 @@ ID,Posted at,Screen name,Text
       end
       it 'outputs in long format' do
         @search.list('presidents', 'twitter')
-        expect($stdout.string).to eq <<-eos
-ID                  Posted at     Screen name  Text
-244102209942458368  Sep  7 07:57  @sferik      @episod @twitterapi now https:...
-244100411563339777  Sep  7 07:50  @sferik      @episod @twitterapi Did you ca...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID                  Posted at     Screen name  Text
+          244102209942458368  Sep  7 07:57  @sferik      @episod @twitterapi now https:...
+          244100411563339777  Sep  7 07:50  @sferik      @episod @twitterapi Did you ca...
+        EOS
       end
     end
     context 'with a user passed' do
@@ -499,11 +500,11 @@ ID                  Posted at     Screen name  Text
     end
     it 'has the correct output' do
       @search.retweets('mosaic')
-      expect($stdout.string).to eq <<-eos
+      expect($stdout.string).to eq <<-EOS
    @calebelston
    RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
 
-      eos
+      EOS
     end
     context '--csv' do
       before do
@@ -511,10 +512,10 @@ ID                  Posted at     Screen name  Text
       end
       it 'outputs in CSV format' do
         @search.retweets('mosaic')
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text
+          244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
+        EOS
       end
     end
     context '--decode-uris' do
@@ -539,10 +540,10 @@ ID,Posted at,Screen name,Text
       end
       it 'outputs in long format' do
         @search.retweets('mosaic')
-        expect($stdout.string).to eq <<-eos
-ID                  Posted at     Screen name   Text
-244108728834592770  Sep  7 08:23  @calebelston  RT @olivercameron: Mosaic loo...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID                  Posted at     Screen name   Text
+          244108728834592770  Sep  7 08:23  @calebelston  RT @olivercameron: Mosaic loo...
+        EOS
       end
     end
     context 'Twitter is down' do
@@ -566,11 +567,11 @@ ID                  Posted at     Screen name   Text
       end
       it 'has the correct output' do
         @search.retweets('sferik', 'mosaic')
-        expect($stdout.string).to eq <<-eos
+        expect($stdout.string).to eq <<-EOS
    @calebelston
    RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
 
-        eos
+        EOS
       end
       context '--id' do
         before do
@@ -585,11 +586,11 @@ ID                  Posted at     Screen name   Text
         end
         it 'has the correct output' do
           @search.retweets('7505382', 'mosaic')
-          expect($stdout.string).to eq <<-eos
+          expect($stdout.string).to eq <<-EOS
    @calebelston
    RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
 
-          eos
+          EOS
         end
       end
     end
@@ -607,7 +608,7 @@ ID                  Posted at     Screen name   Text
     end
     it 'has the correct output' do
       @search.timeline('twitter')
-      expect($stdout.string).to eq <<-eos
+      expect($stdout.string).to eq <<-EOS
    @sferik
    @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
    missing "1.1" from the URL.
@@ -615,7 +616,7 @@ ID                  Posted at     Screen name   Text
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
 
-      eos
+      EOS
     end
     context '--csv' do
       before do
@@ -623,11 +624,11 @@ ID                  Posted at     Screen name   Text
       end
       it 'outputs in CSV format' do
         @search.timeline('twitter')
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
-244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text
+          244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
+          244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
+        EOS
       end
     end
     context '--decode-uris' do
@@ -676,11 +677,11 @@ ID,Posted at,Screen name,Text
       end
       it 'outputs in long format' do
         @search.timeline('twitter')
-        expect($stdout.string).to eq <<-eos
-ID                  Posted at     Screen name  Text
-244102209942458368  Sep  7 07:57  @sferik      @episod @twitterapi now https:...
-244100411563339777  Sep  7 07:50  @sferik      @episod @twitterapi Did you ca...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID                  Posted at     Screen name  Text
+          244102209942458368  Sep  7 07:57  @sferik      @episod @twitterapi now https:...
+          244100411563339777  Sep  7 07:50  @sferik      @episod @twitterapi Did you ca...
+        EOS
       end
     end
     context '--max-id' do
@@ -726,7 +727,7 @@ ID                  Posted at     Screen name  Text
       end
       it 'has the correct output' do
         @search.timeline('sferik', 'twitter')
-        expect($stdout.string).to eq <<-eos
+        expect($stdout.string).to eq <<-EOS
    @sferik
    @episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be
    missing "1.1" from the URL.
@@ -734,7 +735,7 @@ ID                  Posted at     Screen name  Text
    @sferik
    @episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
 
-        eos
+        EOS
       end
       context '--csv' do
         before do
@@ -742,11 +743,11 @@ ID                  Posted at     Screen name  Text
         end
         it 'outputs in CSV format' do
           @search.timeline('sferik', 'twitter')
-          expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
-244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
-          eos
+          expect($stdout.string).to eq <<~EOS
+            ID,Posted at,Screen name,Text
+            244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
+            244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
+          EOS
         end
       end
       context '--id' do
@@ -767,11 +768,11 @@ ID,Posted at,Screen name,Text
         end
         it 'outputs in long format' do
           @search.timeline('sferik', 'twitter')
-          expect($stdout.string).to eq <<-eos
-ID                  Posted at     Screen name  Text
-244102209942458368  Sep  7 07:57  @sferik      @episod @twitterapi now https:...
-244100411563339777  Sep  7 07:50  @sferik      @episod @twitterapi Did you ca...
-          eos
+          expect($stdout.string).to eq <<~EOS
+            ID                  Posted at     Screen name  Text
+            244102209942458368  Sep  7 07:57  @sferik      @episod @twitterapi now https:...
+            244100411563339777  Sep  7 07:50  @sferik      @episod @twitterapi Did you ca...
+          EOS
         end
       end
       context '--max-id' do
@@ -828,11 +829,11 @@ ID                  Posted at     Screen name  Text
       end
       it 'outputs in CSV format' do
         @search.users('Erik')
-        expect($stdout.string).to eq <<-eos
-ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
-14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
-7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
+          14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
+          7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
+        EOS
       end
     end
     context '--long' do
@@ -841,11 +842,11 @@ ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name
       end
       it 'outputs in long format' do
         @search.users('Erik')
-        expect($stdout.string).to eq <<-eos
-ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
-14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
- 7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
+          14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
+           7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
+        EOS
       end
     end
     context '--reverse' do

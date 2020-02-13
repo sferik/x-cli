@@ -43,12 +43,13 @@ module T
         direct_message_ids.each do |direct_message_id_to_delete|
           direct_message = client.direct_message(direct_message_id_to_delete)
           next unless yes? "Are you sure you want to permanently delete the direct message to @#{direct_message.recipient.screen_name}: \"#{direct_message.text}\"? [y/N]"
+
           client.destroy_direct_message(direct_message_id_to_delete)
           say "@#{@rcfile.active_profile[0]} deleted the direct message sent to @#{direct_message.recipient.screen_name}: \"#{direct_message.text}\""
         end
       end
     end
-    map %w(d m) => :dm
+    map %w[d m] => :dm
 
     desc 'favorite TWEET_ID [TWEET_ID...]', 'Delete favorites.'
     method_option 'force', aliases: '-f', type: :boolean
@@ -65,12 +66,13 @@ module T
         status_ids.each do |status_id_to_unfavorite|
           status = client.status(status_id_to_unfavorite, include_my_retweet: false)
           next unless yes? "Are you sure you want to remove @#{status.user.screen_name}'s status: \"#{status.full_text}\" from your favorites? [y/N]"
+
           client.unfavorite(status_id_to_unfavorite)
           say "@#{@rcfile.active_profile[0]} unfavorited @#{status.user.screen_name}'s status: \"#{status.full_text}\""
         end
       end
     end
-    map %w(fave favourite) => :favorite
+    map %w[fave favourite] => :favorite
 
     desc 'list LIST', 'Delete a list.'
     method_option 'force', aliases: '-f', type: :boolean
@@ -124,11 +126,12 @@ module T
         status_ids.each do |status_id_to_delete|
           status = client.status(status_id_to_delete, include_my_retweet: false)
           next unless yes? "Are you sure you want to permanently delete @#{status.user.screen_name}'s status: \"#{status.full_text}\"? [y/N]"
+
           client.destroy_status(status_id_to_delete, trim_user: true)
           say "@#{@rcfile.active_profile[0]} deleted the Tweet: \"#{status.full_text}\""
         end
       end
     end
-    map %w(post tweet update) => :status
+    map %w[post tweet update] => :status
   end
 end

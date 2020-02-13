@@ -10,7 +10,7 @@ begin
 rescue LoadError
   desc 'Run RuboCop'
   task :rubocop do
-    $stderr.puts 'Rubocop is disabled'
+    warn 'Rubocop is disabled'
   end
 end
 
@@ -18,4 +18,4 @@ Dir.glob('tasks/*.rake').each { |r| import r }
 
 task release: ['completion:zsh', 'completion:bash']
 task test: :spec
-task default: [:spec, :rubocop]
+task default: %i[spec rubocop]

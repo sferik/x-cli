@@ -71,14 +71,14 @@ module T
         print_table(array)
       end
     end
-    map %w(details) => :information
+    map %w[details] => :information
 
     desc 'members [USER/]LIST', 'Returns the members of a Twitter list.'
     method_option 'csv', aliases: '-c', type: :boolean, desc: 'Output in CSV format.'
     method_option 'id', aliases: '-i', type: :boolean, desc: 'Specify user via ID instead of screen name.'
     method_option 'long', aliases: '-l', type: :boolean, desc: 'Output in long format.'
     method_option 'reverse', aliases: '-r', type: :boolean, desc: 'Reverse the order of the sort.'
-    method_option 'sort', aliases: '-s', type: :string, enum: %w(favorites followers friends listed screen_name since tweets tweeted), default: 'screen_name', desc: 'Specify the order of the results.', banner: 'ORDER'
+    method_option 'sort', aliases: '-s', type: :string, enum: %w[favorites followers friends listed screen_name since tweets tweeted], default: 'screen_name', desc: 'Specify the order of the results.', banner: 'ORDER'
     method_option 'unsorted', aliases: '-u', type: :boolean, desc: 'Output is not sorted.'
     def members(user_list)
       owner, list_name = extract_owner(user_list, options)
@@ -120,6 +120,6 @@ module T
       end
       print_tweets(tweets)
     end
-    map %w(tl) => :timeline
+    map %w[tl] => :timeline
   end
 end

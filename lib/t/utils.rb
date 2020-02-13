@@ -3,7 +3,7 @@ module T
   private
 
     # https://github.com/rails/rails/blob/bd8a970/actionpack/lib/action_view/helpers/date_helper.rb
-    def distance_of_time_in_words(from_time, to_time = Time.now) # rubocop:disable CyclomaticComplexity
+    def distance_of_time_in_words(from_time, to_time = Time.now) # rubocop:disable Metrics/CyclomaticComplexity
       seconds = (to_time - from_time).abs
       minutes = seconds / 60
       case minutes
@@ -14,34 +14,34 @@ module T
         when 1...2
           'a second'
         when 2...60
-          format('%d seconds', seconds)
+          format('%<seconds>d seconds', seconds: seconds)
         end
       when 1...2
         'a minute'
       when 2...60
-        format('%d minutes', minutes)
+        format('%<minutes>d minutes', minutes: minutes)
       when 60...120
         'an hour'
       # 120 minutes up to 23.5 hours
       when 120...1410
-        format('%d hours', (minutes.to_f / 60.0).round)
+        format('%<hours>d hours', hours: (minutes.to_f / 60.0).round)
       # 23.5 hours up to 48 hours
       when 1410...2880
         'a day'
       # 48 hours up to 29.5 days
       when 2880...42_480
-        format('%d days', (minutes.to_f / 1440.0).round)
+        format('%<days>d days', days: (minutes.to_f / 1440.0).round)
       # 29.5 days up to 60 days
       when 42_480...86_400
         'a month'
       # 60 days up to 11.5 months
       when 86_400...503_700
-        format('%d months', (minutes.to_f / 43_800.0).round)
+        format('%<months>d months', months: (minutes.to_f / 43_800.0).round)
       # 11.5 months up to 2 years
       when 503_700...1_051_200
         'a year'
       else
-        format('%d years', (minutes.to_f / 525_600.0).round)
+        format('%<years>d years', years: (minutes.to_f / 525_600.0).round)
       end
     end
     alias time_ago_in_words distance_of_time_in_words

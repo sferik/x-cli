@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 require 'helper'
 
 describe T::CLI do
@@ -34,10 +35,10 @@ describe T::CLI do
     end
     it 'has the correct output' do
       @cli.accounts
-      expect($stdout.string).to eq <<-eos
-testcli
-  abc123 (active)
-      eos
+      expect($stdout.string).to eq <<~EOS
+        testcli
+          abc123 (active)
+      EOS
     end
   end
 
@@ -138,7 +139,7 @@ testcli
     end
     it 'has the correct output' do
       @cli.direct_messages
-      expect($stdout.string).to eq <<-eos
+      expect($stdout.string).to eq <<-EOS
    @sferik
    Sounds good. Meeting Tuesday is fine.
 
@@ -175,7 +176,7 @@ testcli
    I'm trying to debug the issue you were having with the Bundler Gemfile.lock
    shortref. What version of Ruby and RubyGems are you running?
 
-      eos
+      EOS
     end
     context '--csv' do
       before do
@@ -183,19 +184,19 @@ testcli
       end
       it 'outputs in CSV format' do
         @cli.direct_messages
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-1773478249,2010-10-17 20:48:55 +0000,sferik,Sounds good. Meeting Tuesday is fine.
-1762960771,2010-10-14 21:43:30 +0000,sferik,That's great news! Let's plan to chat around 8 AM tomorrow Pacific time. Does that work for you?
-1711812216,2010-10-01 15:07:12 +0000,sferik,I asked Yehuda about the stipend. I believe it has already been sent. Glad you're feeling better.
-1711417617,2010-10-01 13:09:27 +0000,sferik,Just checking in. How's everything going?
-1653301471,2010-09-16 16:13:27 +0000,sferik,Not sure about the payment. Feel free to ask Leah or Yehuda directly. Think you'll be able to finish up your work on graphs this weekend?
-1645324992,2010-09-14 18:44:10 +0000,sferik,How are the graph enhancements coming?
-1632933616,2010-09-11 17:45:46 +0000,sferik,How are the graphs coming? I'm really looking forward to seeing what you do with Raphaël.
-1629239903,2010-09-10 18:21:36 +0000,sferik,Awesome! Any luck duplicating the Gemfile.lock error with Ruby 1.9.2 final?
-1629166212,2010-09-10 17:56:53 +0000,sferik,I just committed a bunch of cleanup and fixes to RailsAdmin that touched many of files. Make sure you pull to avoid conflicts.
-1624782206,2010-09-09 18:11:48 +0000,sferik,I'm trying to debug the issue you were having with the Bundler Gemfile.lock shortref. What version of Ruby and RubyGems are you running?
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text
+          1773478249,2010-10-17 20:48:55 +0000,sferik,Sounds good. Meeting Tuesday is fine.
+          1762960771,2010-10-14 21:43:30 +0000,sferik,That's great news! Let's plan to chat around 8 AM tomorrow Pacific time. Does that work for you?
+          1711812216,2010-10-01 15:07:12 +0000,sferik,I asked Yehuda about the stipend. I believe it has already been sent. Glad you're feeling better.
+          1711417617,2010-10-01 13:09:27 +0000,sferik,Just checking in. How's everything going?
+          1653301471,2010-09-16 16:13:27 +0000,sferik,Not sure about the payment. Feel free to ask Leah or Yehuda directly. Think you'll be able to finish up your work on graphs this weekend?
+          1645324992,2010-09-14 18:44:10 +0000,sferik,How are the graph enhancements coming?
+          1632933616,2010-09-11 17:45:46 +0000,sferik,How are the graphs coming? I'm really looking forward to seeing what you do with Raphaël.
+          1629239903,2010-09-10 18:21:36 +0000,sferik,Awesome! Any luck duplicating the Gemfile.lock error with Ruby 1.9.2 final?
+          1629166212,2010-09-10 17:56:53 +0000,sferik,I just committed a bunch of cleanup and fixes to RailsAdmin that touched many of files. Make sure you pull to avoid conflicts.
+          1624782206,2010-09-09 18:11:48 +0000,sferik,I'm trying to debug the issue you were having with the Bundler Gemfile.lock shortref. What version of Ruby and RubyGems are you running?
+        EOS
       end
     end
     context '--decode-uris' do
@@ -215,19 +216,19 @@ ID,Posted at,Screen name,Text
       end
       it 'outputs in long format' do
         @cli.direct_messages
-        expect($stdout.string).to eq <<-eos
-ID          Posted at     Screen name  Text
-1773478249  Oct 17  2010  @sferik      Sounds good. Meeting Tuesday is fine.
-1762960771  Oct 14  2010  @sferik      That's great news! Let's plan to chat ...
-1711812216  Oct  1  2010  @sferik      I asked Yehuda about the stipend. I be...
-1711417617  Oct  1  2010  @sferik      Just checking in. How's everything going?
-1653301471  Sep 16  2010  @sferik      Not sure about the payment. Feel free ...
-1645324992  Sep 14  2010  @sferik      How are the graph enhancements coming?
-1632933616  Sep 11  2010  @sferik      How are the graphs coming? I'm really ...
-1629239903  Sep 10  2010  @sferik      Awesome! Any luck duplicating the Gemf...
-1629166212  Sep 10  2010  @sferik      I just committed a bunch of cleanup an...
-1624782206  Sep  9  2010  @sferik      I'm trying to debug the issue you were...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID          Posted at     Screen name  Text
+          1773478249  Oct 17  2010  @sferik      Sounds good. Meeting Tuesday is fine.
+          1762960771  Oct 14  2010  @sferik      That's great news! Let's plan to chat ...
+          1711812216  Oct  1  2010  @sferik      I asked Yehuda about the stipend. I be...
+          1711417617  Oct  1  2010  @sferik      Just checking in. How's everything going?
+          1653301471  Sep 16  2010  @sferik      Not sure about the payment. Feel free ...
+          1645324992  Sep 14  2010  @sferik      How are the graph enhancements coming?
+          1632933616  Sep 11  2010  @sferik      How are the graphs coming? I'm really ...
+          1629239903  Sep 10  2010  @sferik      Awesome! Any luck duplicating the Gemf...
+          1629166212  Sep 10  2010  @sferik      I just committed a bunch of cleanup an...
+          1624782206  Sep  9  2010  @sferik      I'm trying to debug the issue you were...
+        EOS
       end
     end
     context '--number' do
@@ -254,7 +255,7 @@ ID          Posted at     Screen name  Text
       end
       it 'reverses the order of the sort' do
         @cli.direct_messages
-        expect($stdout.string).to eq <<-eos
+        expect($stdout.string).to eq <<-EOS
    @sferik
    I'm trying to debug the issue you were having with the Bundler Gemfile.lock
    shortref. What version of Ruby and RubyGems are you running?
@@ -291,7 +292,7 @@ ID          Posted at     Screen name  Text
    @sferik
    Sounds good. Meeting Tuesday is fine.
 
-        eos
+        EOS
       end
     end
   end
@@ -307,7 +308,7 @@ ID          Posted at     Screen name  Text
     end
     it 'has the correct output' do
       @cli.direct_messages_sent
-      expect($stdout.string).to eq <<-eos
+      expect($stdout.string).to eq <<-EOS
    @hurrycane
    Sounds good. Meeting Tuesday is fine.
 
@@ -344,7 +345,7 @@ ID          Posted at     Screen name  Text
    I'm trying to debug the issue you were having with the Bundler Gemfile.lock
    shortref. What version of Ruby and RubyGems are you running?
 
-      eos
+      EOS
     end
     context '--csv' do
       before do
@@ -352,19 +353,19 @@ ID          Posted at     Screen name  Text
       end
       it 'outputs in CSV format' do
         @cli.direct_messages_sent
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-1773478249,2010-10-17 20:48:55 +0000,hurrycane,Sounds good. Meeting Tuesday is fine.
-1762960771,2010-10-14 21:43:30 +0000,hurrycane,That's great news! Let's plan to chat around 8 AM tomorrow Pacific time. Does that work for you?
-1711812216,2010-10-01 15:07:12 +0000,hurrycane,I asked Yehuda about the stipend. I believe it has already been sent. Glad you're feeling better.
-1711417617,2010-10-01 13:09:27 +0000,hurrycane,Just checking in. How's everything going?
-1653301471,2010-09-16 16:13:27 +0000,hurrycane,Not sure about the payment. Feel free to ask Leah or Yehuda directly. Think you'll be able to finish up your work on graphs this weekend?
-1645324992,2010-09-14 18:44:10 +0000,hurrycane,How are the graph enhancements coming?
-1632933616,2010-09-11 17:45:46 +0000,hurrycane,How are the graphs coming? I'm really looking forward to seeing what you do with Raphaël.
-1629239903,2010-09-10 18:21:36 +0000,hurrycane,Awesome! Any luck duplicating the Gemfile.lock error with Ruby 1.9.2 final?
-1629166212,2010-09-10 17:56:53 +0000,hurrycane,I just committed a bunch of cleanup and fixes to RailsAdmin that touched many of files. Make sure you pull to avoid conflicts.
-1624782206,2010-09-09 18:11:48 +0000,hurrycane,I'm trying to debug the issue you were having with the Bundler Gemfile.lock shortref. What version of Ruby and RubyGems are you running?
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text
+          1773478249,2010-10-17 20:48:55 +0000,hurrycane,Sounds good. Meeting Tuesday is fine.
+          1762960771,2010-10-14 21:43:30 +0000,hurrycane,That's great news! Let's plan to chat around 8 AM tomorrow Pacific time. Does that work for you?
+          1711812216,2010-10-01 15:07:12 +0000,hurrycane,I asked Yehuda about the stipend. I believe it has already been sent. Glad you're feeling better.
+          1711417617,2010-10-01 13:09:27 +0000,hurrycane,Just checking in. How's everything going?
+          1653301471,2010-09-16 16:13:27 +0000,hurrycane,Not sure about the payment. Feel free to ask Leah or Yehuda directly. Think you'll be able to finish up your work on graphs this weekend?
+          1645324992,2010-09-14 18:44:10 +0000,hurrycane,How are the graph enhancements coming?
+          1632933616,2010-09-11 17:45:46 +0000,hurrycane,How are the graphs coming? I'm really looking forward to seeing what you do with Raphaël.
+          1629239903,2010-09-10 18:21:36 +0000,hurrycane,Awesome! Any luck duplicating the Gemfile.lock error with Ruby 1.9.2 final?
+          1629166212,2010-09-10 17:56:53 +0000,hurrycane,I just committed a bunch of cleanup and fixes to RailsAdmin that touched many of files. Make sure you pull to avoid conflicts.
+          1624782206,2010-09-09 18:11:48 +0000,hurrycane,I'm trying to debug the issue you were having with the Bundler Gemfile.lock shortref. What version of Ruby and RubyGems are you running?
+        EOS
       end
     end
     context '--decode-uris' do
@@ -384,19 +385,19 @@ ID,Posted at,Screen name,Text
       end
       it 'outputs in long format' do
         @cli.direct_messages_sent
-        expect($stdout.string).to eq <<-eos
-ID          Posted at     Screen name  Text
-1773478249  Oct 17  2010  @hurrycane   Sounds good. Meeting Tuesday is fine.
-1762960771  Oct 14  2010  @hurrycane   That's great news! Let's plan to chat ...
-1711812216  Oct  1  2010  @hurrycane   I asked Yehuda about the stipend. I be...
-1711417617  Oct  1  2010  @hurrycane   Just checking in. How's everything going?
-1653301471  Sep 16  2010  @hurrycane   Not sure about the payment. Feel free ...
-1645324992  Sep 14  2010  @hurrycane   How are the graph enhancements coming?
-1632933616  Sep 11  2010  @hurrycane   How are the graphs coming? I'm really ...
-1629239903  Sep 10  2010  @hurrycane   Awesome! Any luck duplicating the Gemf...
-1629166212  Sep 10  2010  @hurrycane   I just committed a bunch of cleanup an...
-1624782206  Sep  9  2010  @hurrycane   I'm trying to debug the issue you were...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID          Posted at     Screen name  Text
+          1773478249  Oct 17  2010  @hurrycane   Sounds good. Meeting Tuesday is fine.
+          1762960771  Oct 14  2010  @hurrycane   That's great news! Let's plan to chat ...
+          1711812216  Oct  1  2010  @hurrycane   I asked Yehuda about the stipend. I be...
+          1711417617  Oct  1  2010  @hurrycane   Just checking in. How's everything going?
+          1653301471  Sep 16  2010  @hurrycane   Not sure about the payment. Feel free ...
+          1645324992  Sep 14  2010  @hurrycane   How are the graph enhancements coming?
+          1632933616  Sep 11  2010  @hurrycane   How are the graphs coming? I'm really ...
+          1629239903  Sep 10  2010  @hurrycane   Awesome! Any luck duplicating the Gemf...
+          1629166212  Sep 10  2010  @hurrycane   I just committed a bunch of cleanup an...
+          1624782206  Sep  9  2010  @hurrycane   I'm trying to debug the issue you were...
+        EOS
       end
     end
     context '--number' do
@@ -423,7 +424,7 @@ ID          Posted at     Screen name  Text
       end
       it 'reverses the order of the sort' do
         @cli.direct_messages_sent
-        expect($stdout.string).to eq <<-eos
+        expect($stdout.string).to eq <<-EOS
    @hurrycane
    I'm trying to debug the issue you were having with the Bundler Gemfile.lock
    shortref. What version of Ruby and RubyGems are you running?
@@ -460,7 +461,7 @@ ID          Posted at     Screen name  Text
    @hurrycane
    Sounds good. Meeting Tuesday is fine.
 
-        eos
+        EOS
       end
     end
   end
@@ -662,7 +663,7 @@ ID          Posted at     Screen name  Text
     end
     it 'has the correct output' do
       @cli.favorites
-      expect($stdout.string).to eq <<-eos
+      expect($stdout.string).to eq <<-EOS
    @mutgoff
    Happy Birthday @imdane. Watch out for those @rally pranksters!
 
@@ -737,7 +738,7 @@ ID          Posted at     Screen name  Text
    @dwiskus
    Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF
 
-      eos
+      EOS
     end
     context '--csv' do
       before do
@@ -745,29 +746,29 @@ ID          Posted at     Screen name  Text
       end
       it 'outputs in CSV format' do
         @cli.favorites
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-4611686018427387904,2012-09-07 16:35:24 +0000,mutgoff,Happy Birthday @imdane. Watch out for those @rally pranksters!
-244111183165157376,2012-09-07 16:33:36 +0000,ironicsans,"If you like good real-life stories, check out @NarrativelyNY's just-launched site http://t.co/wiUL07jE (and also visit http://t.co/ZoyQxqWA)"
-244110336414859264,2012-09-07 16:30:14 +0000,pat_shaughnessy,"Something else to vote for: ""New Rails workshops to bring more women into the Boston software scene"" http://t.co/eNBuckHc /cc @bostonrb"
-244109797308379136,2012-09-07 16:28:05 +0000,calebelston,Pushing the button to launch the site. http://t.co/qLoEn5jG
-244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
-244107890632294400,2012-09-07 16:20:31 +0000,fivethirtyeight,"The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book, THE SIGNAL AND THE NOISE (http://t.co/fNXj8vCE)"
-244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
-244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
-244106476048764928,2012-09-07 16:14:53 +0000,mbostock,If you are wondering how we computed the split bubbles: http://t.co/BcaqSs5u
-244105599351148544,2012-09-07 16:11:24 +0000,FakeDorsey,"""Write drunk. Edit sober.""—Ernest Hemingway"
-244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
-244104146997870594,2012-09-07 16:05:38 +0000,calebelston,"We just announced Mosaic, what we've been working on since the Yobongo acquisition. My personal post, http://t.co/ELOyIRZU @heymosaic"
-244103057175113729,2012-09-07 16:01:18 +0000,BarackObama,Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2 #Obama2012
-244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
-244102741125890048,2012-09-07 16:00:03 +0000,eveningedition,LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake China; Canada cuts Iran ties; weekend read: http://t.co/OFs6dVW4
-244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
-244102490646278146,2012-09-07 15:59:03 +0000,jasonfried,"The story of Mars Curiosity's gears, made by a factory in Rockford, IL: http://t.co/MwCRsHQg"
-244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
-244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
-244099460672679938,2012-09-07 15:47:01 +0000,dwiskus,"Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF"
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text
+          4611686018427387904,2012-09-07 16:35:24 +0000,mutgoff,Happy Birthday @imdane. Watch out for those @rally pranksters!
+          244111183165157376,2012-09-07 16:33:36 +0000,ironicsans,"If you like good real-life stories, check out @NarrativelyNY's just-launched site http://t.co/wiUL07jE (and also visit http://t.co/ZoyQxqWA)"
+          244110336414859264,2012-09-07 16:30:14 +0000,pat_shaughnessy,"Something else to vote for: ""New Rails workshops to bring more women into the Boston software scene"" http://t.co/eNBuckHc /cc @bostonrb"
+          244109797308379136,2012-09-07 16:28:05 +0000,calebelston,Pushing the button to launch the site. http://t.co/qLoEn5jG
+          244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
+          244107890632294400,2012-09-07 16:20:31 +0000,fivethirtyeight,"The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book, THE SIGNAL AND THE NOISE (http://t.co/fNXj8vCE)"
+          244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
+          244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
+          244106476048764928,2012-09-07 16:14:53 +0000,mbostock,If you are wondering how we computed the split bubbles: http://t.co/BcaqSs5u
+          244105599351148544,2012-09-07 16:11:24 +0000,FakeDorsey,"""Write drunk. Edit sober.""—Ernest Hemingway"
+          244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
+          244104146997870594,2012-09-07 16:05:38 +0000,calebelston,"We just announced Mosaic, what we've been working on since the Yobongo acquisition. My personal post, http://t.co/ELOyIRZU @heymosaic"
+          244103057175113729,2012-09-07 16:01:18 +0000,BarackObama,Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2 #Obama2012
+          244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
+          244102741125890048,2012-09-07 16:00:03 +0000,eveningedition,LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake China; Canada cuts Iran ties; weekend read: http://t.co/OFs6dVW4
+          244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
+          244102490646278146,2012-09-07 15:59:03 +0000,jasonfried,"The story of Mars Curiosity's gears, made by a factory in Rockford, IL: http://t.co/MwCRsHQg"
+          244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
+          244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
+          244099460672679938,2012-09-07 15:47:01 +0000,dwiskus,"Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF"
+        EOS
       end
     end
     context '--decode-uris' do
@@ -790,29 +791,29 @@ ID,Posted at,Screen name,Text
       end
       it 'outputs in long format' do
         @cli.favorites
-        expect($stdout.string).to eq <<-eos
-ID                   Posted at     Screen name       Text
-4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
- 244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
- 244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
- 244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
- 244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
- 244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
- 244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
- 244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
- 244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
- 244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
- 244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
- 244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
- 244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
- 244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
- 244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
- 244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
- 244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
- 244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
- 244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
- 244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID                   Posted at     Screen name       Text
+          4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
+           244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
+           244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
+           244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
+           244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
+           244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
+           244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
+           244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
+           244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
+           244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
+           244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
+           244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
+           244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
+           244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
+           244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
+           244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
+           244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
+           244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
+           244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
+           244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
+        EOS
       end
       context '--reverse' do
         before do
@@ -820,29 +821,29 @@ ID                   Posted at     Screen name       Text
         end
         it 'reverses the order of the sort' do
           @cli.favorites
-          expect($stdout.string).to eq <<-eos
-ID                   Posted at     Screen name       Text
- 244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
- 244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
- 244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
- 244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
- 244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
- 244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
- 244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
- 244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
- 244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
- 244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
- 244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
- 244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
- 244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
- 244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
- 244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
- 244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
- 244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
- 244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
- 244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
-4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
-          eos
+          expect($stdout.string).to eq <<~EOS
+            ID                   Posted at     Screen name       Text
+             244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
+             244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
+             244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
+             244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
+             244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
+             244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
+             244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
+             244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
+             244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
+             244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
+             244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
+             244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
+             244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
+             244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
+             244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
+             244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
+             244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
+             244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
+             244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
+            4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
+          EOS
         end
       end
     end
@@ -1017,11 +1018,11 @@ ID                   Posted at     Screen name       Text
       end
       it 'outputs in CSV format' do
         @cli.followings
-        expect($stdout.string).to eq <<-eos
-ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
-14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
-7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
+          14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
+          7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
+        EOS
       end
     end
     context '--long' do
@@ -1030,11 +1031,11 @@ ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name
       end
       it 'outputs in long format' do
         @cli.followings
-        expect($stdout.string).to eq <<-eos
-ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
-14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
- 7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
+          14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
+           7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
+        EOS
       end
     end
     context '--reverse' do
@@ -1163,11 +1164,11 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
       end
       it 'outputs in CSV format' do
         @cli.followings_following('sferik')
-        expect($stdout.string).to eq <<-eos
-ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
-14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
-7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
+          14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
+          7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
+        EOS
       end
     end
     context '--long' do
@@ -1176,11 +1177,11 @@ ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name
       end
       it 'outputs in long format' do
         @cli.followings_following('sferik')
-        expect($stdout.string).to eq <<-eos
-ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
-14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
- 7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
+          14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
+           7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
+        EOS
       end
     end
     context '--reverse' do
@@ -1313,11 +1314,11 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
       end
       it 'outputs in CSV format' do
         @cli.followers
-        expect($stdout.string).to eq <<-eos
-ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
-14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
-7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
+          14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
+          7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
+        EOS
       end
     end
     context '--long' do
@@ -1326,11 +1327,11 @@ ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name
       end
       it 'outputs in long format' do
         @cli.followers
-        expect($stdout.string).to eq <<-eos
-ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
-14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
- 7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
+          14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
+           7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
+        EOS
       end
     end
     context '--reverse' do
@@ -1462,11 +1463,11 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
       end
       it 'outputs in CSV format' do
         @cli.friends
-        expect($stdout.string).to eq <<-eos
-ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
-14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
-7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
+          14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
+          7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
+        EOS
       end
     end
     context '--long' do
@@ -1475,11 +1476,11 @@ ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name
       end
       it 'outputs in long format' do
         @cli.friends
-        expect($stdout.string).to eq <<-eos
-ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
-14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
- 7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
+          14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
+           7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
+        EOS
       end
     end
     context '--reverse' do
@@ -1614,11 +1615,11 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
       end
       it 'outputs in CSV format' do
         @cli.groupies
-        expect($stdout.string).to eq <<-eos
-ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
-14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
-7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
+          14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
+          7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
+        EOS
       end
     end
     context '--long' do
@@ -1627,11 +1628,11 @@ ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name
       end
       it 'outputs in long format' do
         @cli.groupies
-        expect($stdout.string).to eq <<-eos
-ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
-14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
- 7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
+          14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
+           7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
+        EOS
       end
     end
     context '--reverse' do
@@ -1765,11 +1766,11 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
       end
       it 'outputs in CSV format' do
         @cli.intersection('sferik')
-        expect($stdout.string).to eq <<-eos
-ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
-14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
-7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
+          14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
+          7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
+        EOS
       end
     end
     context '--long' do
@@ -1778,11 +1779,11 @@ ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name
       end
       it 'outputs in long format' do
         @cli.intersection('sferik')
-        expect($stdout.string).to eq <<-eos
-ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
-14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
- 7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
+          14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
+           7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
+        EOS
       end
     end
     context '--reverse' do
@@ -1935,11 +1936,11 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
       end
       it 'outputs in CSV format' do
         @cli.leaders
-        expect($stdout.string).to eq <<-eos
-ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
-14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
-7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
+          14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
+          7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
+        EOS
       end
     end
     context '--long' do
@@ -1948,11 +1949,11 @@ ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name
       end
       it 'outputs in long format' do
         @cli.leaders
-        expect($stdout.string).to eq <<-eos
-ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
-14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
- 7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
-         eos
+        expect($stdout.string).to eq <<~EOS
+          ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
+          14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
+           7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
+        EOS
       end
     end
     context '--reverse' do
@@ -2081,12 +2082,12 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
       end
       it 'outputs in CSV format' do
         @cli.lists
-        expect($stdout.string).to eq <<-eos
-ID,Created at,Screen name,Slug,Members,Subscribers,Mode,Description
-1129440,2009-10-30 14:39:25 +0000,pengwynn,rubyists,499,39,public,
-574,2009-09-23 01:18:01 +0000,twitter,team,1199,78078,other,
-73546689,2012-07-08 22:19:05 +0000,sferik,test,2,0,private,
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Created at,Screen name,Slug,Members,Subscribers,Mode,Description
+          1129440,2009-10-30 14:39:25 +0000,pengwynn,rubyists,499,39,public,
+          574,2009-09-23 01:18:01 +0000,twitter,team,1199,78078,other,
+          73546689,2012-07-08 22:19:05 +0000,sferik,test,2,0,private,
+        EOS
       end
     end
     context '--long' do
@@ -2095,12 +2096,12 @@ ID,Created at,Screen name,Slug,Members,Subscribers,Mode,Description
       end
       it 'outputs in long format' do
         @cli.lists
-        expect($stdout.string).to eq <<-eos
-ID        Created at    Screen name  Slug      Members  Subscribers  Mode    ...
- 1129440  Oct 30  2009  @pengwynn    rubyists      499           39  public   
-     574  Sep 22  2009  @twitter     team         1199        78078  other    
-73546689  Jul  8 14:19  @sferik      test            2            0  private  
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID        Created at    Screen name  Slug      Members  Subscribers  Mode    ...
+           1129440  Oct 30  2009  @pengwynn    rubyists      499           39  public   
+               574  Sep 22  2009  @twitter     team         1199        78078  other    
+          73546689  Jul  8 14:19  @sferik      test            2            0  private  
+        EOS
       end
     end
     context '--reverse' do
@@ -2204,7 +2205,7 @@ ID        Created at    Screen name  Slug      Members  Subscribers  Mode    ...
     end
     it 'has the correct output' do
       @cli.mentions
-      expect($stdout.string).to eq <<-eos
+      expect($stdout.string).to eq <<-EOS
    @mutgoff
    Happy Birthday @imdane. Watch out for those @rally pranksters!
 
@@ -2279,7 +2280,7 @@ ID        Created at    Screen name  Slug      Members  Subscribers  Mode    ...
    @dwiskus
    Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF
 
-      eos
+      EOS
     end
     context '--csv' do
       before do
@@ -2287,29 +2288,29 @@ ID        Created at    Screen name  Slug      Members  Subscribers  Mode    ...
       end
       it 'outputs in CSV format' do
         @cli.mentions
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-4611686018427387904,2012-09-07 16:35:24 +0000,mutgoff,Happy Birthday @imdane. Watch out for those @rally pranksters!
-244111183165157376,2012-09-07 16:33:36 +0000,ironicsans,"If you like good real-life stories, check out @NarrativelyNY's just-launched site http://t.co/wiUL07jE (and also visit http://t.co/ZoyQxqWA)"
-244110336414859264,2012-09-07 16:30:14 +0000,pat_shaughnessy,"Something else to vote for: ""New Rails workshops to bring more women into the Boston software scene"" http://t.co/eNBuckHc /cc @bostonrb"
-244109797308379136,2012-09-07 16:28:05 +0000,calebelston,Pushing the button to launch the site. http://t.co/qLoEn5jG
-244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
-244107890632294400,2012-09-07 16:20:31 +0000,fivethirtyeight,"The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book, THE SIGNAL AND THE NOISE (http://t.co/fNXj8vCE)"
-244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
-244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
-244106476048764928,2012-09-07 16:14:53 +0000,mbostock,If you are wondering how we computed the split bubbles: http://t.co/BcaqSs5u
-244105599351148544,2012-09-07 16:11:24 +0000,FakeDorsey,"""Write drunk. Edit sober.""—Ernest Hemingway"
-244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
-244104146997870594,2012-09-07 16:05:38 +0000,calebelston,"We just announced Mosaic, what we've been working on since the Yobongo acquisition. My personal post, http://t.co/ELOyIRZU @heymosaic"
-244103057175113729,2012-09-07 16:01:18 +0000,BarackObama,Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2 #Obama2012
-244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
-244102741125890048,2012-09-07 16:00:03 +0000,eveningedition,LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake China; Canada cuts Iran ties; weekend read: http://t.co/OFs6dVW4
-244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
-244102490646278146,2012-09-07 15:59:03 +0000,jasonfried,"The story of Mars Curiosity's gears, made by a factory in Rockford, IL: http://t.co/MwCRsHQg"
-244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
-244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
-244099460672679938,2012-09-07 15:47:01 +0000,dwiskus,"Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF"
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text
+          4611686018427387904,2012-09-07 16:35:24 +0000,mutgoff,Happy Birthday @imdane. Watch out for those @rally pranksters!
+          244111183165157376,2012-09-07 16:33:36 +0000,ironicsans,"If you like good real-life stories, check out @NarrativelyNY's just-launched site http://t.co/wiUL07jE (and also visit http://t.co/ZoyQxqWA)"
+          244110336414859264,2012-09-07 16:30:14 +0000,pat_shaughnessy,"Something else to vote for: ""New Rails workshops to bring more women into the Boston software scene"" http://t.co/eNBuckHc /cc @bostonrb"
+          244109797308379136,2012-09-07 16:28:05 +0000,calebelston,Pushing the button to launch the site. http://t.co/qLoEn5jG
+          244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
+          244107890632294400,2012-09-07 16:20:31 +0000,fivethirtyeight,"The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book, THE SIGNAL AND THE NOISE (http://t.co/fNXj8vCE)"
+          244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
+          244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
+          244106476048764928,2012-09-07 16:14:53 +0000,mbostock,If you are wondering how we computed the split bubbles: http://t.co/BcaqSs5u
+          244105599351148544,2012-09-07 16:11:24 +0000,FakeDorsey,"""Write drunk. Edit sober.""—Ernest Hemingway"
+          244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
+          244104146997870594,2012-09-07 16:05:38 +0000,calebelston,"We just announced Mosaic, what we've been working on since the Yobongo acquisition. My personal post, http://t.co/ELOyIRZU @heymosaic"
+          244103057175113729,2012-09-07 16:01:18 +0000,BarackObama,Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2 #Obama2012
+          244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
+          244102741125890048,2012-09-07 16:00:03 +0000,eveningedition,LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake China; Canada cuts Iran ties; weekend read: http://t.co/OFs6dVW4
+          244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
+          244102490646278146,2012-09-07 15:59:03 +0000,jasonfried,"The story of Mars Curiosity's gears, made by a factory in Rockford, IL: http://t.co/MwCRsHQg"
+          244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
+          244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
+          244099460672679938,2012-09-07 15:47:01 +0000,dwiskus,"Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF"
+        EOS
       end
     end
     context '--decode-uris' do
@@ -2332,29 +2333,29 @@ ID,Posted at,Screen name,Text
       end
       it 'outputs in long format' do
         @cli.mentions
-        expect($stdout.string).to eq <<-eos
-ID                   Posted at     Screen name       Text
-4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
- 244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
- 244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
- 244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
- 244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
- 244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
- 244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
- 244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
- 244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
- 244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
- 244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
- 244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
- 244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
- 244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
- 244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
- 244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
- 244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
- 244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
- 244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
- 244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID                   Posted at     Screen name       Text
+          4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
+           244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
+           244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
+           244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
+           244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
+           244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
+           244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
+           244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
+           244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
+           244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
+           244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
+           244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
+           244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
+           244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
+           244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
+           244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
+           244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
+           244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
+           244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
+           244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
+        EOS
       end
       context '--reverse' do
         before do
@@ -2362,29 +2363,29 @@ ID                   Posted at     Screen name       Text
         end
         it 'reverses the order of the sort' do
           @cli.mentions
-          expect($stdout.string).to eq <<-eos
-ID                   Posted at     Screen name       Text
- 244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
- 244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
- 244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
- 244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
- 244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
- 244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
- 244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
- 244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
- 244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
- 244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
- 244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
- 244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
- 244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
- 244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
- 244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
- 244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
- 244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
- 244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
- 244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
-4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
-          eos
+          expect($stdout.string).to eq <<~EOS
+            ID                   Posted at     Screen name       Text
+             244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
+             244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
+             244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
+             244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
+             244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
+             244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
+             244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
+             244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
+             244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
+             244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
+             244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
+             244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
+             244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
+             244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
+             244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
+             244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
+             244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
+             244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
+             244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
+            4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
+          EOS
         end
       end
     end
@@ -2658,7 +2659,7 @@ ID                   Posted at     Screen name       Text
       end
       it 'has the correct output' do
         @cli.retweets
-        expect($stdout.string).to eq <<-eos
+        expect($stdout.string).to eq <<-EOS
    @calebelston
    RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
 
@@ -2739,7 +2740,7 @@ ID                   Posted at     Screen name       Text
    8 http://t.co/Sk5BM7U3 We'll see y'all there! #rhok @codeforamerica
    @TheaClay
 
-        eos
+        EOS
       end
     end
     context '--csv' do
@@ -2748,29 +2749,29 @@ ID                   Posted at     Screen name       Text
       end
       it 'outputs in CSV format' do
         @cli.retweets
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
-244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
-244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
-244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
-244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
-244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
-244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
-244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
-244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
-244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
-244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
-244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
-244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
-244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
-244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
-244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
-244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
-244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
-244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
-244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
-       eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text
+          244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
+          244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
+          244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
+          244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
+          244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
+          244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
+          244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
+          244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
+          244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
+          244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
+          244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
+          244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
+          244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
+          244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
+          244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
+          244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
+          244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
+          244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
+          244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
+          244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
+        EOS
       end
     end
     context '--decode-uris' do
@@ -2791,29 +2792,29 @@ ID,Posted at,Screen name,Text
       end
       it 'outputs in long format' do
         @cli.retweets
-        expect($stdout.string).to eq <<-eos
-ID                  Posted at     Screen name      Text
-244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
-244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
-244107236262170624  Sep  7 08:17  @fbjork          RT @jondot: Just published...
-244104558433951744  Sep  7 08:07  @al3x            RT @wcmaier: Better bankin...
-244102834398851073  Sep  7 08:00  @JEG2            RT @tenderlove: If corpora...
-244102729860009984  Sep  7 08:00  @dhh             RT @ggreenwald: Democrats ...
-244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
-244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
-244107236262170624  Sep  7 08:17  @fbjork          RT @jondot: Just published...
-244104558433951744  Sep  7 08:07  @al3x            RT @wcmaier: Better bankin...
-244102834398851073  Sep  7 08:00  @JEG2            RT @tenderlove: If corpora...
-244102729860009984  Sep  7 08:00  @dhh             RT @ggreenwald: Democrats ...
-244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
-244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
-244107236262170624  Sep  7 08:17  @fbjork          RT @jondot: Just published...
-244104558433951744  Sep  7 08:07  @al3x            RT @wcmaier: Better bankin...
-244102834398851073  Sep  7 08:00  @JEG2            RT @tenderlove: If corpora...
-244102729860009984  Sep  7 08:00  @dhh             RT @ggreenwald: Democrats ...
-244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
-244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID                  Posted at     Screen name      Text
+          244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
+          244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
+          244107236262170624  Sep  7 08:17  @fbjork          RT @jondot: Just published...
+          244104558433951744  Sep  7 08:07  @al3x            RT @wcmaier: Better bankin...
+          244102834398851073  Sep  7 08:00  @JEG2            RT @tenderlove: If corpora...
+          244102729860009984  Sep  7 08:00  @dhh             RT @ggreenwald: Democrats ...
+          244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
+          244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
+          244107236262170624  Sep  7 08:17  @fbjork          RT @jondot: Just published...
+          244104558433951744  Sep  7 08:07  @al3x            RT @wcmaier: Better bankin...
+          244102834398851073  Sep  7 08:00  @JEG2            RT @tenderlove: If corpora...
+          244102729860009984  Sep  7 08:00  @dhh             RT @ggreenwald: Democrats ...
+          244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
+          244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
+          244107236262170624  Sep  7 08:17  @fbjork          RT @jondot: Just published...
+          244104558433951744  Sep  7 08:07  @al3x            RT @wcmaier: Better bankin...
+          244102834398851073  Sep  7 08:00  @JEG2            RT @tenderlove: If corpora...
+          244102729860009984  Sep  7 08:00  @dhh             RT @ggreenwald: Democrats ...
+          244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
+          244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
+        EOS
       end
       context '--reverse' do
         before do
@@ -2821,29 +2822,29 @@ ID                  Posted at     Screen name      Text
         end
         it 'reverses the order of the sort' do
           @cli.retweets
-          expect($stdout.string).to eq <<-eos
-ID                  Posted at     Screen name      Text
-244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
-244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
-244102729860009984  Sep  7 08:00  @dhh             RT @ggreenwald: Democrats ...
-244102834398851073  Sep  7 08:00  @JEG2            RT @tenderlove: If corpora...
-244104558433951744  Sep  7 08:07  @al3x            RT @wcmaier: Better bankin...
-244107236262170624  Sep  7 08:17  @fbjork          RT @jondot: Just published...
-244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
-244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
-244102729860009984  Sep  7 08:00  @dhh             RT @ggreenwald: Democrats ...
-244102834398851073  Sep  7 08:00  @JEG2            RT @tenderlove: If corpora...
-244104558433951744  Sep  7 08:07  @al3x            RT @wcmaier: Better bankin...
-244107236262170624  Sep  7 08:17  @fbjork          RT @jondot: Just published...
-244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
-244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
-244102729860009984  Sep  7 08:00  @dhh             RT @ggreenwald: Democrats ...
-244102834398851073  Sep  7 08:00  @JEG2            RT @tenderlove: If corpora...
-244104558433951744  Sep  7 08:07  @al3x            RT @wcmaier: Better bankin...
-244107236262170624  Sep  7 08:17  @fbjork          RT @jondot: Just published...
-244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
-244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
-          eos
+          expect($stdout.string).to eq <<~EOS
+            ID                  Posted at     Screen name      Text
+            244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
+            244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
+            244102729860009984  Sep  7 08:00  @dhh             RT @ggreenwald: Democrats ...
+            244102834398851073  Sep  7 08:00  @JEG2            RT @tenderlove: If corpora...
+            244104558433951744  Sep  7 08:07  @al3x            RT @wcmaier: Better bankin...
+            244107236262170624  Sep  7 08:17  @fbjork          RT @jondot: Just published...
+            244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
+            244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
+            244102729860009984  Sep  7 08:00  @dhh             RT @ggreenwald: Democrats ...
+            244102834398851073  Sep  7 08:00  @JEG2            RT @tenderlove: If corpora...
+            244104558433951744  Sep  7 08:07  @al3x            RT @wcmaier: Better bankin...
+            244107236262170624  Sep  7 08:17  @fbjork          RT @jondot: Just published...
+            244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
+            244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
+            244102729860009984  Sep  7 08:00  @dhh             RT @ggreenwald: Democrats ...
+            244102834398851073  Sep  7 08:00  @JEG2            RT @tenderlove: If corpora...
+            244104558433951744  Sep  7 08:07  @al3x            RT @wcmaier: Better bankin...
+            244107236262170624  Sep  7 08:17  @fbjork          RT @jondot: Just published...
+            244107823733174272  Sep  7 08:20  @codeforamerica  RT @randomhacks: Going to ...
+            244108728834592770  Sep  7 08:23  @calebelston     RT @olivercameron: Mosaic ...
+          EOS
         end
       end
     end
@@ -2900,7 +2901,7 @@ ID                  Posted at     Screen name      Text
       end
       it 'has the correct output' do
         @cli.retweets_of_me
-        expect($stdout.string).to eq <<-eos
+        expect($stdout.string).to eq <<-EOS
    @mutgoff
    Happy Birthday @imdane. Watch out for those @rally pranksters!
 
@@ -2975,7 +2976,7 @@ ID                  Posted at     Screen name      Text
    @dwiskus
    Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF
 
-        eos
+        EOS
       end
     end
     context '--csv' do
@@ -2984,29 +2985,29 @@ ID                  Posted at     Screen name      Text
       end
       it 'outputs in CSV format' do
         @cli.retweets_of_me
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-4611686018427387904,2012-09-07 16:35:24 +0000,mutgoff,Happy Birthday @imdane. Watch out for those @rally pranksters!
-244111183165157376,2012-09-07 16:33:36 +0000,ironicsans,"If you like good real-life stories, check out @NarrativelyNY's just-launched site http://t.co/wiUL07jE (and also visit http://t.co/ZoyQxqWA)"
-244110336414859264,2012-09-07 16:30:14 +0000,pat_shaughnessy,"Something else to vote for: ""New Rails workshops to bring more women into the Boston software scene"" http://t.co/eNBuckHc /cc @bostonrb"
-244109797308379136,2012-09-07 16:28:05 +0000,calebelston,Pushing the button to launch the site. http://t.co/qLoEn5jG
-244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
-244107890632294400,2012-09-07 16:20:31 +0000,fivethirtyeight,"The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book, THE SIGNAL AND THE NOISE (http://t.co/fNXj8vCE)"
-244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
-244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
-244106476048764928,2012-09-07 16:14:53 +0000,mbostock,If you are wondering how we computed the split bubbles: http://t.co/BcaqSs5u
-244105599351148544,2012-09-07 16:11:24 +0000,FakeDorsey,"""Write drunk. Edit sober.""—Ernest Hemingway"
-244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
-244104146997870594,2012-09-07 16:05:38 +0000,calebelston,"We just announced Mosaic, what we've been working on since the Yobongo acquisition. My personal post, http://t.co/ELOyIRZU @heymosaic"
-244103057175113729,2012-09-07 16:01:18 +0000,BarackObama,Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2 #Obama2012
-244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
-244102741125890048,2012-09-07 16:00:03 +0000,eveningedition,LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake China; Canada cuts Iran ties; weekend read: http://t.co/OFs6dVW4
-244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
-244102490646278146,2012-09-07 15:59:03 +0000,jasonfried,"The story of Mars Curiosity's gears, made by a factory in Rockford, IL: http://t.co/MwCRsHQg"
-244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
-244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
-244099460672679938,2012-09-07 15:47:01 +0000,dwiskus,"Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF"
-       eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text
+          4611686018427387904,2012-09-07 16:35:24 +0000,mutgoff,Happy Birthday @imdane. Watch out for those @rally pranksters!
+          244111183165157376,2012-09-07 16:33:36 +0000,ironicsans,"If you like good real-life stories, check out @NarrativelyNY's just-launched site http://t.co/wiUL07jE (and also visit http://t.co/ZoyQxqWA)"
+          244110336414859264,2012-09-07 16:30:14 +0000,pat_shaughnessy,"Something else to vote for: ""New Rails workshops to bring more women into the Boston software scene"" http://t.co/eNBuckHc /cc @bostonrb"
+          244109797308379136,2012-09-07 16:28:05 +0000,calebelston,Pushing the button to launch the site. http://t.co/qLoEn5jG
+          244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
+          244107890632294400,2012-09-07 16:20:31 +0000,fivethirtyeight,"The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book, THE SIGNAL AND THE NOISE (http://t.co/fNXj8vCE)"
+          244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
+          244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
+          244106476048764928,2012-09-07 16:14:53 +0000,mbostock,If you are wondering how we computed the split bubbles: http://t.co/BcaqSs5u
+          244105599351148544,2012-09-07 16:11:24 +0000,FakeDorsey,"""Write drunk. Edit sober.""—Ernest Hemingway"
+          244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
+          244104146997870594,2012-09-07 16:05:38 +0000,calebelston,"We just announced Mosaic, what we've been working on since the Yobongo acquisition. My personal post, http://t.co/ELOyIRZU @heymosaic"
+          244103057175113729,2012-09-07 16:01:18 +0000,BarackObama,Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2 #Obama2012
+          244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
+          244102741125890048,2012-09-07 16:00:03 +0000,eveningedition,LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake China; Canada cuts Iran ties; weekend read: http://t.co/OFs6dVW4
+          244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
+          244102490646278146,2012-09-07 15:59:03 +0000,jasonfried,"The story of Mars Curiosity's gears, made by a factory in Rockford, IL: http://t.co/MwCRsHQg"
+          244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
+          244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
+          244099460672679938,2012-09-07 15:47:01 +0000,dwiskus,"Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF"
+        EOS
       end
     end
     context '--decode-uris' do
@@ -3025,29 +3026,29 @@ ID,Posted at,Screen name,Text
       end
       it 'outputs in long format' do
         @cli.retweets_of_me
-        expect($stdout.string).to eq <<-eos
-ID                   Posted at     Screen name       Text
-4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
- 244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
- 244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
- 244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
- 244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
- 244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
- 244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
- 244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
- 244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
- 244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
- 244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
- 244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
- 244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
- 244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
- 244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
- 244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
- 244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
- 244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
- 244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
- 244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID                   Posted at     Screen name       Text
+          4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
+           244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
+           244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
+           244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
+           244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
+           244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
+           244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
+           244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
+           244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
+           244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
+           244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
+           244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
+           244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
+           244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
+           244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
+           244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
+           244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
+           244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
+           244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
+           244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
+        EOS
       end
       context '--reverse' do
         before do
@@ -3055,29 +3056,29 @@ ID                   Posted at     Screen name       Text
         end
         it 'reverses the order of the sort' do
           @cli.retweets_of_me
-          expect($stdout.string).to eq <<-eos
-ID                   Posted at     Screen name       Text
- 244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
- 244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
- 244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
- 244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
- 244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
- 244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
- 244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
- 244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
- 244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
- 244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
- 244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
- 244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
- 244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
- 244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
- 244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
- 244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
- 244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
- 244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
- 244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
-4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
-          eos
+          expect($stdout.string).to eq <<~EOS
+            ID                   Posted at     Screen name       Text
+             244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
+             244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
+             244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
+             244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
+             244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
+             244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
+             244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
+             244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
+             244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
+             244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
+             244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
+             244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
+             244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
+             244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
+             244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
+             244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
+             244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
+             244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
+             244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
+            4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
+          EOS
         end
       end
     end
@@ -3133,16 +3134,16 @@ ID                   Posted at     Screen name       Text
     end
     it 'has the correct output' do
       @cli.status('55709764298092545')
-      expect($stdout.string).to eq <<-eos
-ID           55709764298092545
-Text         The problem with your code is that it's doing exactly what you told it to do.
-Screen name  @sferik
-Posted at    Apr  6  2011 (8 months ago)
-Retweets     320
-Favorites    50
-Source       Twitter for iPhone
-Location     Blowfish Sushi To Die For, 2170 Bryant St, San Francisco, California, United States
-      eos
+      expect($stdout.string).to eq <<~EOS
+        ID           55709764298092545
+        Text         The problem with your code is that it's doing exactly what you told it to do.
+        Screen name  @sferik
+        Posted at    Apr  6  2011 (8 months ago)
+        Retweets     320
+        Favorites    50
+        Source       Twitter for iPhone
+        Location     Blowfish Sushi To Die For, 2170 Bryant St, San Francisco, California, United States
+      EOS
     end
     context '--csv' do
       before do
@@ -3150,10 +3151,10 @@ Location     Blowfish Sushi To Die For, 2170 Bryant St, San Francisco, Californi
       end
       it 'has the correct output' do
         @cli.status('55709764298092545')
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text,Retweets,Favorites,Source,Location
-55709764298092545,2011-04-06 19:13:37 +0000,sferik,The problem with your code is that it's doing exactly what you told it to do.,320,50,Twitter for iPhone,"Blowfish Sushi To Die For, 2170 Bryant St, San Francisco, California, United States"
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text,Retweets,Favorites,Source,Location
+          55709764298092545,2011-04-06 19:13:37 +0000,sferik,The problem with your code is that it's doing exactly what you told it to do.,320,50,Twitter for iPhone,"Blowfish Sushi To Die For, 2170 Bryant St, San Francisco, California, United States"
+        EOS
       end
     end
     context 'with no street address' do
@@ -3162,16 +3163,16 @@ ID,Posted at,Screen name,Text,Retweets,Favorites,Source,Location
       end
       it 'has the correct output' do
         @cli.status('55709764298092545')
-        expect($stdout.string).to eq <<-eos
-ID           55709764298092550
-Text         The problem with your code is that it's doing exactly what you told it to do.
-Screen name  @sferik
-Posted at    Apr  6  2011 (8 months ago)
-Retweets     320
-Favorites    50
-Source       Twitter for iPhone
-Location     Blowfish Sushi To Die For, San Francisco, California, United States
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID           55709764298092550
+          Text         The problem with your code is that it's doing exactly what you told it to do.
+          Screen name  @sferik
+          Posted at    Apr  6  2011 (8 months ago)
+          Retweets     320
+          Favorites    50
+          Source       Twitter for iPhone
+          Location     Blowfish Sushi To Die For, San Francisco, California, United States
+        EOS
       end
     end
     context 'with no locality' do
@@ -3180,16 +3181,16 @@ Location     Blowfish Sushi To Die For, San Francisco, California, United States
       end
       it 'has the correct output' do
         @cli.status('55709764298092545')
-        expect($stdout.string).to eq <<-eos
-ID           55709764298092549
-Text         The problem with your code is that it's doing exactly what you told it to do.
-Screen name  @sferik
-Posted at    Apr  6  2011 (8 months ago)
-Retweets     320
-Favorites    50
-Source       Twitter for iPhone
-Location     Blowfish Sushi To Die For, San Francisco, California, United States
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID           55709764298092549
+          Text         The problem with your code is that it's doing exactly what you told it to do.
+          Screen name  @sferik
+          Posted at    Apr  6  2011 (8 months ago)
+          Retweets     320
+          Favorites    50
+          Source       Twitter for iPhone
+          Location     Blowfish Sushi To Die For, San Francisco, California, United States
+        EOS
       end
     end
     context 'with no attributes' do
@@ -3198,16 +3199,16 @@ Location     Blowfish Sushi To Die For, San Francisco, California, United States
       end
       it 'has the correct output' do
         @cli.status('55709764298092545')
-        expect($stdout.string).to eq <<-eos
-ID           55709764298092546
-Text         The problem with your code is that it's doing exactly what you told it to do.
-Screen name  @sferik
-Posted at    Apr  6  2011 (8 months ago)
-Retweets     320
-Favorites    50
-Source       Twitter for iPhone
-Location     Blowfish Sushi To Die For, San Francisco, United States
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID           55709764298092546
+          Text         The problem with your code is that it's doing exactly what you told it to do.
+          Screen name  @sferik
+          Posted at    Apr  6  2011 (8 months ago)
+          Retweets     320
+          Favorites    50
+          Source       Twitter for iPhone
+          Location     Blowfish Sushi To Die For, San Francisco, United States
+        EOS
       end
     end
     context 'with no country' do
@@ -3216,16 +3217,16 @@ Location     Blowfish Sushi To Die For, San Francisco, United States
       end
       it 'has the correct output' do
         @cli.status('55709764298092545')
-        expect($stdout.string).to eq <<-eos
-ID           55709764298092547
-Text         The problem with your code is that it's doing exactly what you told it to do.
-Screen name  @sferik
-Posted at    Apr  6  2011 (8 months ago)
-Retweets     320
-Favorites    50
-Source       Twitter for iPhone
-Location     Blowfish Sushi To Die For, San Francisco
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID           55709764298092547
+          Text         The problem with your code is that it's doing exactly what you told it to do.
+          Screen name  @sferik
+          Posted at    Apr  6  2011 (8 months ago)
+          Retweets     320
+          Favorites    50
+          Source       Twitter for iPhone
+          Location     Blowfish Sushi To Die For, San Francisco
+        EOS
       end
     end
     context 'with no full name' do
@@ -3234,16 +3235,16 @@ Location     Blowfish Sushi To Die For, San Francisco
       end
       it 'has the correct output' do
         @cli.status('55709764298092545')
-        expect($stdout.string).to eq <<-eos
-ID           55709764298092548
-Text         The problem with your code is that it's doing exactly what you told it to do.
-Screen name  @sferik
-Posted at    Apr  6  2011 (8 months ago)
-Retweets     320
-Favorites    50
-Source       Twitter for iPhone
-Location     Blowfish Sushi To Die For
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID           55709764298092548
+          Text         The problem with your code is that it's doing exactly what you told it to do.
+          Screen name  @sferik
+          Posted at    Apr  6  2011 (8 months ago)
+          Retweets     320
+          Favorites    50
+          Source       Twitter for iPhone
+          Location     Blowfish Sushi To Die For
+        EOS
       end
     end
     context 'with no place' do
@@ -3253,16 +3254,16 @@ Location     Blowfish Sushi To Die For
       end
       it 'has the correct output' do
         @cli.status('55709764298092545')
-        expect($stdout.string).to eq <<-eos
-ID           55709764298092551
-Text         The problem with your code is that it's doing exactly what you told it to do.
-Screen name  @sferik
-Posted at    Apr  6  2011 (8 months ago)
-Retweets     320
-Favorites    50
-Source       Twitter for iPhone
-Location     San Francisco, CA, United States
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID           55709764298092551
+          Text         The problem with your code is that it's doing exactly what you told it to do.
+          Screen name  @sferik
+          Posted at    Apr  6  2011 (8 months ago)
+          Retweets     320
+          Favorites    50
+          Source       Twitter for iPhone
+          Location     San Francisco, CA, United States
+        EOS
       end
       context 'with no city' do
         before do
@@ -3271,16 +3272,16 @@ Location     San Francisco, CA, United States
         end
         it 'has the correct output' do
           @cli.status('55709764298092545')
-          expect($stdout.string).to eq <<-eos
-ID           55709764298092551
-Text         The problem with your code is that it's doing exactly what you told it to do.
-Screen name  @sferik
-Posted at    Apr  6  2011 (8 months ago)
-Retweets     320
-Favorites    50
-Source       Twitter for iPhone
-Location     CA, United States
-          eos
+          expect($stdout.string).to eq <<~EOS
+            ID           55709764298092551
+            Text         The problem with your code is that it's doing exactly what you told it to do.
+            Screen name  @sferik
+            Posted at    Apr  6  2011 (8 months ago)
+            Retweets     320
+            Favorites    50
+            Source       Twitter for iPhone
+            Location     CA, United States
+          EOS
         end
       end
       context 'with no state' do
@@ -3290,16 +3291,16 @@ Location     CA, United States
         end
         it 'has the correct output' do
           @cli.status('55709764298092545')
-          expect($stdout.string).to eq <<-eos
-ID           55709764298092551
-Text         The problem with your code is that it's doing exactly what you told it to do.
-Screen name  @sferik
-Posted at    Apr  6  2011 (8 months ago)
-Retweets     320
-Favorites    50
-Source       Twitter for iPhone
-Location     United States
-          eos
+          expect($stdout.string).to eq <<~EOS
+            ID           55709764298092551
+            Text         The problem with your code is that it's doing exactly what you told it to do.
+            Screen name  @sferik
+            Posted at    Apr  6  2011 (8 months ago)
+            Retweets     320
+            Favorites    50
+            Source       Twitter for iPhone
+            Location     United States
+          EOS
         end
       end
     end
@@ -3309,10 +3310,10 @@ Location     United States
       end
       it 'outputs in long format' do
         @cli.status('55709764298092545')
-        expect($stdout.string).to eq <<-eos
-ID                 Posted at     Screen name  Text                           ...
-55709764298092545  Apr  6  2011  @sferik      The problem with your code is t...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID                 Posted at     Screen name  Text                           ...
+          55709764298092545  Apr  6  2011  @sferik      The problem with your code is t...
+        EOS
       end
     end
     describe '--relative-dates' do
@@ -3323,34 +3324,34 @@ ID                 Posted at     Screen name  Text                           ...
       end
       it 'status has the correct output (absolute and relative date together)' do
         @cli.status('55709764298092545')
-        expect($stdout.string).to eq <<-eos
-ID           55709764298092545
-Text         The problem with your code is that it's doing exactly what you told it to do.
-Screen name  @sferik
-Posted at    Apr  6  2011 (8 months ago)
-Retweets     320
-Favorites    50
-Source       Twitter for iPhone
-Location     Blowfish Sushi To Die For, 2170 Bryant St, San Francisco, California, United States
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID           55709764298092545
+          Text         The problem with your code is that it's doing exactly what you told it to do.
+          Screen name  @sferik
+          Posted at    Apr  6  2011 (8 months ago)
+          Retweets     320
+          Favorites    50
+          Source       Twitter for iPhone
+          Location     Blowfish Sushi To Die For, 2170 Bryant St, San Francisco, California, United States
+        EOS
       end
       it 'whois has the correct output (absolute and relative date together)' do
         @cli.whois('sferik')
-        expect($stdout.string).to eq <<-eos
-ID           7505382
-Since        Jul 16  2007 (4 years ago)
-Last update  @goldman You're near my home town! Say hi to Woodstock for me. (7 months ago)
-Screen name  @sferik
-Name         Erik Michaels-Ober
-Tweets       7,890
-Favorites    3,755
-Listed       118
-Following    212
-Followers    2,262
-Bio          Vagabond.
-Location     San Francisco
-URL          https://github.com/sferik
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID           7505382
+          Since        Jul 16  2007 (4 years ago)
+          Last update  @goldman You're near my home town! Say hi to Woodstock for me. (7 months ago)
+          Screen name  @sferik
+          Name         Erik Michaels-Ober
+          Tweets       7,890
+          Favorites    3,755
+          Listed       118
+          Following    212
+          Followers    2,262
+          Bio          Vagabond.
+          Location     San Francisco
+          URL          https://github.com/sferik
+        EOS
       end
       context '--csv' do
         before do
@@ -3358,10 +3359,10 @@ URL          https://github.com/sferik
         end
         it 'has the correct output (absolute date in csv)' do
           @cli.status('55709764298092545')
-          expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text,Retweets,Favorites,Source,Location
-55709764298092545,2011-04-06 19:13:37 +0000,sferik,The problem with your code is that it's doing exactly what you told it to do.,320,50,Twitter for iPhone,"Blowfish Sushi To Die For, 2170 Bryant St, San Francisco, California, United States"
-          eos
+          expect($stdout.string).to eq <<~EOS
+            ID,Posted at,Screen name,Text,Retweets,Favorites,Source,Location
+            55709764298092545,2011-04-06 19:13:37 +0000,sferik,The problem with your code is that it's doing exactly what you told it to do.,320,50,Twitter for iPhone,"Blowfish Sushi To Die For, 2170 Bryant St, San Francisco, California, United States"
+          EOS
         end
       end
       context '--long' do
@@ -3370,10 +3371,10 @@ ID,Posted at,Screen name,Text,Retweets,Favorites,Source,Location
         end
         it 'outputs in long format' do
           @cli.status('55709764298092545')
-          expect($stdout.string).to eq <<-eos
-ID                 Posted at     Screen name  Text                           ...
-55709764298092545  8 months ago  @sferik      The problem with your code is t...
-          eos
+          expect($stdout.string).to eq <<~EOS
+            ID                 Posted at     Screen name  Text                           ...
+            55709764298092545  8 months ago  @sferik      The problem with your code is t...
+          EOS
         end
       end
     end
@@ -3390,7 +3391,7 @@ ID                 Posted at     Screen name  Text                           ...
       end
       it 'has the correct output' do
         @cli.timeline
-        expect($stdout.string).to eq <<-eos
+        expect($stdout.string).to eq <<-EOS
    @mutgoff
    Happy Birthday @imdane. Watch out for those @rally pranksters!
 
@@ -3465,7 +3466,7 @@ ID                 Posted at     Screen name  Text                           ...
    @dwiskus
    Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF
 
-        eos
+        EOS
       end
     end
     context '--csv' do
@@ -3474,29 +3475,29 @@ ID                 Posted at     Screen name  Text                           ...
       end
       it 'outputs in CSV format' do
         @cli.timeline
-        expect($stdout.string).to eq <<-eos
-ID,Posted at,Screen name,Text
-4611686018427387904,2012-09-07 16:35:24 +0000,mutgoff,Happy Birthday @imdane. Watch out for those @rally pranksters!
-244111183165157376,2012-09-07 16:33:36 +0000,ironicsans,"If you like good real-life stories, check out @NarrativelyNY's just-launched site http://t.co/wiUL07jE (and also visit http://t.co/ZoyQxqWA)"
-244110336414859264,2012-09-07 16:30:14 +0000,pat_shaughnessy,"Something else to vote for: ""New Rails workshops to bring more women into the Boston software scene"" http://t.co/eNBuckHc /cc @bostonrb"
-244109797308379136,2012-09-07 16:28:05 +0000,calebelston,Pushing the button to launch the site. http://t.co/qLoEn5jG
-244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
-244107890632294400,2012-09-07 16:20:31 +0000,fivethirtyeight,"The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book, THE SIGNAL AND THE NOISE (http://t.co/fNXj8vCE)"
-244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
-244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
-244106476048764928,2012-09-07 16:14:53 +0000,mbostock,If you are wondering how we computed the split bubbles: http://t.co/BcaqSs5u
-244105599351148544,2012-09-07 16:11:24 +0000,FakeDorsey,"""Write drunk. Edit sober.""—Ernest Hemingway"
-244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
-244104146997870594,2012-09-07 16:05:38 +0000,calebelston,"We just announced Mosaic, what we've been working on since the Yobongo acquisition. My personal post, http://t.co/ELOyIRZU @heymosaic"
-244103057175113729,2012-09-07 16:01:18 +0000,BarackObama,Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2 #Obama2012
-244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
-244102741125890048,2012-09-07 16:00:03 +0000,eveningedition,LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake China; Canada cuts Iran ties; weekend read: http://t.co/OFs6dVW4
-244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
-244102490646278146,2012-09-07 15:59:03 +0000,jasonfried,"The story of Mars Curiosity's gears, made by a factory in Rockford, IL: http://t.co/MwCRsHQg"
-244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
-244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
-244099460672679938,2012-09-07 15:47:01 +0000,dwiskus,"Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF"
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Posted at,Screen name,Text
+          4611686018427387904,2012-09-07 16:35:24 +0000,mutgoff,Happy Birthday @imdane. Watch out for those @rally pranksters!
+          244111183165157376,2012-09-07 16:33:36 +0000,ironicsans,"If you like good real-life stories, check out @NarrativelyNY's just-launched site http://t.co/wiUL07jE (and also visit http://t.co/ZoyQxqWA)"
+          244110336414859264,2012-09-07 16:30:14 +0000,pat_shaughnessy,"Something else to vote for: ""New Rails workshops to bring more women into the Boston software scene"" http://t.co/eNBuckHc /cc @bostonrb"
+          244109797308379136,2012-09-07 16:28:05 +0000,calebelston,Pushing the button to launch the site. http://t.co/qLoEn5jG
+          244108728834592770,2012-09-07 16:23:50 +0000,calebelston,RT @olivercameron: Mosaic looks cool: http://t.co/A8013C9k
+          244107890632294400,2012-09-07 16:20:31 +0000,fivethirtyeight,"The Weatherman is Not a Moron: http://t.co/ZwL5Gnq5. An excerpt from my book, THE SIGNAL AND THE NOISE (http://t.co/fNXj8vCE)"
+          244107823733174272,2012-09-07 16:20:15 +0000,codeforamerica,"RT @randomhacks: Going to Code Across Austin II: Y'all Come Hack Now, Sat, Sep 8 http://t.co/Sk5BM7U3  We'll see y'all there! #rhok @codeforamerica @TheaClay"
+          244107236262170624,2012-09-07 16:17:55 +0000,fbjork,"RT @jondot: Just published: ""Pragmatic Concurrency With #Ruby"" http://t.co/kGEykswZ   /cc @JRuby @headius"
+          244106476048764928,2012-09-07 16:14:53 +0000,mbostock,If you are wondering how we computed the split bubbles: http://t.co/BcaqSs5u
+          244105599351148544,2012-09-07 16:11:24 +0000,FakeDorsey,"""Write drunk. Edit sober.""—Ernest Hemingway"
+          244104558433951744,2012-09-07 16:07:16 +0000,al3x,"RT @wcmaier: Better banking through better ops: build something new with us @Simplify (remote, PDX) http://t.co/8WgzKZH3"
+          244104146997870594,2012-09-07 16:05:38 +0000,calebelston,"We just announced Mosaic, what we've been working on since the Yobongo acquisition. My personal post, http://t.co/ELOyIRZU @heymosaic"
+          244103057175113729,2012-09-07 16:01:18 +0000,BarackObama,Donate $10 or more --> get your favorite car magnet: http://t.co/NfRhl2s2 #Obama2012
+          244102834398851073,2012-09-07 16:00:25 +0000,JEG2,"RT @tenderlove: If corporations are people, can we use them to drive in the carpool lane?"
+          244102741125890048,2012-09-07 16:00:03 +0000,eveningedition,LDN—Obama's nomination; Putin woos APEC; Bombs hit Damascus; Quakes shake China; Canada cuts Iran ties; weekend read: http://t.co/OFs6dVW4
+          244102729860009984,2012-09-07 16:00:00 +0000,dhh,RT @ggreenwald: Democrats parade Osama bin Laden's corpse as their proudest achievement: why this goulish jingoism is so warped http://t.co/kood278s
+          244102490646278146,2012-09-07 15:59:03 +0000,jasonfried,"The story of Mars Curiosity's gears, made by a factory in Rockford, IL: http://t.co/MwCRsHQg"
+          244102209942458368,2012-09-07 15:57:56 +0000,sferik,"@episod @twitterapi now https://t.co/I17jUTu2 and https://t.co/deDu4Hgw seem to be missing ""1.1"" from the URL."
+          244100411563339777,2012-09-07 15:50:47 +0000,sferik,@episod @twitterapi Did you catch https://t.co/VHsQvZT0 as well?
+          244099460672679938,2012-09-07 15:47:01 +0000,dwiskus,"Gentlemen, you can't fight in here! This is the war room! http://t.co/kMxMYyqF"
+        EOS
       end
     end
     context '--decode-uris' do
@@ -3539,29 +3540,29 @@ ID,Posted at,Screen name,Text
       end
       it 'outputs in long format' do
         @cli.timeline
-        expect($stdout.string).to eq <<-eos
-ID                   Posted at     Screen name       Text
-4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
- 244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
- 244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
- 244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
- 244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
- 244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
- 244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
- 244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
- 244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
- 244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
- 244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
- 244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
- 244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
- 244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
- 244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
- 244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
- 244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
- 244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
- 244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
- 244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID                   Posted at     Screen name       Text
+          4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
+           244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
+           244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
+           244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
+           244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
+           244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
+           244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
+           244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
+           244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
+           244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
+           244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
+           244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
+           244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
+           244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
+           244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
+           244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
+           244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
+           244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
+           244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
+           244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
+        EOS
       end
       context '--reverse' do
         before do
@@ -3569,29 +3570,29 @@ ID                   Posted at     Screen name       Text
         end
         it 'reverses the order of the sort' do
           @cli.timeline
-          expect($stdout.string).to eq <<-eos
-ID                   Posted at     Screen name       Text
- 244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
- 244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
- 244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
- 244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
- 244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
- 244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
- 244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
- 244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
- 244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
- 244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
- 244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
- 244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
- 244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
- 244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
- 244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
- 244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
- 244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
- 244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
- 244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
-4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
-          eos
+          expect($stdout.string).to eq <<~EOS
+            ID                   Posted at     Screen name       Text
+             244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
+             244100411563339777  Sep  7 07:50  @sferik           @episod @twitterapi Did ...
+             244102209942458368  Sep  7 07:57  @sferik           @episod @twitterapi now ...
+             244102490646278146  Sep  7 07:59  @jasonfried       The story of Mars Curios...
+             244102729860009984  Sep  7 08:00  @dhh              RT @ggreenwald: Democrat...
+             244102741125890048  Sep  7 08:00  @eveningedition   LDN—Obama's nomination; ...
+             244102834398851073  Sep  7 08:00  @JEG2             RT @tenderlove: If corpo...
+             244103057175113729  Sep  7 08:01  @BarackObama      Donate $10 or more --> g...
+             244104146997870594  Sep  7 08:05  @calebelston      We just announced Mosaic...
+             244104558433951744  Sep  7 08:07  @al3x             RT @wcmaier: Better bank...
+             244105599351148544  Sep  7 08:11  @FakeDorsey       "Write drunk. Edit sober...
+             244106476048764928  Sep  7 08:14  @mbostock         If you are wondering how...
+             244107236262170624  Sep  7 08:17  @fbjork           RT @jondot: Just publish...
+             244107823733174272  Sep  7 08:20  @codeforamerica   RT @randomhacks: Going t...
+             244107890632294400  Sep  7 08:20  @fivethirtyeight  The Weatherman is Not a ...
+             244108728834592770  Sep  7 08:23  @calebelston      RT @olivercameron: Mosai...
+             244109797308379136  Sep  7 08:28  @calebelston      Pushing the button to la...
+             244110336414859264  Sep  7 08:30  @pat_shaughnessy  Something else to vote f...
+             244111183165157376  Sep  7 08:33  @ironicsans       If you like good real-li...
+            4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
+          EOS
         end
       end
     end
@@ -3751,13 +3752,13 @@ ID                   Posted at     Screen name       Text
       end
       it 'outputs in CSV format' do
         @cli.trend_locations
-        expect($stdout.string.chomp).to eq <<-eos.chomp
-WOEID,Parent ID,Type,Name,Country
-2487956,23424977,Town,San Francisco,United States
-1587677,23424942,Unknown,Soweto,South Africa
-23424977,1,Country,United States,United States
-1,0,Supername,Worldwide,
-        eos
+        expect($stdout.string.chomp).to eq <<~EOS.chomp
+          WOEID,Parent ID,Type,Name,Country
+          2487956,23424977,Town,San Francisco,United States
+          1587677,23424942,Unknown,Soweto,South Africa
+          23424977,1,Country,United States,United States
+          1,0,Supername,Worldwide,
+        EOS
       end
     end
     context '--long' do
@@ -3766,13 +3767,13 @@ WOEID,Parent ID,Type,Name,Country
       end
       it 'outputs in long format' do
         @cli.trend_locations
-        expect($stdout.string.chomp).to eq <<-eos.chomp
-WOEID     Parent ID  Type       Name           Country
- 2487956   23424977  Town       San Francisco  United States
- 1587677   23424942  Unknown    Soweto         South Africa
-23424977          1  Country    United States  United States
-       1          0  Supername  Worldwide      
-        eos
+        expect($stdout.string.chomp).to eq <<~EOS.chomp
+          WOEID     Parent ID  Type       Name           Country
+           2487956   23424977  Town       San Francisco  United States
+           1587677   23424942  Unknown    Soweto         South Africa
+          23424977          1  Country    United States  United States
+                 1          0  Supername  Worldwide      
+        EOS
       end
     end
     context '--reverse' do
@@ -3959,11 +3960,11 @@ WOEID     Parent ID  Type       Name           Country
       end
       it 'outputs in CSV format' do
         @cli.users('sferik', 'pengwynn')
-        expect($stdout.string).to eq <<-eos
-ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
-14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
-7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
+          14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
+          7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
+        EOS
       end
     end
     context '--long' do
@@ -3972,11 +3973,11 @@ ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name
       end
       it 'outputs in long format' do
         @cli.users('sferik', 'pengwynn')
-        expect($stdout.string).to eq <<-eos
-ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
-14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
- 7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
+          14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
+           7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212...
+        EOS
       end
     end
     context '--reverse' do
@@ -4089,21 +4090,21 @@ ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
     end
     it 'has the correct output' do
       @cli.whois('sferik')
-      expect($stdout.string).to eq <<-eos
-ID           7505382
-Since        Jul 16  2007 (4 years ago)
-Last update  @goldman You're near my home town! Say hi to Woodstock for me. (7 months ago)
-Screen name  @sferik
-Name         Erik Michaels-Ober
-Tweets       7,890
-Favorites    3,755
-Listed       118
-Following    212
-Followers    2,262
-Bio          Vagabond.
-Location     San Francisco
-URL          https://github.com/sferik
-      eos
+      expect($stdout.string).to eq <<~EOS
+        ID           7505382
+        Since        Jul 16  2007 (4 years ago)
+        Last update  @goldman You're near my home town! Say hi to Woodstock for me. (7 months ago)
+        Screen name  @sferik
+        Name         Erik Michaels-Ober
+        Tweets       7,890
+        Favorites    3,755
+        Listed       118
+        Following    212
+        Followers    2,262
+        Bio          Vagabond.
+        Location     San Francisco
+        URL          https://github.com/sferik
+      EOS
     end
     context '--csv' do
       before do
@@ -4111,10 +4112,10 @@ URL          https://github.com/sferik
       end
       it 'has the correct output' do
         @cli.whois('sferik')
-        expect($stdout.string).to eq <<-eos
-ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
-7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
+          7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
+        EOS
       end
     end
     context '--id' do
@@ -4133,10 +4134,10 @@ ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name
       end
       it 'outputs in long format' do
         @cli.whois('sferik')
-        expect($stdout.string).to eq <<-eos
-ID       Since         Last tweeted at  Tweets  Favorites  Listed  Following ...
-7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212 ...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID       Since         Last tweeted at  Tweets  Favorites  Listed  Following ...
+          7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212 ...
+        EOS
       end
     end
   end
@@ -4151,21 +4152,21 @@ ID       Since         Last tweeted at  Tweets  Favorites  Listed  Following ...
     end
     it 'has the correct output' do
       @cli.whoami
-      expect($stdout.string).to eq <<-eos
-ID           7505382
-Since        Jul 16  2007 (4 years ago)
-Last update  @goldman You're near my home town! Say hi to Woodstock for me. (7 months ago)
-Screen name  @sferik
-Name         Erik Michaels-Ober
-Tweets       7,890
-Favorites    3,755
-Listed       118
-Following    212
-Followers    2,262
-Bio          Vagabond.
-Location     San Francisco
-URL          https://github.com/sferik
-      eos
+      expect($stdout.string).to eq <<~EOS
+        ID           7505382
+        Since        Jul 16  2007 (4 years ago)
+        Last update  @goldman You're near my home town! Say hi to Woodstock for me. (7 months ago)
+        Screen name  @sferik
+        Name         Erik Michaels-Ober
+        Tweets       7,890
+        Favorites    3,755
+        Listed       118
+        Following    212
+        Followers    2,262
+        Bio          Vagabond.
+        Location     San Francisco
+        URL          https://github.com/sferik
+      EOS
     end
     context '--csv' do
       before do
@@ -4173,10 +4174,10 @@ URL          https://github.com/sferik
       end
       it 'has the correct output' do
         @cli.whoami
-        expect($stdout.string).to eq <<-eos
-ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
-7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
+          7505382,2007-07-16 12:59:01 +0000,2012-07-08 18:29:20 +0000,7890,3755,118,212,2262,sferik,Erik Michaels-Ober,false,false,Vagabond.,@goldman You're near my home town! Say hi to Woodstock for me.,San Francisco,https://github.com/sferik
+        EOS
       end
     end
     context '--long' do
@@ -4185,10 +4186,10 @@ ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name
       end
       it 'outputs in long format' do
         @cli.whoami
-        expect($stdout.string).to eq <<-eos
-ID       Since         Last tweeted at  Tweets  Favorites  Listed  Following ...
-7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212 ...
-        eos
+        expect($stdout.string).to eq <<~EOS
+          ID       Since         Last tweeted at  Tweets  Favorites  Listed  Following ...
+          7505382  Jul 16  2007  Jul  8 10:29       7890       3755     118        212 ...
+        EOS
       end
     end
     context 'no configuration' do

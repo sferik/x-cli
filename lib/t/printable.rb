@@ -1,5 +1,5 @@
 module T
-  module Printable # rubocop:disable ModuleLength
+  module Printable # rubocop:disable Metrics/ModuleLength
     LIST_HEADINGS = ['ID', 'Created at', 'Screen name', 'Slug', 'Members', 'Subscribers', 'Mode', 'Description'].freeze
     TWEET_HEADINGS = ['ID', 'Posted at', 'Screen name', 'Text'].freeze
     USER_HEADINGS = ['ID', 'Since', 'Last tweeted at', 'Tweets', 'Favorites', 'Listed', 'Following', 'Followers', 'Screen name', 'Name', 'Verified', 'Protected', 'Bio', 'Status', 'Location', 'URL'].freeze
@@ -21,12 +21,14 @@ module T
 
     def csv_formatted_time(object, key = :created_at)
       return nil if object.nil?
+
       time = object.send(key.to_sym).dup
       time.utc.strftime('%Y-%m-%d %H:%M:%S %z')
     end
 
     def ls_formatted_time(object, key = :created_at, allow_relative = true)
       return '' if object.nil?
+
       time = T.local_time(object.send(key.to_sym))
       if allow_relative && options['relative_dates']
         distance_of_time_in_words(time) + ' ago'
@@ -97,12 +99,14 @@ module T
 
     def print_table_with_headings(array, headings, format)
       return if array.flatten.empty?
+
       if STDOUT.tty?
         array.unshift(headings)
         require 't/core_ext/kernel'
         array.collect! do |row|
           row.each_with_index.collect do |element, index|
             next if element.nil?
+
             Kernel.send(element.class.name.to_sym, format[index] % element)
           end
         end
@@ -121,7 +125,7 @@ module T
         print_identicon(from_user, message)
         say
       when 'auto'
-        say("   @#{from_user}", [:bold, :yellow])
+        say("   @#{from_user}", %i[bold yellow])
         print_wrapped(HTMLEntities.new.decode(message), indent: 3)
       else
         say("   @#{from_user}")
@@ -140,7 +144,7 @@ module T
       lines.unshift(set_color("  @#{from_user}", :bold, :yellow))
       lines.concat(Array.new([3 - lines.length, 0].max) { '' })
 
-      $stdout.puts lines.zip(icon.lines).map { |x, i| "  #{i || '      '}#{x}" }
+      $stdout.puts(lines.zip(icon.lines).map { |x, i| "  #{i || '      '}#{x}" })
     end
 
     def wrapped(message, options = {})
@@ -182,7 +186,7 @@ module T
       end
     end
 
-    def print_users(users) # rubocop:disable CyclomaticComplexity
+    def print_users(users) # rubocop:disable Metrics/CyclomaticComplexity
       unless options['unsorted']
         users = case options['sort']
         when 'favorites'
@@ -198,7 +202,7 @@ module T
         when 'tweets'
           users.sort_by { |user| user.statuses_count.to_i }
         when 'tweeted'
-          users.sort_by { |user| user.status? ? user.status.created_at : Time.at(0) } # rubocop:disable BlockNesting
+          users.sort_by { |user| user.status? ? user.status.created_at : Time.at(0) } # rubocop:disable Metrics/BlockNesting
         else
           users.sort_by { |user| user.screen_name.downcase }
         end

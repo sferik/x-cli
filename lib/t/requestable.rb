@@ -6,6 +6,7 @@ module T
 
     def client
       return @client if @client
+
       @rcfile.path = options['profile'] if options['profile']
       @client = Twitter::REST::Client.new do |config|
         config.consumer_key        = @rcfile.active_consumer_key

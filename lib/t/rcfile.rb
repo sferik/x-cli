@@ -18,6 +18,7 @@ module T
     def find(username)
       possibilities = Array(find_case_insensitive_match(username) || find_case_insensitive_possibilities(username))
       raise(ArgumentError.new("Username #{username} is #{possibilities.empty? ? 'not found.' : 'ambiguous, matching ' + possibilities.join(', ')}")) unless possibilities.size == 1
+
       possibilities.first
     end
 
@@ -82,7 +83,6 @@ module T
     def path=(path)
       @path = path
       @data = load_file
-      @path
     end
 
     def profiles

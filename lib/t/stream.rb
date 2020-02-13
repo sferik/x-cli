@@ -42,6 +42,7 @@ module T
       end
       streaming_client.sample do |tweet|
         next unless tweet.is_a?(Twitter::Tweet)
+
         if options['csv']
           print_csv_tweet(tweet)
         elsif options['long']
@@ -74,6 +75,7 @@ module T
       user_ids = client.list_members(owner, list_name).collect(&:id)
       streaming_client.filter(follow: user_ids.join(',')) do |tweet|
         next unless tweet.is_a?(Twitter::Tweet)
+
         if options['csv']
           print_csv_tweet(tweet)
         elsif options['long']
@@ -86,7 +88,7 @@ module T
         end
       end
     end
-    map %w(tl) => :timeline
+    map %w[tl] => :timeline
 
     desc 'matrix', 'Unfortunately, no one can be told what the Matrix is. You have to see it for yourself.'
     def matrix
@@ -97,7 +99,8 @@ module T
       end
       streaming_client.sample(language: 'ja') do |tweet|
         next unless tweet.is_a?(Twitter::Tweet)
-        say(tweet.text.gsub(/[^\u3000\u3040-\u309f]/, '').reverse, [:bold, :green, :on_black], false)
+
+        say(tweet.text.gsub(/[^\u3000\u3040-\u309f]/, '').reverse, %i[bold green on_black], false)
       end
     end
 
@@ -117,6 +120,7 @@ module T
       end
       streaming_client.filter(track: keywords.join(',')) do |tweet|
         next unless tweet.is_a?(Twitter::Tweet)
+
         if options['csv']
           print_csv_tweet(tweet)
         elsif options['long']
@@ -145,6 +149,7 @@ module T
       end
       streaming_client.user do |tweet|
         next unless tweet.is_a?(Twitter::Tweet)
+
         if options['csv']
           print_csv_tweet(tweet)
         elsif options['long']
@@ -178,6 +183,7 @@ module T
       end
       streaming_client.filter(follow: user_ids.join(',')) do |tweet|
         next unless tweet.is_a?(Twitter::Tweet)
+
         if options['csv']
           print_csv_tweet(tweet)
         elsif options['long']
@@ -195,6 +201,7 @@ module T
 
     def streaming_client
       return @streaming_client if @streaming_client
+
       @rcfile.path = options['profile'] if options['profile']
       @streaming_client = Twitter::Streaming::Client.new do |config|
         config.consumer_key        = @rcfile.active_consumer_key

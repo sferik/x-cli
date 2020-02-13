@@ -1,3 +1,6 @@
+AllCops:
+  TargetRubyVersion: 2.4
+
 Layout/AccessModifierIndentation:
   EnforcedStyle: outdent
 
@@ -7,14 +10,18 @@ Layout/CaseIndentation:
 Layout/DotPosition:
   EnforcedStyle: trailing
 
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
+
+Layout/LineLength:
+  AllowURI: true
+  Enabled: false
+
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 
 Layout/TrailingWhitespace:
   Enabled: false
-
-Lint/EndAlignment:
-  EnforcedStyleAlignWith: variable
 
 Metrics/AbcSize:
   Enabled: false
@@ -22,15 +29,14 @@ Metrics/AbcSize:
 Metrics/BlockNesting:
   Max: 2
 
+Metrics/BlockLength:
+  Enabled: false
+
 Metrics/ClassLength:
   Enabled: false
 
 Metrics/CyclomaticComplexity:
   Max: 11 # TODO: Lower to 6
-
-Metrics/LineLength:
-  AllowURI: true
-  Enabled: false
 
 Metrics/MethodLength:
   Enabled: false
@@ -41,6 +47,9 @@ Metrics/ParameterLists:
 
 Metrics/PerceivedComplexity:
   Max: 28 # TODO: Lower to 7
+
+Naming/HeredocDelimiterNaming:
+  Enabled: false
 
 Style/CollectionMethods:
   PreferredMethods:
@@ -74,5 +83,8 @@ Style/RegexpLiteral:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: 'comma'
+
+Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: 'comma'
