@@ -10,11 +10,11 @@ group :test do
   gem 'coveralls'
   gem 'rb-readline', '>= 0.5.5'
   gem 'rspec', '>= 3'
-  gem 'rubocop', '>= 0.37'
-  gem 'simplecov', '>= 0.9'
+  gem 'rubocop', '>= 0.79'
+  gem 'simplecov', '>= 0.18.2'
   gem 'timecop'
   gem 'tins'
-  gem 'webmock', '>= 1.10.1'
+  gem 'webmock', '>= 3.8.2'
 end
 
 gemspec
