@@ -46,9 +46,10 @@ or for Red Hat-based distros like Fedora and CentOS, type:
 
 (if necessary, adapt for your package manager)
 
-**On Windows**, you can install Ruby with [RubyInstaller][rubyinstaller].
+**On Windows**, you can install Ruby with [RubyInstaller][rubyinstaller] or [winget][winget].
 
 [rubyinstaller]: http://rubyinstaller.org/downloads/
+[winget]: https://github.com/microsoft/winget-cli
 
 ## Installation
 Once you've verified that Ruby is installed:
