@@ -409,12 +409,12 @@ describe T::CLI do
   describe '#dm' do
     before do
       @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc')
-      stub_post('/1.1/direct_messages/events/new.json').with(body: {event: {type: 'message_create', message_create: {target: {recipient_id: 7505382}, message_data: {text: 'Creating a fixture for the Twitter gem'}}}}).to_return(body: fixture('direct_message_event.json'), headers: {content_type: 'application/json; charset=utf-8'})
+      stub_post('/1.1/direct_messages/events/new.json').with(body: {event: {type: 'message_create', message_create: {target: {recipient_id: 7_505_382}, message_data: {text: 'Creating a fixture for the Twitter gem'}}}}).to_return(body: fixture('direct_message_event.json'), headers: {content_type: 'application/json; charset=utf-8'})
       stub_get('/1.1/users/show.json').with(query: {screen_name: 'sferik'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
       @cli.dm('sferik', 'Creating a fixture for the Twitter gem')
-      expect(a_post('/1.1/direct_messages/events/new.json').with(body: {event: {type: 'message_create', message_create: {target: {recipient_id: 7505382}, message_data: {text: 'Creating a fixture for the Twitter gem'}}}})).to have_been_made
+      expect(a_post('/1.1/direct_messages/events/new.json').with(body: {event: {type: 'message_create', message_create: {target: {recipient_id: 7_505_382}, message_data: {text: 'Creating a fixture for the Twitter gem'}}}})).to have_been_made
       expect(a_get('/1.1/users/show.json').with(query: {screen_name: 'sferik'})).to have_been_made
     end
     it 'has the correct output' do
@@ -424,12 +424,12 @@ describe T::CLI do
     context '--id' do
       before do
         @cli.options = @cli.options.merge('id' => true)
-        stub_post('/1.1/direct_messages/events/new.json').with(body: {event: {type: 'message_create', message_create: {target: {recipient_id: 7505382}, message_data: {text: 'Creating a fixture for the Twitter gem'}}}}).to_return(body: fixture('direct_message_event.json'), headers: {content_type: 'application/json; charset=utf-8'})
+        stub_post('/1.1/direct_messages/events/new.json').with(body: {event: {type: 'message_create', message_create: {target: {recipient_id: 7_505_382}, message_data: {text: 'Creating a fixture for the Twitter gem'}}}}).to_return(body: fixture('direct_message_event.json'), headers: {content_type: 'application/json; charset=utf-8'})
         stub_get('/1.1/users/show.json').with(query: {user_id: '7505382'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
       end
       it 'requests the correct resource' do
         @cli.dm('7505382', 'Creating a fixture for the Twitter gem')
-        expect(a_post('/1.1/direct_messages/events/new.json').with(body: {event: {type: 'message_create', message_create: {target: {recipient_id: 7505382}, message_data: {text: 'Creating a fixture for the Twitter gem'}}}})).to have_been_made
+        expect(a_post('/1.1/direct_messages/events/new.json').with(body: {event: {type: 'message_create', message_create: {target: {recipient_id: 7_505_382}, message_data: {text: 'Creating a fixture for the Twitter gem'}}}})).to have_been_made
         expect(a_get('/1.1/users/show.json').with(query: {user_id: '7505382'})).to have_been_made
       end
       it 'has the correct output' do
