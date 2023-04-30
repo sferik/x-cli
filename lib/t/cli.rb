@@ -958,7 +958,7 @@ module T
   private
 
     def extract_mentioned_screen_names(text)
-      valid_mention_preceding_chars = /(?:[^a-zA-Z0-9_!#\$%&*@＠]|^|RT:?)/o
+      valid_mention_preceding_chars = /(?:[^a-zA-Z0-9_!#$%&*@＠]|^|RT:?)/o
       at_signs = /[@＠]/
       valid_mentions = /
         (#{valid_mention_preceding_chars})  # $1: Preceeding character
