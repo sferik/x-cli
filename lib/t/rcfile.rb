@@ -1,14 +1,14 @@
-require 'singleton'
+require "singleton"
 
 module T
   class RCFile
     include Singleton
     attr_reader :path
 
-    FILE_NAME = '.trc'.freeze
+    FILE_NAME = ".trc".freeze
 
     def initialize
-      @path = File.join(File.expand_path('~'), FILE_NAME)
+      @path = File.join(File.expand_path("~"), FILE_NAME)
       @data = load_file
     end
 
@@ -38,32 +38,32 @@ module T
     end
 
     def configuration
-      @data['configuration']
+      @data["configuration"]
     end
 
     def active_consumer_key
-      profiles[active_profile[0]][active_profile[1]]['consumer_key'] if active_profile?
+      profiles[active_profile[0]][active_profile[1]]["consumer_key"] if active_profile?
     end
 
     def active_consumer_secret
-      profiles[active_profile[0]][active_profile[1]]['consumer_secret'] if active_profile?
+      profiles[active_profile[0]][active_profile[1]]["consumer_secret"] if active_profile?
     end
 
     def active_profile
-      configuration['default_profile']
+      configuration["default_profile"]
     end
 
     def active_profile=(profile)
-      configuration['default_profile'] = [profile['username'], profile['consumer_key']]
+      configuration["default_profile"] = [profile["username"], profile["consumer_key"]]
       write
     end
 
     def active_secret
-      profiles[active_profile[0]][active_profile[1]]['secret'] if active_profile?
+      profiles[active_profile[0]][active_profile[1]]["secret"] if active_profile?
     end
 
     def active_token
-      profiles[active_profile[0]][active_profile[1]]['token'] if active_profile?
+      profiles[active_profile[0]][active_profile[1]]["token"] if active_profile?
     end
 
     def delete
@@ -75,7 +75,7 @@ module T
     end
 
     def load_file
-      require 'yaml'
+      require "yaml"
       YAML.load_file(@path)
     rescue Errno::ENOENT
       default_structure
@@ -87,7 +87,7 @@ module T
     end
 
     def profiles
-      @data['profiles']
+      @data["profiles"]
     end
 
     def reset
@@ -111,11 +111,11 @@ module T
     end
 
     def default_structure
-      {'configuration' => {}, 'profiles' => {}}
+      {"configuration" => {}, "profiles" => {}}
     end
 
     def write
-      require 'yaml'
+      require "yaml"
       File.open(@path, File::RDWR | File::TRUNC | File::CREAT, 0o0600) do |rcfile|
         rcfile.write @data.to_yaml
       end

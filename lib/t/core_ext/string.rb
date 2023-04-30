@@ -4,12 +4,12 @@ class String
   end
 
   def strip_ats
-    tr('@', '')
+    tr("@", "")
   end
 
   alias old_to_i to_i
 
   def to_i(base = 10)
-    tr(',', '').old_to_i(base)
+    tr(",", "").old_to_i(base)
   end
 end

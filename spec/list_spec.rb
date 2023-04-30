@@ -1,11 +1,11 @@
 # encoding: utf-8
 
-require 'helper'
+require "helper"
 
 describe T::List do
   before :all do
     Timecop.freeze(Time.utc(2011, 11, 24, 16, 20, 0))
-    T.utc_offset = 'PST'
+    T.utc_offset = "PST"
   end
 
   before do
@@ -28,78 +28,78 @@ describe T::List do
     Timecop.return
   end
 
-  describe '#add' do
+  describe "#add" do
     before do
-      @list.options = @list.options.merge('profile' => "#{fixture_path}/.trc")
-      stub_get('/1.1/account/verify_credentials.json').with(query: {skip_status: 'true'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
-      stub_post('/1.1/lists/members/create_all.json').with(body: {screen_name: 'BarackObama', slug: 'presidents', owner_id: '7505382'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
+      @list.options = @list.options.merge("profile" => "#{fixture_path}/.trc")
+      stub_get("/1.1/account/verify_credentials.json").with(query: {skip_status: "true"}).to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
+      stub_post("/1.1/lists/members/create_all.json").with(body: {screen_name: "BarackObama", slug: "presidents", owner_id: "7505382"}).to_return(body: fixture("list.json"), headers: {content_type: "application/json; charset=utf-8"})
     end
 
-    it 'requests the correct resource' do
-      @list.add('presidents', 'BarackObama')
-      expect(a_get('/1.1/account/verify_credentials.json').with(query: {skip_status: 'true'})).to have_been_made
-      expect(a_post('/1.1/lists/members/create_all.json').with(body: {screen_name: 'BarackObama', slug: 'presidents', owner_id: '7505382'})).to have_been_made
+    it "requests the correct resource" do
+      @list.add("presidents", "BarackObama")
+      expect(a_get("/1.1/account/verify_credentials.json").with(query: {skip_status: "true"})).to have_been_made
+      expect(a_post("/1.1/lists/members/create_all.json").with(body: {screen_name: "BarackObama", slug: "presidents", owner_id: "7505382"})).to have_been_made
     end
 
-    it 'has the correct output' do
-      @list.add('presidents', 'BarackObama')
+    it "has the correct output" do
+      @list.add("presidents", "BarackObama")
       expect($stdout.string.split("\n").first).to eq '@testcli added 1 member to the list "presidents".'
     end
 
-    context '--id' do
+    context "--id" do
       before do
-        @list.options = @list.options.merge('id' => true)
-        stub_post('/1.1/lists/members/create_all.json').with(body: {user_id: '7505382', slug: 'presidents', owner_id: '7505382'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
+        @list.options = @list.options.merge("id" => true)
+        stub_post("/1.1/lists/members/create_all.json").with(body: {user_id: "7505382", slug: "presidents", owner_id: "7505382"}).to_return(body: fixture("list.json"), headers: {content_type: "application/json; charset=utf-8"})
       end
 
-      it 'requests the correct resource' do
-        @list.add('presidents', '7505382')
-        expect(a_get('/1.1/account/verify_credentials.json').with(query: {skip_status: 'true'})).to have_been_made
-        expect(a_post('/1.1/lists/members/create_all.json').with(body: {user_id: '7505382', slug: 'presidents', owner_id: '7505382'})).to have_been_made
+      it "requests the correct resource" do
+        @list.add("presidents", "7505382")
+        expect(a_get("/1.1/account/verify_credentials.json").with(query: {skip_status: "true"})).to have_been_made
+        expect(a_post("/1.1/lists/members/create_all.json").with(body: {user_id: "7505382", slug: "presidents", owner_id: "7505382"})).to have_been_made
       end
     end
 
-    context 'Twitter is down' do
-      it 'retries 3 times and then raise an error' do
-        stub_post('/1.1/lists/members/create_all.json').with(body: {screen_name: 'BarackObama', slug: 'presidents', owner_id: '7505382'}).to_return(status: 502, headers: {content_type: 'application/json; charset=utf-8'})
+    context "Twitter is down" do
+      it "retries 3 times and then raise an error" do
+        stub_post("/1.1/lists/members/create_all.json").with(body: {screen_name: "BarackObama", slug: "presidents", owner_id: "7505382"}).to_return(status: 502, headers: {content_type: "application/json; charset=utf-8"})
         expect do
-          @list.add('presidents', 'BarackObama')
+          @list.add("presidents", "BarackObama")
         end.to raise_error(Twitter::Error::BadGateway)
-        expect(a_post('/1.1/lists/members/create_all.json').with(body: {screen_name: 'BarackObama', slug: 'presidents', owner_id: '7505382'})).to have_been_made.times(3)
+        expect(a_post("/1.1/lists/members/create_all.json").with(body: {screen_name: "BarackObama", slug: "presidents", owner_id: "7505382"})).to have_been_made.times(3)
       end
     end
   end
 
-  describe '#create' do
+  describe "#create" do
     before do
-      @list.options = @list.options.merge('profile' => "#{fixture_path}/.trc")
-      stub_post('/1.1/lists/create.json').with(body: {name: 'presidents'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
+      @list.options = @list.options.merge("profile" => "#{fixture_path}/.trc")
+      stub_post("/1.1/lists/create.json").with(body: {name: "presidents"}).to_return(body: fixture("list.json"), headers: {content_type: "application/json; charset=utf-8"})
     end
 
-    it 'requests the correct resource' do
-      @list.create('presidents')
-      expect(a_post('/1.1/lists/create.json').with(body: {name: 'presidents'})).to have_been_made
+    it "requests the correct resource" do
+      @list.create("presidents")
+      expect(a_post("/1.1/lists/create.json").with(body: {name: "presidents"})).to have_been_made
     end
 
-    it 'has the correct output' do
-      @list.create('presidents')
+    it "has the correct output" do
+      @list.create("presidents")
       expect($stdout.string.chomp).to eq '@testcli created the list "presidents".'
     end
   end
 
-  describe '#information' do
+  describe "#information" do
     before do
-      @list.options = @list.options.merge('profile' => "#{fixture_path}/.trc")
-      stub_get('/1.1/lists/show.json').with(query: {owner_screen_name: 'testcli', slug: 'presidents'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
+      @list.options = @list.options.merge("profile" => "#{fixture_path}/.trc")
+      stub_get("/1.1/lists/show.json").with(query: {owner_screen_name: "testcli", slug: "presidents"}).to_return(body: fixture("list.json"), headers: {content_type: "application/json; charset=utf-8"})
     end
 
-    it 'requests the correct resource' do
-      @list.information('presidents')
-      expect(a_get('/1.1/lists/show.json').with(query: {owner_screen_name: 'testcli', slug: 'presidents'})).to have_been_made
+    it "requests the correct resource" do
+      @list.information("presidents")
+      expect(a_get("/1.1/lists/show.json").with(query: {owner_screen_name: "testcli", slug: "presidents"})).to have_been_made
     end
 
-    it 'has the correct output' do
-      @list.information('presidents')
+    it "has the correct output" do
+      @list.information("presidents")
       expect($stdout.string).to eq <<~EOS
         ID           8863586
         Description  Presidents of the United States of America
@@ -114,9 +114,9 @@ describe T::List do
       EOS
     end
 
-    it 'has the correct output with --relative-dates turned on' do
-      @list.options = @list.options.merge('relative_dates' => true)
-      @list.information('presidents')
+    it "has the correct output with --relative-dates turned on" do
+      @list.options = @list.options.merge("relative_dates" => true)
+      @list.information("presidents")
       expect($stdout.string).to eq <<~EOS
         ID           8863586
         Description  Presidents of the United States of America
@@ -131,32 +131,32 @@ describe T::List do
       EOS
     end
 
-    context 'with a user passed' do
-      it 'requests the correct resource' do
-        @list.information('testcli/presidents')
-        expect(a_get('/1.1/lists/show.json').with(query: {owner_screen_name: 'testcli', slug: 'presidents'})).to have_been_made
+    context "with a user passed" do
+      it "requests the correct resource" do
+        @list.information("testcli/presidents")
+        expect(a_get("/1.1/lists/show.json").with(query: {owner_screen_name: "testcli", slug: "presidents"})).to have_been_made
       end
 
-      context '--id' do
+      context "--id" do
         before do
-          @list.options = @list.options.merge('id' => true)
-          stub_get('/1.1/lists/show.json').with(query: {owner_id: '7505382', slug: 'presidents'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
+          @list.options = @list.options.merge("id" => true)
+          stub_get("/1.1/lists/show.json").with(query: {owner_id: "7505382", slug: "presidents"}).to_return(body: fixture("list.json"), headers: {content_type: "application/json; charset=utf-8"})
         end
 
-        it 'requests the correct resource' do
-          @list.information('7505382/presidents')
-          expect(a_get('/1.1/lists/show.json').with(query: {owner_id: '7505382', slug: 'presidents'})).to have_been_made
+        it "requests the correct resource" do
+          @list.information("7505382/presidents")
+          expect(a_get("/1.1/lists/show.json").with(query: {owner_id: "7505382", slug: "presidents"})).to have_been_made
         end
       end
     end
 
-    context '--csv' do
+    context "--csv" do
       before do
-        @list.options = @list.options.merge('csv' => true)
+        @list.options = @list.options.merge("csv" => true)
       end
 
-      it 'has the correct output' do
-        @list.information('presidents')
+      it "has the correct output" do
+        @list.information("presidents")
         expect($stdout.string).to eq <<~EOS
           ID,Description,Slug,Screen name,Created at,Members,Subscribers,Following,Mode,URL
           8863586,Presidents of the United States of America,presidents,sferik,2010-03-15 12:10:13 +0000,2,1,false,public,https://twitter.com/sferik/presidents
@@ -165,28 +165,28 @@ describe T::List do
     end
   end
 
-  describe '#members' do
+  describe "#members" do
     before do
-      stub_get('/1.1/lists/members.json').with(query: {cursor: '-1', owner_screen_name: 'testcli', slug: 'presidents'}).to_return(body: fixture('users_list.json'), headers: {content_type: 'application/json; charset=utf-8'})
+      stub_get("/1.1/lists/members.json").with(query: {cursor: "-1", owner_screen_name: "testcli", slug: "presidents"}).to_return(body: fixture("users_list.json"), headers: {content_type: "application/json; charset=utf-8"})
     end
 
-    it 'requests the correct resource' do
-      @list.members('presidents')
-      expect(a_get('/1.1/lists/members.json').with(query: {cursor: '-1', owner_screen_name: 'testcli', slug: 'presidents'})).to have_been_made
+    it "requests the correct resource" do
+      @list.members("presidents")
+      expect(a_get("/1.1/lists/members.json").with(query: {cursor: "-1", owner_screen_name: "testcli", slug: "presidents"})).to have_been_made
     end
 
-    it 'has the correct output' do
-      @list.members('presidents')
-      expect($stdout.string.chomp).to eq 'pengwynn  sferik'
+    it "has the correct output" do
+      @list.members("presidents")
+      expect($stdout.string.chomp).to eq "pengwynn  sferik"
     end
 
-    context '--csv' do
+    context "--csv" do
       before do
-        @list.options = @list.options.merge('csv' => true)
+        @list.options = @list.options.merge("csv" => true)
       end
 
-      it 'outputs in CSV format' do
-        @list.members('presidents')
+      it "outputs in CSV format" do
+        @list.members("presidents")
         expect($stdout.string).to eq <<~EOS
           ID,Since,Last tweeted at,Tweets,Favorites,Listed,Following,Followers,Screen name,Name,Verified,Protected,Bio,Status,Location,URL
           14100886,2008-03-08 16:34:22 +0000,2012-07-07 20:33:19 +0000,6940,192,358,3427,5457,pengwynn,Wynn Netherland,false,false,"Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-),"Denton, TX",http://wynnnetherland.com
@@ -195,13 +195,13 @@ describe T::List do
       end
     end
 
-    context '--long' do
+    context "--long" do
       before do
-        @list.options = @list.options.merge('long' => true)
+        @list.options = @list.options.merge("long" => true)
       end
 
-      it 'outputs in long format' do
-        @list.members('presidents')
+      it "outputs in long format" do
+        @list.members("presidents")
         expect($stdout.string).to eq <<~EOS
           ID        Since         Last tweeted at  Tweets  Favorites  Listed  Following...
           14100886  Mar  8  2008  Jul  7 12:33       6940        192     358       3427...
@@ -210,181 +210,181 @@ describe T::List do
       end
     end
 
-    context '--reverse' do
+    context "--reverse" do
       before do
-        @list.options = @list.options.merge('reverse' => true)
+        @list.options = @list.options.merge("reverse" => true)
       end
 
-      it 'reverses the order of the sort' do
-        @list.members('presidents')
-        expect($stdout.string.chomp).to eq 'sferik    pengwynn'
+      it "reverses the order of the sort" do
+        @list.members("presidents")
+        expect($stdout.string.chomp).to eq "sferik    pengwynn"
       end
     end
 
-    context '--sort=favorites' do
+    context "--sort=favorites" do
       before do
-        @list.options = @list.options.merge('sort' => 'favorites')
+        @list.options = @list.options.merge("sort" => "favorites")
       end
 
-      it 'sorts by the number of favorites' do
-        @list.members('presidents')
-        expect($stdout.string.chomp).to eq 'pengwynn  sferik'
+      it "sorts by the number of favorites" do
+        @list.members("presidents")
+        expect($stdout.string.chomp).to eq "pengwynn  sferik"
       end
     end
 
-    context '--sort=followers' do
+    context "--sort=followers" do
       before do
-        @list.options = @list.options.merge('sort' => 'followers')
+        @list.options = @list.options.merge("sort" => "followers")
       end
 
-      it 'sorts by the number of followers' do
-        @list.members('presidents')
-        expect($stdout.string.chomp).to eq 'sferik    pengwynn'
+      it "sorts by the number of followers" do
+        @list.members("presidents")
+        expect($stdout.string.chomp).to eq "sferik    pengwynn"
       end
     end
 
-    context '--sort=friends' do
+    context "--sort=friends" do
       before do
-        @list.options = @list.options.merge('sort' => 'friends')
+        @list.options = @list.options.merge("sort" => "friends")
       end
 
-      it 'sorts by the number of friends' do
-        @list.members('presidents')
-        expect($stdout.string.chomp).to eq 'sferik    pengwynn'
+      it "sorts by the number of friends" do
+        @list.members("presidents")
+        expect($stdout.string.chomp).to eq "sferik    pengwynn"
       end
     end
 
-    context '--sort=listed' do
+    context "--sort=listed" do
       before do
-        @list.options = @list.options.merge('sort' => 'listed')
+        @list.options = @list.options.merge("sort" => "listed")
       end
 
-      it 'sorts by the number of list memberships' do
-        @list.members('presidents')
-        expect($stdout.string.chomp).to eq 'sferik    pengwynn'
+      it "sorts by the number of list memberships" do
+        @list.members("presidents")
+        expect($stdout.string.chomp).to eq "sferik    pengwynn"
       end
     end
 
-    context '--sort=since' do
+    context "--sort=since" do
       before do
-        @list.options = @list.options.merge('sort' => 'since')
+        @list.options = @list.options.merge("sort" => "since")
       end
 
-      it 'sorts by the time when Twitter account was created' do
-        @list.members('presidents')
-        expect($stdout.string.chomp).to eq 'sferik    pengwynn'
+      it "sorts by the time when Twitter account was created" do
+        @list.members("presidents")
+        expect($stdout.string.chomp).to eq "sferik    pengwynn"
       end
     end
 
-    context '--sort=tweets' do
+    context "--sort=tweets" do
       before do
-        @list.options = @list.options.merge('sort' => 'tweets')
+        @list.options = @list.options.merge("sort" => "tweets")
       end
 
-      it 'sorts by the number of Tweets' do
-        @list.members('presidents')
-        expect($stdout.string.chomp).to eq 'pengwynn  sferik'
+      it "sorts by the number of Tweets" do
+        @list.members("presidents")
+        expect($stdout.string.chomp).to eq "pengwynn  sferik"
       end
     end
 
-    context '--sort=tweeted' do
+    context "--sort=tweeted" do
       before do
-        @list.options = @list.options.merge('sort' => 'tweeted')
+        @list.options = @list.options.merge("sort" => "tweeted")
       end
 
-      it 'sorts by the time of the last Tweet' do
-        @list.members('presidents')
-        expect($stdout.string.chomp).to eq 'pengwynn  sferik'
+      it "sorts by the time of the last Tweet" do
+        @list.members("presidents")
+        expect($stdout.string.chomp).to eq "pengwynn  sferik"
       end
     end
 
-    context '--unsorted' do
+    context "--unsorted" do
       before do
-        @list.options = @list.options.merge('unsorted' => true)
+        @list.options = @list.options.merge("unsorted" => true)
       end
 
-      it 'is not sorted' do
-        @list.members('presidents')
-        expect($stdout.string.chomp).to eq 'sferik    pengwynn'
+      it "is not sorted" do
+        @list.members("presidents")
+        expect($stdout.string.chomp).to eq "sferik    pengwynn"
       end
     end
 
-    context 'with a user passed' do
-      it 'requests the correct resource' do
-        @list.members('testcli/presidents')
-        expect(a_get('/1.1/lists/members.json').with(query: {cursor: '-1', owner_screen_name: 'testcli', slug: 'presidents'})).to have_been_made
+    context "with a user passed" do
+      it "requests the correct resource" do
+        @list.members("testcli/presidents")
+        expect(a_get("/1.1/lists/members.json").with(query: {cursor: "-1", owner_screen_name: "testcli", slug: "presidents"})).to have_been_made
       end
 
-      context '--id' do
+      context "--id" do
         before do
-          @list.options = @list.options.merge('id' => true)
-          stub_get('/1.1/lists/members.json').with(query: {cursor: '-1', owner_id: '7505382', slug: 'presidents'}).to_return(body: fixture('users_list.json'), headers: {content_type: 'application/json; charset=utf-8'})
+          @list.options = @list.options.merge("id" => true)
+          stub_get("/1.1/lists/members.json").with(query: {cursor: "-1", owner_id: "7505382", slug: "presidents"}).to_return(body: fixture("users_list.json"), headers: {content_type: "application/json; charset=utf-8"})
         end
 
-        it 'requests the correct resource' do
-          @list.members('7505382/presidents')
-          expect(a_get('/1.1/lists/members.json').with(query: {cursor: '-1', owner_id: '7505382', slug: 'presidents'})).to have_been_made
+        it "requests the correct resource" do
+          @list.members("7505382/presidents")
+          expect(a_get("/1.1/lists/members.json").with(query: {cursor: "-1", owner_id: "7505382", slug: "presidents"})).to have_been_made
         end
       end
     end
   end
 
-  describe '#remove' do
+  describe "#remove" do
     before do
-      @list.options = @list.options.merge('profile' => "#{fixture_path}/.trc")
-      stub_get('/1.1/account/verify_credentials.json').with(query: {skip_status: 'true'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
+      @list.options = @list.options.merge("profile" => "#{fixture_path}/.trc")
+      stub_get("/1.1/account/verify_credentials.json").with(query: {skip_status: "true"}).to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
     end
 
-    it 'requests the correct resource' do
-      stub_post('/1.1/lists/members/destroy_all.json').with(body: {screen_name: 'BarackObama', slug: 'presidents', owner_id: '7505382'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
-      @list.remove('presidents', 'BarackObama')
-      expect(a_get('/1.1/account/verify_credentials.json').with(query: {skip_status: 'true'})).to have_been_made
-      expect(a_post('/1.1/lists/members/destroy_all.json').with(body: {screen_name: 'BarackObama', slug: 'presidents', owner_id: '7505382'})).to have_been_made
+    it "requests the correct resource" do
+      stub_post("/1.1/lists/members/destroy_all.json").with(body: {screen_name: "BarackObama", slug: "presidents", owner_id: "7505382"}).to_return(body: fixture("list.json"), headers: {content_type: "application/json; charset=utf-8"})
+      @list.remove("presidents", "BarackObama")
+      expect(a_get("/1.1/account/verify_credentials.json").with(query: {skip_status: "true"})).to have_been_made
+      expect(a_post("/1.1/lists/members/destroy_all.json").with(body: {screen_name: "BarackObama", slug: "presidents", owner_id: "7505382"})).to have_been_made
     end
 
-    it 'has the correct output' do
-      stub_post('/1.1/lists/members/destroy_all.json').with(body: {screen_name: 'BarackObama', slug: 'presidents', owner_id: '7505382'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
-      @list.remove('presidents', 'BarackObama')
+    it "has the correct output" do
+      stub_post("/1.1/lists/members/destroy_all.json").with(body: {screen_name: "BarackObama", slug: "presidents", owner_id: "7505382"}).to_return(body: fixture("list.json"), headers: {content_type: "application/json; charset=utf-8"})
+      @list.remove("presidents", "BarackObama")
       expect($stdout.string.split("\n").first).to eq '@testcli removed 1 member from the list "presidents".'
     end
 
-    context '--id' do
+    context "--id" do
       before do
-        @list.options = @list.options.merge('id' => true)
-        stub_post('/1.1/lists/members/destroy_all.json').with(body: {user_id: '7505382', slug: 'presidents', owner_id: '7505382'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
+        @list.options = @list.options.merge("id" => true)
+        stub_post("/1.1/lists/members/destroy_all.json").with(body: {user_id: "7505382", slug: "presidents", owner_id: "7505382"}).to_return(body: fixture("list.json"), headers: {content_type: "application/json; charset=utf-8"})
       end
 
-      it 'requests the correct resource' do
-        @list.remove('presidents', '7505382')
-        expect(a_get('/1.1/account/verify_credentials.json').with(query: {skip_status: 'true'})).to have_been_made
-        expect(a_post('/1.1/lists/members/destroy_all.json').with(body: {user_id: '7505382', slug: 'presidents', owner_id: '7505382'})).to have_been_made
+      it "requests the correct resource" do
+        @list.remove("presidents", "7505382")
+        expect(a_get("/1.1/account/verify_credentials.json").with(query: {skip_status: "true"})).to have_been_made
+        expect(a_post("/1.1/lists/members/destroy_all.json").with(body: {user_id: "7505382", slug: "presidents", owner_id: "7505382"})).to have_been_made
       end
     end
 
-    context 'Twitter is down' do
-      it 'retries 3 times and then raise an error' do
-        stub_post('/1.1/lists/members/destroy_all.json').with(body: {screen_name: 'BarackObama', slug: 'presidents', owner_id: '7505382'}).to_return(status: 502, headers: {content_type: 'application/json; charset=utf-8'})
+    context "Twitter is down" do
+      it "retries 3 times and then raise an error" do
+        stub_post("/1.1/lists/members/destroy_all.json").with(body: {screen_name: "BarackObama", slug: "presidents", owner_id: "7505382"}).to_return(status: 502, headers: {content_type: "application/json; charset=utf-8"})
         expect do
-          @list.remove('presidents', 'BarackObama')
+          @list.remove("presidents", "BarackObama")
         end.to raise_error(Twitter::Error::BadGateway)
-        expect(a_post('/1.1/lists/members/destroy_all.json').with(body: {screen_name: 'BarackObama', slug: 'presidents', owner_id: '7505382'})).to have_been_made.times(3)
+        expect(a_post("/1.1/lists/members/destroy_all.json").with(body: {screen_name: "BarackObama", slug: "presidents", owner_id: "7505382"})).to have_been_made.times(3)
       end
     end
   end
 
-  describe '#timeline' do
+  describe "#timeline" do
     before do
-      @list.options = @list.options.merge('color' => 'always')
-      stub_get('/1.1/lists/statuses.json').with(query: {owner_screen_name: 'testcli', count: '20', slug: 'presidents', include_entities: 'false'}).to_return(body: fixture('statuses.json'), headers: {content_type: 'application/json; charset=utf-8'})
+      @list.options = @list.options.merge("color" => "always")
+      stub_get("/1.1/lists/statuses.json").with(query: {owner_screen_name: "testcli", count: "20", slug: "presidents", include_entities: "false"}).to_return(body: fixture("statuses.json"), headers: {content_type: "application/json; charset=utf-8"})
     end
 
-    it 'requests the correct resource' do
-      @list.timeline('presidents')
-      expect(a_get('/1.1/lists/statuses.json').with(query: {owner_screen_name: 'testcli', count: '20', slug: 'presidents', include_entities: 'false'})).to have_been_made
+    it "requests the correct resource" do
+      @list.timeline("presidents")
+      expect(a_get("/1.1/lists/statuses.json").with(query: {owner_screen_name: "testcli", count: "20", slug: "presidents", include_entities: "false"})).to have_been_made
     end
 
-    it 'has the correct output' do
-      @list.timeline('presidents')
+    it "has the correct output" do
+      @list.timeline("presidents")
       expect($stdout.string).to eq <<-EOS
    @mutgoff
    Happy Birthday @imdane. Watch out for those @rally pranksters!
@@ -464,13 +464,13 @@ describe T::List do
       EOS
     end
 
-    context '--color=never' do
+    context "--color=never" do
       before do
-        @list.options = @list.options.merge('color' => 'never')
+        @list.options = @list.options.merge("color" => "never")
       end
 
-      it 'outputs without color' do
-        @list.timeline('presidents')
+      it "outputs without color" do
+        @list.timeline("presidents")
         expect($stdout.string).to eq <<-EOS
    @mutgoff
    Happy Birthday @imdane. Watch out for those @rally pranksters!
@@ -551,13 +551,13 @@ describe T::List do
       end
     end
 
-    context '--color=auto' do
+    context "--color=auto" do
       before do
-        @list.options = @list.options.merge('color' => 'auto')
+        @list.options = @list.options.merge("color" => "auto")
       end
 
-      it 'outputs without color when stdout is not a tty' do
-        @list.timeline('presidents')
+      it "outputs without color when stdout is not a tty" do
+        @list.timeline("presidents")
         expect($stdout.string).to eq <<-EOS
    @mutgoff
    Happy Birthday @imdane. Watch out for those @rally pranksters!
@@ -637,9 +637,9 @@ describe T::List do
         EOS
       end
 
-      it 'outputs with color when stdout is a tty' do
+      it "outputs with color when stdout is a tty" do
         allow($stdout).to receive(:tty?).and_return(true)
-        @list.timeline('presidents')
+        @list.timeline("presidents")
         expect($stdout.string).to eq <<~EOS
           \e[1m\e[33m   @mutgoff\e[0m
              Happy Birthday @imdane. Watch out for those @rally pranksters!
@@ -720,14 +720,14 @@ describe T::List do
       end
     end
 
-    context '--color=icon' do
+    context "--color=icon" do
       before do
-        @list.options = @list.options.merge('color' => 'icon')
+        @list.options = @list.options.merge("color" => "icon")
       end
 
-      it 'outputs with color when stdout is a tty' do
+      it "outputs with color when stdout is a tty" do
         allow($stdout).to receive(:tty?).and_return(true)
-        @list.timeline('presidents')
+        @list.timeline("presidents")
 
         names = %w[mutgoff ironicsans pat_shaughnessy calebelston fivethirtyeight
                    codeforamerica fbjork mbostock FakeDorsey al3x BarackObama
@@ -845,13 +845,13 @@ describe T::List do
       end
     end
 
-    context '--csv' do
+    context "--csv" do
       before do
-        @list.options = @list.options.merge('csv' => true)
+        @list.options = @list.options.merge("csv" => true)
       end
 
-      it 'outputs in long format' do
-        @list.timeline('presidents')
+      it "outputs in long format" do
+        @list.timeline("presidents")
         expect($stdout.string).to eq <<~EOS
           ID,Posted at,Screen name,Text
           4611686018427387904,2012-09-07 16:35:24 +0000,mutgoff,Happy Birthday @imdane. Watch out for those @rally pranksters!
@@ -878,30 +878,30 @@ describe T::List do
       end
     end
 
-    context '--decode-uris' do
+    context "--decode-uris" do
       before do
-        @list.options = @list.options.merge('decode_uris' => true)
-        stub_get('/1.1/lists/statuses.json').with(query: {owner_screen_name: 'testcli', count: '20', slug: 'presidents', include_entities: 'true'}).to_return(body: fixture('statuses.json'), headers: {content_type: 'application/json; charset=utf-8'})
+        @list.options = @list.options.merge("decode_uris" => true)
+        stub_get("/1.1/lists/statuses.json").with(query: {owner_screen_name: "testcli", count: "20", slug: "presidents", include_entities: "true"}).to_return(body: fixture("statuses.json"), headers: {content_type: "application/json; charset=utf-8"})
       end
 
-      it 'requests the correct resource' do
-        @list.timeline('presidents')
-        expect(a_get('/1.1/lists/statuses.json').with(query: {owner_screen_name: 'testcli', count: '20', slug: 'presidents', include_entities: 'true'})).to have_been_made
+      it "requests the correct resource" do
+        @list.timeline("presidents")
+        expect(a_get("/1.1/lists/statuses.json").with(query: {owner_screen_name: "testcli", count: "20", slug: "presidents", include_entities: "true"})).to have_been_made
       end
 
-      it 'decodes URLs' do
-        @list.timeline('presidents')
-        expect($stdout.string).to include 'https://twitter.com/sferik/status/243988000076337152'
+      it "decodes URLs" do
+        @list.timeline("presidents")
+        expect($stdout.string).to include "https://twitter.com/sferik/status/243988000076337152"
       end
     end
 
-    context '--long' do
+    context "--long" do
       before do
-        @list.options = @list.options.merge('long' => true)
+        @list.options = @list.options.merge("long" => true)
       end
 
-      it 'outputs in long format' do
-        @list.timeline('presidents')
+      it "outputs in long format" do
+        @list.timeline("presidents")
         expect($stdout.string).to eq <<~EOS
           ID                   Posted at     Screen name       Text
           4611686018427387904  Sep  7 08:35  @mutgoff          Happy Birthday @imdane. ...
@@ -927,13 +927,13 @@ describe T::List do
         EOS
       end
 
-      context '--reverse' do
+      context "--reverse" do
         before do
-          @list.options = @list.options.merge('reverse' => true)
+          @list.options = @list.options.merge("reverse" => true)
         end
 
-        it 'reverses the order of the sort' do
-          @list.timeline('presidents')
+        it "reverses the order of the sort" do
+          @list.timeline("presidents")
           expect($stdout.string).to eq <<~EOS
             ID                   Posted at     Screen name       Text
              244099460672679938  Sep  7 07:47  @dwiskus          Gentlemen, you can't fig...
@@ -961,42 +961,42 @@ describe T::List do
       end
     end
 
-    context '--number' do
+    context "--number" do
       before do
-        stub_get('/1.1/lists/statuses.json').with(query: {owner_screen_name: 'testcli', count: '1', slug: 'presidents', include_entities: 'false'}).to_return(body: fixture('statuses.json'), headers: {content_type: 'application/json; charset=utf-8'})
-        stub_get('/1.1/lists/statuses.json').with(query: {owner_screen_name: 'testcli', count: '200', slug: 'presidents', include_entities: 'false'}).to_return(body: fixture('200_statuses.json'), headers: {content_type: 'application/json; charset=utf-8'})
-        stub_get('/1.1/lists/statuses.json').with(query: {owner_screen_name: 'testcli', count: '1', max_id: '265500541700956160', slug: 'presidents', include_entities: 'false'}).to_return(body: fixture('statuses.json'), headers: {content_type: 'application/json; charset=utf-8'})
+        stub_get("/1.1/lists/statuses.json").with(query: {owner_screen_name: "testcli", count: "1", slug: "presidents", include_entities: "false"}).to_return(body: fixture("statuses.json"), headers: {content_type: "application/json; charset=utf-8"})
+        stub_get("/1.1/lists/statuses.json").with(query: {owner_screen_name: "testcli", count: "200", slug: "presidents", include_entities: "false"}).to_return(body: fixture("200_statuses.json"), headers: {content_type: "application/json; charset=utf-8"})
+        stub_get("/1.1/lists/statuses.json").with(query: {owner_screen_name: "testcli", count: "1", max_id: "265500541700956160", slug: "presidents", include_entities: "false"}).to_return(body: fixture("statuses.json"), headers: {content_type: "application/json; charset=utf-8"})
       end
 
-      it 'limits the number of results to 1' do
-        @list.options = @list.options.merge('number' => 1)
-        @list.timeline('presidents')
-        expect(a_get('/1.1/lists/statuses.json').with(query: {owner_screen_name: 'testcli', count: '1', slug: 'presidents', include_entities: 'false'})).to have_been_made
+      it "limits the number of results to 1" do
+        @list.options = @list.options.merge("number" => 1)
+        @list.timeline("presidents")
+        expect(a_get("/1.1/lists/statuses.json").with(query: {owner_screen_name: "testcli", count: "1", slug: "presidents", include_entities: "false"})).to have_been_made
       end
 
-      it 'limits the number of results to 201' do
-        @list.options = @list.options.merge('number' => 201)
-        @list.timeline('presidents')
-        expect(a_get('/1.1/lists/statuses.json').with(query: {owner_screen_name: 'testcli', count: '200', slug: 'presidents', include_entities: 'false'})).to have_been_made
-        expect(a_get('/1.1/lists/statuses.json').with(query: {owner_screen_name: 'testcli', count: '1', max_id: '265500541700956160', slug: 'presidents', include_entities: 'false'})).to have_been_made
+      it "limits the number of results to 201" do
+        @list.options = @list.options.merge("number" => 201)
+        @list.timeline("presidents")
+        expect(a_get("/1.1/lists/statuses.json").with(query: {owner_screen_name: "testcli", count: "200", slug: "presidents", include_entities: "false"})).to have_been_made
+        expect(a_get("/1.1/lists/statuses.json").with(query: {owner_screen_name: "testcli", count: "1", max_id: "265500541700956160", slug: "presidents", include_entities: "false"})).to have_been_made
       end
     end
 
-    context 'with a user passed' do
-      it 'requests the correct resource' do
-        @list.timeline('testcli/presidents')
-        expect(a_get('/1.1/lists/statuses.json').with(query: {owner_screen_name: 'testcli', count: '20', slug: 'presidents', include_entities: 'false'})).to have_been_made
+    context "with a user passed" do
+      it "requests the correct resource" do
+        @list.timeline("testcli/presidents")
+        expect(a_get("/1.1/lists/statuses.json").with(query: {owner_screen_name: "testcli", count: "20", slug: "presidents", include_entities: "false"})).to have_been_made
       end
 
-      context '--id' do
+      context "--id" do
         before do
-          @list.options = @list.options.merge('id' => true)
-          stub_get('/1.1/lists/statuses.json').with(query: {owner_id: '7505382', count: '20', slug: 'presidents', include_entities: 'false'}).to_return(body: fixture('statuses.json'), headers: {content_type: 'application/json; charset=utf-8'})
+          @list.options = @list.options.merge("id" => true)
+          stub_get("/1.1/lists/statuses.json").with(query: {owner_id: "7505382", count: "20", slug: "presidents", include_entities: "false"}).to_return(body: fixture("statuses.json"), headers: {content_type: "application/json; charset=utf-8"})
         end
 
-        it 'requests the correct resource' do
-          @list.timeline('7505382/presidents')
-          expect(a_get('/1.1/lists/statuses.json').with(query: {owner_id: '7505382', count: '20', slug: 'presidents', include_entities: 'false'})).to have_been_made
+        it "requests the correct resource" do
+          @list.timeline("7505382/presidents")
+          expect(a_get("/1.1/lists/statuses.json").with(query: {owner_id: "7505382", count: "20", slug: "presidents", include_entities: "false"})).to have_been_made
         end
       end
     end

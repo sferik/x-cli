@@ -75,6 +75,9 @@ Style/EachWithObject:
 Style/Encoding:
   Enabled: false
 
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 Style/Lambda:
   Enabled: false
 
@@ -85,8 +88,8 @@ Style/RegexpLiteral:
   Exclude:
     - 'Guardfile'
 
-Style/FrozenStringLiteralComment:
-  Enabled: false
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
 
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: 'comma'

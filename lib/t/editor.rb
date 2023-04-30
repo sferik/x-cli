@@ -1,5 +1,5 @@
-require 'tempfile'
-require 'shellwords'
+require "tempfile"
+require "shellwords"
 
 module T
   class Editor
@@ -14,7 +14,7 @@ module T
       end
 
       def tempfile
-        Tempfile.new('TWEET_EDITMSG')
+        Tempfile.new("TWEET_EDITMSG")
       end
 
       def edit(path)
@@ -22,11 +22,11 @@ module T
       end
 
       def editor
-        ENV['VISUAL'] || ENV['EDITOR'] || system_editor
+        ENV["VISUAL"] || ENV["EDITOR"] || system_editor
       end
 
       def system_editor
-        RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ ? 'notepad' : 'vi'
+        RbConfig::CONFIG["host_os"] =~ /mswin|mingw/ ? "notepad" : "vi"
       end
     end
   end

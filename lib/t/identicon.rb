@@ -42,7 +42,7 @@ module T
   private
 
     def digest(string)
-      require 'digest'
+      require "digest"
       Digest::MD5.digest(string).chars.inject(0) { |acc, elem| (acc << 8) | elem.ord }
     end
   end

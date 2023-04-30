@@ -1,6 +1,6 @@
-require 'twitter'
-require 'retryable'
-require 'set'
+require "twitter"
+require "retryable"
+require "set"
 
 module T
   module Collectable

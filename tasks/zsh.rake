@@ -1,9 +1,9 @@
 namespace :completion do
-  desc 'Generate zsh completion file'
+  desc "Generate zsh completion file"
   task :zsh do
     Bundler.require(:default)
 
-    output_path = 'etc/t-completion.zsh'
+    output_path = "etc/t-completion.zsh"
     file_path = File.expand_path(output_path)
     puts "Compiling zsh completion to #{output_path}"
     File.write(file_path, zsh_completion)
@@ -12,7 +12,7 @@ namespace :completion do
     if git_status[/M #{output_path}/]
       cmd = "git add #{output_path} && git commit -m 'Updating Zsh completion'"
       result = system cmd
-      raise('Could not commit changes') unless result
+      raise("Could not commit changes") unless result
     end
   end
 end
@@ -65,7 +65,7 @@ end
 
 def command_function_arguments(command)
   body = command.options.collect { |_, option| option_completion(option) }
-  body << '$t_general_options && ret=0'
+  body << "$t_general_options && ret=0"
 
   body.join("\n    ")
 end

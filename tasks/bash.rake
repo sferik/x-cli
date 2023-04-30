@@ -1,9 +1,9 @@
 namespace :completion do
-  desc 'Generate bash completion file'
+  desc "Generate bash completion file"
   task :bash do
     Bundler.require(:default)
 
-    output_path = 'etc/t-completion.sh'
+    output_path = "etc/t-completion.sh"
     file_path = File.expand_path(output_path)
     puts "Compiling bash completion to #{output_path}"
     File.write(file_path, BashCompletion.generate)
@@ -12,7 +12,7 @@ namespace :completion do
     if git_status[/M #{output_path}/]
       cmd = "git add #{output_path} && git commit -m 'Updating Bash completion'"
       result = system cmd
-      raise('Could not commit changes') unless result
+      raise("Could not commit changes") unless result
     end
   end
 end
@@ -51,7 +51,7 @@ module BashCompletion
 
     def comp_cases
       commands.collect do |cmd|
-        options_str = options(cmd).join(' ')
+        options_str = options(cmd).join(" ")
         subcmds = subcommands(cmd)
 
         opts_args = cmd.options.collect do |_, opt|

@@ -1,5 +1,5 @@
-require 't/cli'
-require 'time'
+require "t/cli"
+require "time"
 
 module T
   class << self
