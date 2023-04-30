@@ -84,9 +84,7 @@ module T
         list = list.to_i
       end
       list = client.list(list)
-      unless options['force']
-        return unless yes? "Are you sure you want to permanently delete the list \"#{list.name}\"? [y/N]"
-      end
+      return if !options['force'] && !(yes? "Are you sure you want to permanently delete the list \"#{list.name}\"? [y/N]")
       client.destroy_list(list)
       say "@#{@rcfile.active_profile[0]} deleted the list \"#{list.name}\"."
     end
