@@ -242,13 +242,13 @@ describe T::Delete do
     it 'deletes the key' do
       @delete.account('delete_cli', 'dw1234')
       rcfile = @delete.instance_variable_get(:@rcfile)
-      expect(rcfile.profiles['delete_cli'].keys.include?('dw1234')).to eq false
+      expect(rcfile.profiles['delete_cli'].keys.include?('dw1234')).to be false
     end
 
     it 'deletes the account' do
       @delete.account('delete_cli')
       rcfile = @delete.instance_variable_get(:@rcfile)
-      expect(rcfile.profiles.keys.include?('delete_cli')).to eq false
+      expect(rcfile.profiles.keys.include?('delete_cli')).to be false
     end
   end
 
