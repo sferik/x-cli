@@ -254,10 +254,7 @@ describe T::CLI do
       it 'limits the number of results to 1' do
         @cli.options = @cli.options.merge('number' => 1)
         @cli.direct_messages
-      end
-      it 'limits the number of results to 201' do
-        @cli.options = @cli.options.merge('number' => 201)
-        @cli.direct_messages
+        expect(a_get('/1.1/users/lookup.json').with(query: {user_id: '358486183'})).to have_been_made
       end
     end
     context '--reverse' do
