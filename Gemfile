@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 
 gem 'rake'
+gem 'rubocop-rake'
+gem 'rubocop-rspec'
 
 group :development do
   gem 'pry'
