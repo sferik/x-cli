@@ -429,7 +429,7 @@ describe T::CLI do
         @cli.options = @cli.options.merge('id' => true)
         stub_post('/1.1/direct_messages/events/new.json').with(body: {event: {type: 'message_create', message_create: {target: {recipient_id: 7505382}, message_data: {text: 'Creating a fixture for the Twitter gem'}}}}).to_return(body: fixture('direct_message_event.json'), headers: {content_type: 'application/json; charset=utf-8'})
         stub_get('/1.1/users/show.json').with(query: {user_id: '7505382'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
-        end
+      end
       it 'requests the correct resource' do
         @cli.dm('7505382', 'Creating a fixture for the Twitter gem')
         expect(a_post('/1.1/direct_messages/events/new.json').with(body: {event: {type: 'message_create', message_create: {target: {recipient_id: 7505382}, message_data: {text: 'Creating a fixture for the Twitter gem'}}}})).to have_been_made
