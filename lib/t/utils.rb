@@ -79,7 +79,7 @@ module T
 
     def number_with_delimiter(number, delimiter = ',')
       digits = number.to_s.chars
-      groups = digits.reverse.each_slice(3).collect { |g| g.join('') }
+      groups = digits.reverse.each_slice(3).collect { |g| g.join }
       groups.join(delimiter).reverse
     end
 
