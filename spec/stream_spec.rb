@@ -13,7 +13,7 @@ describe T::Stream do
   end
 
   before do
-    T::RCFile.instance.path = fixture_path + '/.trc'
+    T::RCFile.instance.path = "#{fixture_path}/.trc"
     @streaming_client = double('Twitter::Streaming::Client').as_null_object
     @stream = T::Stream.new
     allow(@stream).to receive(:streaming_client) { @streaming_client }

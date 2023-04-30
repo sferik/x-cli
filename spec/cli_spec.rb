@@ -9,7 +9,7 @@ describe T::CLI do
   end
 
   before do
-    T::RCFile.instance.path = fixture_path + '/.trc'
+    T::RCFile.instance.path = "#{fixture_path}/.trc"
     @cli = T::CLI.new
     @cli.options = @cli.options.merge('color' => 'always')
     @old_stderr = $stderr
@@ -31,7 +31,7 @@ describe T::CLI do
 
   describe '#account' do
     before do
-      @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc')
+      @cli.options = @cli.options.merge('profile' => "#{fixture_path}/.trc")
     end
     it 'has the correct output' do
       @cli.accounts
@@ -44,7 +44,7 @@ describe T::CLI do
 
   describe '#authorize' do
     before do
-      @cli.options = @cli.options.merge('profile' => project_path + '/tmp/authorize', 'display-uri' => true)
+      @cli.options = @cli.options.merge('profile' => "#{project_path}/tmp/authorize", 'display-uri' => true)
       stub_post('/oauth/request_token').to_return(body: fixture('request_token'))
       stub_post('/oauth/access_token').to_return(body: fixture('access_token'))
       stub_get('/1.1/account/verify_credentials.json').with(query: {skip_status: 'true'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
@@ -72,11 +72,11 @@ describe T::CLI do
     end
     context 'empty RC file' do
       before do
-        file_path = project_path + '/tmp/empty'
+        file_path = "#{project_path}/tmp/empty"
         @cli.options = @cli.options.merge('profile' => file_path, 'display-uri' => true)
       end
       after do
-        file_path = project_path + '/tmp/empty'
+        file_path = "#{project_path}/tmp/empty"
         FileUtils.rm_f(file_path)
       end
       it 'requests the correct resource' do
@@ -105,7 +105,7 @@ describe T::CLI do
 
   describe '#block' do
     before do
-      @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc')
+      @cli.options = @cli.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/blocks/create.json').with(body: {screen_name: 'sferik'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -408,7 +408,7 @@ describe T::CLI do
 
   describe '#dm' do
     before do
-      @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc')
+      @cli.options = @cli.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/direct_messages/events/new.json').with(body: {event: {type: 'message_create', message_create: {target: {recipient_id: 7_505_382}, message_data: {text: 'Creating a fixture for the Twitter gem'}}}}).to_return(body: fixture('direct_message_event.json'), headers: {content_type: 'application/json; charset=utf-8'})
       stub_get('/1.1/users/show.json').with(query: {screen_name: 'sferik'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
@@ -441,7 +441,7 @@ describe T::CLI do
 
   describe '#does_contain' do
     before do
-      @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc')
+      @cli.options = @cli.options.merge('profile' => "#{fixture_path}/.trc")
       stub_get('/1.1/lists/members/show.json').with(query: {owner_screen_name: 'testcli', screen_name: 'testcli', slug: 'presidents'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -503,7 +503,7 @@ describe T::CLI do
 
   describe '#does_follow' do
     before do
-      @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc')
+      @cli.options = @cli.options.merge('profile' => "#{fixture_path}/.trc")
       stub_get('/1.1/friendships/show.json').with(query: {source_screen_name: 'ev', target_screen_name: 'testcli'}).to_return(body: fixture('following.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -588,7 +588,7 @@ describe T::CLI do
 
   describe '#favorite' do
     before do
-      @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc')
+      @cli.options = @cli.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/favorites/create.json').with(body: {id: '26755176471724032'}).to_return(body: fixture('status.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -895,7 +895,7 @@ describe T::CLI do
 
   describe '#follow' do
     before do
-      @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc')
+      @cli.options = @cli.options.merge('profile' => "#{fixture_path}/.trc")
     end
     context 'one user' do
       before do
@@ -2361,7 +2361,7 @@ describe T::CLI do
 
   describe '#mute' do
     before do
-      @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc')
+      @cli.options = @cli.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/mutes/users/create.json').with(body: {screen_name: 'sferik'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -2462,7 +2462,7 @@ describe T::CLI do
 
   describe '#reply' do
     before do
-      @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc', 'location' => nil)
+      @cli.options = @cli.options.merge('profile' => "#{fixture_path}/.trc", 'location' => nil)
       stub_get('/1.1/statuses/show/263813522369159169.json').with(query: {include_my_retweet: 'false'}).to_return(body: fixture('status_with_mention.json'), headers: {content_type: 'application/json; charset=utf-8'})
       stub_post('/1.1/statuses/update.json').with(body: {in_reply_to_status_id: '263813522369159169', status: '@joshfrench Testing', trim_user: 'true'}).to_return(body: fixture('status.json'), headers: {content_type: 'application/json; charset=utf-8'})
       stub_request(:get, 'http://checkip.dyndns.org/').to_return(body: fixture('checkip.html'), headers: {content_type: 'text/html'})
@@ -2498,7 +2498,7 @@ describe T::CLI do
     end
     context 'with file' do
       before do
-        @cli.options = @cli.options.merge('file' => fixture_path + '/long.png')
+        @cli.options = @cli.options.merge('file' => "#{fixture_path}/long.png")
         stub_request(:post, 'https://upload.twitter.com/1.1/media/upload.json').to_return(body: fixture('upload.json'), headers: {content_type: 'application/json; charset=utf-8'})
         stub_post('/1.1/statuses/update.json').to_return(body: fixture('status.json'), headers: {content_type: 'application/json; charset=utf-8'})
       end
@@ -2558,7 +2558,7 @@ describe T::CLI do
 
   describe '#report_spam' do
     before do
-      @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc')
+      @cli.options = @cli.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/users/report_spam.json').with(body: {screen_name: 'sferik'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -2583,7 +2583,7 @@ describe T::CLI do
 
   describe '#retweet' do
     before do
-      @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc')
+      @cli.options = @cli.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/statuses/retweet/26755176471724032.json').to_return(body: fixture('retweet.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -3786,7 +3786,7 @@ describe T::CLI do
 
   describe '#unfollow' do
     before do
-      @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc')
+      @cli.options = @cli.options.merge('profile' => "#{fixture_path}/.trc")
     end
     context 'one user' do
       it 'requests the correct resource' do
@@ -3823,7 +3823,7 @@ describe T::CLI do
 
   describe '#update' do
     before do
-      @cli.options = @cli.options.merge('profile' => fixture_path + '/.trc')
+      @cli.options = @cli.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/statuses/update.json').with(body: {status: 'Testing', trim_user: 'true'}).to_return(body: fixture('status.json'), headers: {content_type: 'application/json; charset=utf-8'})
       stub_request(:get, 'http://checkip.dyndns.org/').to_return(body: fixture('checkip.html'), headers: {content_type: 'text/html'})
       stub_request(:get, 'http://www.geoplugin.net/xml.gp?ip=50.131.22.169').to_return(body: fixture('geoplugin.xml'), headers: {content_type: 'application/xml'})
@@ -3840,7 +3840,7 @@ describe T::CLI do
     end
     context 'with file' do
       before do
-        @cli.options = @cli.options.merge('file' => fixture_path + '/long.png')
+        @cli.options = @cli.options.merge('file' => "#{fixture_path}/long.png")
         stub_request(:post, 'https://upload.twitter.com/1.1/media/upload.json').to_return(body: fixture('upload.json'), headers: {content_type: 'application/json; charset=utf-8'})
         stub_post('/1.1/statuses/update.json').to_return(body: fixture('status.json'), headers: {content_type: 'application/json; charset=utf-8'})
       end

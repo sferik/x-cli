@@ -9,7 +9,7 @@ describe T::List do
   end
 
   before do
-    T::RCFile.instance.path = fixture_path + '/.trc'
+    T::RCFile.instance.path = "#{fixture_path}/.trc"
     @list = T::List.new
     @old_stderr = $stderr
     $stderr = StringIO.new
@@ -30,7 +30,7 @@ describe T::List do
 
   describe '#add' do
     before do
-      @list.options = @list.options.merge('profile' => fixture_path + '/.trc')
+      @list.options = @list.options.merge('profile' => "#{fixture_path}/.trc")
       stub_get('/1.1/account/verify_credentials.json').with(query: {skip_status: 'true'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
       stub_post('/1.1/lists/members/create_all.json').with(body: {screen_name: 'BarackObama', slug: 'presidents', owner_id: '7505382'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
@@ -67,7 +67,7 @@ describe T::List do
 
   describe '#create' do
     before do
-      @list.options = @list.options.merge('profile' => fixture_path + '/.trc')
+      @list.options = @list.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/lists/create.json').with(body: {name: 'presidents'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -82,7 +82,7 @@ describe T::List do
 
   describe '#information' do
     before do
-      @list.options = @list.options.merge('profile' => fixture_path + '/.trc')
+      @list.options = @list.options.merge('profile' => "#{fixture_path}/.trc")
       stub_get('/1.1/lists/show.json').with(query: {owner_screen_name: 'testcli', slug: 'presidents'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -289,7 +289,7 @@ describe T::List do
 
   describe '#remove' do
     before do
-      @list.options = @list.options.merge('profile' => fixture_path + '/.trc')
+      @list.options = @list.options.merge('profile' => "#{fixture_path}/.trc")
       stub_get('/1.1/account/verify_credentials.json').with(query: {skip_status: 'true'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do

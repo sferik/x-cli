@@ -4,7 +4,7 @@ require 'helper'
 
 describe T::Delete do
   before do
-    T::RCFile.instance.path = fixture_path + '/.trc'
+    T::RCFile.instance.path = "#{fixture_path}/.trc"
     @delete = T::Delete.new
     @old_stderr = $stderr
     $stderr = StringIO.new
@@ -20,7 +20,7 @@ describe T::Delete do
 
   describe '#block' do
     before do
-      @delete.options = @delete.options.merge('profile' => fixture_path + '/.trc')
+      @delete.options = @delete.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/blocks/destroy.json').with(body: {screen_name: 'sferik'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -45,7 +45,7 @@ describe T::Delete do
 
   describe '#dm' do
     before do
-      @delete.options = @delete.options.merge('profile' => fixture_path + '/.trc')
+      @delete.options = @delete.options.merge('profile' => "#{fixture_path}/.trc")
       stub_get('/1.1/direct_messages/events/show.json').with(query: {id: '1773478249'}).to_return(body: fixture('direct_message_event.json'), headers: {content_type: 'application/json; charset=utf-8'})
       stub_delete('/1.1/direct_messages/events/destroy.json').with(query: {id: '1773478249'}).to_return(body: fixture('direct_message_event.json'), headers: {content_type: 'application/json; charset=utf-8'})
       stub_get('/1.1/users/show.json').with(query: {user_id: '58983'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
@@ -88,7 +88,7 @@ describe T::Delete do
 
   describe '#favorite' do
     before do
-      @delete.options = @delete.options.merge('profile' => fixture_path + '/.trc')
+      @delete.options = @delete.options.merge('profile' => "#{fixture_path}/.trc")
       stub_get('/1.1/statuses/show/28439861609.json').with(query: {include_my_retweet: 'false'}).to_return(body: fixture('status.json'), headers: {content_type: 'application/json; charset=utf-8'})
       stub_post('/1.1/favorites/destroy.json').with(body: {id: '28439861609'}).to_return(body: fixture('status.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
@@ -129,7 +129,7 @@ describe T::Delete do
 
   describe '#list' do
     before do
-      @delete.options = @delete.options.merge('profile' => fixture_path + '/.trc')
+      @delete.options = @delete.options.merge('profile' => "#{fixture_path}/.trc")
       stub_get('/1.1/account/verify_credentials.json').with(query: {skip_status: 'true'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
       stub_get('/1.1/lists/show.json').with(query: {owner_id: '7505382', slug: 'presidents'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
       stub_post('/1.1/lists/destroy.json').with(body: {owner_id: '7505382', list_id: '8863586'}).to_return(body: fixture('list.json'), headers: {content_type: 'application/json; charset=utf-8'})
@@ -185,7 +185,7 @@ describe T::Delete do
 
   describe '#mute' do
     before do
-      @delete.options = @delete.options.merge('profile' => fixture_path + '/.trc')
+      @delete.options = @delete.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/mutes/users/destroy.json').with(body: {screen_name: 'sferik'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -210,7 +210,7 @@ describe T::Delete do
 
   describe '#account' do
     before do
-      @delete.options = @delete.options.merge('profile' => fixture_path + '/.trc')
+      @delete.options = @delete.options.merge('profile' => "#{fixture_path}/.trc")
       delete_cli = {
         'delete_cli' => {
           'dw123' => {
@@ -254,7 +254,7 @@ describe T::Delete do
 
   describe '#status' do
     before do
-      @delete.options = @delete.options.merge('profile' => fixture_path + '/.trc')
+      @delete.options = @delete.options.merge('profile' => "#{fixture_path}/.trc")
       stub_get('/1.1/statuses/show/26755176471724032.json').with(query: {include_my_retweet: 'false'}).to_return(body: fixture('status.json'), headers: {content_type: 'application/json; charset=utf-8'})
       stub_post('/1.1/statuses/destroy/26755176471724032.json').with(body: {trim_user: 'true'}).to_return(body: fixture('status.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end

@@ -4,7 +4,7 @@ require 'helper'
 
 describe T::Set do
   before do
-    T::RCFile.instance.path = fixture_path + '/.trc'
+    T::RCFile.instance.path = "#{fixture_path}/.trc"
     @set = T::Set.new
     @old_stderr = $stderr
     $stderr = StringIO.new
@@ -20,7 +20,7 @@ describe T::Set do
 
   describe '#active' do
     before do
-      @set.options = @set.options.merge('profile' => fixture_path + '/.trc_set')
+      @set.options = @set.options.merge('profile' => "#{fixture_path}/.trc_set")
     end
     it 'has the correct output' do
       @set.active('testcli', 'abc123')
@@ -48,7 +48,7 @@ describe T::Set do
 
   describe '#bio' do
     before do
-      @set.options = @set.options.merge('profile' => fixture_path + '/.trc')
+      @set.options = @set.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/account/update_profile.json').with(body: {description: 'Vagabond.'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -63,7 +63,7 @@ describe T::Set do
 
   describe '#language' do
     before do
-      @set.options = @set.options.merge('profile' => fixture_path + '/.trc')
+      @set.options = @set.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/account/settings.json').with(body: {lang: 'en'}).to_return(body: fixture('settings.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -78,7 +78,7 @@ describe T::Set do
 
   describe '#location' do
     before do
-      @set.options = @set.options.merge('profile' => fixture_path + '/.trc')
+      @set.options = @set.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/account/update_profile.json').with(body: {location: 'San Francisco'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -93,7 +93,7 @@ describe T::Set do
 
   describe '#name' do
     before do
-      @set.options = @set.options.merge('profile' => fixture_path + '/.trc')
+      @set.options = @set.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/account/update_profile.json').with(body: {name: 'Erik Michaels-Ober'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
@@ -108,37 +108,37 @@ describe T::Set do
 
   describe '#profile_background_image' do
     before do
-      @set.options = @set.options.merge('profile' => fixture_path + '/.trc')
+      @set.options = @set.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/account/update_profile_background_image.json').to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
-      @set.profile_background_image(fixture_path + '/we_concept_bg2.png')
+      @set.profile_background_image("#{fixture_path}/we_concept_bg2.png")
       expect(a_post('/1.1/account/update_profile_background_image.json')).to have_been_made
     end
     it 'has the correct output' do
-      @set.profile_background_image(fixture_path + '/we_concept_bg2.png')
+      @set.profile_background_image("#{fixture_path}/we_concept_bg2.png")
       expect($stdout.string.chomp).to eq "@testcli's background image has been updated."
     end
   end
 
   describe '#profile_image' do
     before do
-      @set.options = @set.options.merge('profile' => fixture_path + '/.trc')
+      @set.options = @set.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/account/update_profile_image.json').to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do
-      @set.profile_image(fixture_path + '/me.jpg')
+      @set.profile_image("#{fixture_path}/me.jpg")
       expect(a_post('/1.1/account/update_profile_image.json')).to have_been_made
     end
     it 'has the correct output' do
-      @set.profile_image(fixture_path + '/me.jpg')
+      @set.profile_image("#{fixture_path}/me.jpg")
       expect($stdout.string.chomp).to eq "@testcli's image has been updated."
     end
   end
 
   describe '#website' do
     before do
-      @set.options = @set.options.merge('profile' => fixture_path + '/.trc')
+      @set.options = @set.options.merge('profile' => "#{fixture_path}/.trc")
       stub_post('/1.1/account/update_profile.json').with(body: {url: 'https://github.com/sferik'}).to_return(body: fixture('sferik.json'), headers: {content_type: 'application/json; charset=utf-8'})
     end
     it 'requests the correct resource' do

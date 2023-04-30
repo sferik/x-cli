@@ -9,7 +9,7 @@ describe T::Search do
   end
 
   before do
-    T::RCFile.instance.path = fixture_path + '/.trc'
+    T::RCFile.instance.path = "#{fixture_path}/.trc"
     @search = T::Search.new
     @search.options = @search.options.merge('color' => 'always')
     @old_stderr = $stderr

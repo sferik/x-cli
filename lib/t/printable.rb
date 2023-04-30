@@ -31,7 +31,7 @@ module T
 
       time = T.local_time(object.send(key.to_sym))
       if allow_relative && options['relative_dates']
-        distance_of_time_in_words(time) + ' ago'
+        "#{distance_of_time_in_words(time)} ago"
       elsif time > Time.now - (MONTH_IN_SECONDS * 6)
         time.strftime('%b %e %H:%M')
       else
