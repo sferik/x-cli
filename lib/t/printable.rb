@@ -32,7 +32,7 @@ module T
       time = T.local_time(object.send(key.to_sym))
       if allow_relative && options['relative_dates']
         distance_of_time_in_words(time) + ' ago'
-      elsif time > Time.now - MONTH_IN_SECONDS * 6
+      elsif time > Time.now - (MONTH_IN_SECONDS * 6)
         time.strftime('%b %e %H:%M')
       else
         time.strftime('%b %e  %Y')
@@ -149,7 +149,7 @@ module T
 
     def wrapped(message, options = {})
       indent = options[:indent] || 0
-      width = options[:width] || terminal_width - indent
+      width = options[:width] || (terminal_width - indent)
       paras = message.split("\n\n")
 
       paras.map! do |unwrapped|
