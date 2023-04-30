@@ -372,7 +372,7 @@ describe T::CLI do
           856523843892129796  Apr 24 07:02  @             https://twitter.com/i/sticker...
           856523768910544899  Apr 24 07:02  @             https://twitter.com/i/sticker...
           856480385957548035  Apr 24 04:10  @            Obrigada Jacques
-          EOS
+        EOS
       end
     end
     context '--number' do
