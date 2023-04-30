@@ -5,13 +5,13 @@ require 'helper'
 describe T::Editor do
   context 'when editing a file' do
     before do
-      allow(T::Editor).to receive(:edit) do |path|
+      allow(described_class).to receive(:edit) do |path|
         File.binwrite(path, 'A tweet!!!!')
       end
     end
 
     it 'fetches your tweet content without comments' do
-      expect(T::Editor.gets).to eq('A tweet!!!!')
+      expect(described_class.gets).to eq('A tweet!!!!')
     end
   end
 
@@ -24,21 +24,21 @@ describe T::Editor do
       context 'host_os is Mac OSX' do
         it 'returns the system editor' do
           RbConfig::CONFIG['host_os'] = 'darwin12.2.0'
-          expect(T::Editor.editor).to eq('vi')
+          expect(described_class.editor).to eq('vi')
         end
       end
 
       context 'host_os is Linux' do
         it 'returns the system editor' do
           RbConfig::CONFIG['host_os'] = '3.2.0-4-amd64'
-          expect(T::Editor.editor).to eq('vi')
+          expect(described_class.editor).to eq('vi')
         end
       end
 
       context 'host_os is Windows' do
         it 'returns the system editor' do
           RbConfig::CONFIG['host_os'] = 'mswin'
-          expect(T::Editor.editor).to eq('notepad')
+          expect(described_class.editor).to eq('notepad')
         end
       end
     end
@@ -50,7 +50,7 @@ describe T::Editor do
       end
 
       it 'returns the system editor' do
-        expect(T::Editor.editor).to eq('/my/vim/install')
+        expect(described_class.editor).to eq('/my/vim/install')
       end
     end
 
@@ -61,7 +61,7 @@ describe T::Editor do
       end
 
       it 'returns the system editor' do
-        expect(T::Editor.editor).to eq('/usr/bin/subl')
+        expect(described_class.editor).to eq('/usr/bin/subl')
       end
     end
 
@@ -72,7 +72,7 @@ describe T::Editor do
       end
 
       it 'returns the system editor' do
-        expect(T::Editor.editor).to eq('/usr/bin/emacs')
+        expect(described_class.editor).to eq('/usr/bin/emacs')
       end
     end
   end
@@ -84,7 +84,7 @@ describe T::Editor do
       end
 
       it "returns 'vi' on a unix machine" do
-        expect(T::Editor.system_editor).to eq('vi')
+        expect(described_class.system_editor).to eq('vi')
       end
     end
 
@@ -94,7 +94,7 @@ describe T::Editor do
       end
 
       it "returns 'notepad' on a windows box" do
-        expect(T::Editor.system_editor).to eq('notepad')
+        expect(described_class.system_editor).to eq('notepad')
       end
     end
   end

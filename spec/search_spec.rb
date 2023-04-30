@@ -10,7 +10,7 @@ describe T::Search do
 
   before do
     T::RCFile.instance.path = "#{fixture_path}/.trc"
-    @search = T::Search.new
+    @search = described_class.new
     @search.options = @search.options.merge('color' => 'always')
     @old_stderr = $stderr
     $stderr = StringIO.new

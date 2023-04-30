@@ -5,7 +5,7 @@ require 'helper'
 describe T::Delete do
   before do
     T::RCFile.instance.path = "#{fixture_path}/.trc"
-    @delete = T::Delete.new
+    @delete = described_class.new
     @old_stderr = $stderr
     $stderr = StringIO.new
     @old_stdout = $stdout

@@ -12,7 +12,7 @@ describe T::Utils do
 
   before do
     @test = Test.new
-    @test.extend(T::Utils)
+    @test.extend(described_class)
   end
 
   after :all do

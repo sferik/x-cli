@@ -10,7 +10,7 @@ describe T::CLI do
 
   before do
     T::RCFile.instance.path = "#{fixture_path}/.trc"
-    @cli = T::CLI.new
+    @cli = described_class.new
     @cli.options = @cli.options.merge('color' => 'always')
     @old_stderr = $stderr
     $stderr = StringIO.new
@@ -4699,7 +4699,7 @@ describe T::CLI do
     context 'no configuration' do
       it 'prints a helpful message and no errors' do
         T::RCFile.instance.path = ''
-        @cli = T::CLI.new
+        @cli = described_class.new
         @cli.whoami
         expect($stderr.string).to eq "You haven't authorized an account, run `t authorize` to get started.\n"
       end

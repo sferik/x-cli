@@ -15,7 +15,7 @@ describe T::Stream do
   before do
     T::RCFile.instance.path = "#{fixture_path}/.trc"
     @streaming_client = double('Twitter::Streaming::Client').as_null_object
-    @stream = T::Stream.new
+    @stream = described_class.new
     allow(@stream).to receive(:streaming_client) { @streaming_client }
     allow(@stream).to receive(:say)
     allow(STDOUT).to receive(:tty?).and_return(true)

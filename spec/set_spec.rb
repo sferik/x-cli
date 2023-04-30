@@ -5,7 +5,7 @@ require 'helper'
 describe T::Set do
   before do
     T::RCFile.instance.path = "#{fixture_path}/.trc"
-    @set = T::Set.new
+    @set = described_class.new
     @old_stderr = $stderr
     $stderr = StringIO.new
     @old_stdout = $stdout

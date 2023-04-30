@@ -4,20 +4,20 @@ require 'helper'
 
 describe T::RCFile do
   after do
-    T::RCFile.instance.reset
+    described_class.instance.reset
     FileUtils.rm_f("#{project_path}/tmp/trc")
   end
 
   it 'is a singleton' do
-    expect(T::RCFile).to be_a Class
+    expect(described_class).to be_a Class
     expect do
-      T::RCFile.new
+      described_class.new
     end.to raise_error(NoMethodError, /private method `new' called/)
   end
 
   describe '#[]' do
     it 'returns the profiles for a user' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{fixture_path}/.trc"
       expect(rcfile['testcli'].keys).to eq %w[abc123]
     end
@@ -25,7 +25,7 @@ describe T::RCFile do
 
   describe '#[]=' do
     it 'adds a profile for a user' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{project_path}/tmp/trc"
       rcfile['testcli'] = {
         'abc123' => {
@@ -40,7 +40,7 @@ describe T::RCFile do
     end
 
     it 'is not be world writable' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{project_path}/tmp/trc"
       rcfile['testcli'] = {
         'abc123' => {
@@ -55,7 +55,7 @@ describe T::RCFile do
     end
 
     it 'is not be world readable' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{project_path}/tmp/trc"
       rcfile['testcli'] = {
         'abc123' => {
@@ -72,7 +72,7 @@ describe T::RCFile do
 
   describe '#configuration' do
     it 'returns configuration' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{fixture_path}/.trc"
       expect(rcfile.configuration.keys).to eq %w[default_profile]
     end
@@ -80,7 +80,7 @@ describe T::RCFile do
 
   describe '#active_consumer_key' do
     it 'returns default consumer key' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{fixture_path}/.trc"
       expect(rcfile.active_consumer_key).to eq 'abc123'
     end
@@ -88,7 +88,7 @@ describe T::RCFile do
 
   describe '#active_consumer_secret' do
     it 'returns default consumer secret' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{fixture_path}/.trc"
       expect(rcfile.active_consumer_secret).to eq 'asdfasd223sd2'
     end
@@ -96,7 +96,7 @@ describe T::RCFile do
 
   describe '#active_profile' do
     it 'returns default profile' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{fixture_path}/.trc"
       expect(rcfile.active_profile).to eq %w[testcli abc123]
     end
@@ -104,7 +104,7 @@ describe T::RCFile do
 
   describe '#active_profile=' do
     it 'sets default profile' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{project_path}/tmp/trc"
       rcfile.active_profile = {'username' => 'testcli', 'consumer_key' => 'abc123'}
       expect(rcfile.active_profile).to eq %w[testcli abc123]
@@ -113,7 +113,7 @@ describe T::RCFile do
 
   describe '#active_token' do
     it 'returns default token' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{fixture_path}/.trc"
       expect(rcfile.active_token).to eq '428004849-cebdct6bwobn'
     end
@@ -121,7 +121,7 @@ describe T::RCFile do
 
   describe '#active_secret' do
     it 'returns default secret' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{fixture_path}/.trc"
       expect(rcfile.active_secret).to eq 'epzrjvxtumoc'
     end
@@ -132,7 +132,7 @@ describe T::RCFile do
       path = "#{project_path}/tmp/trc"
       File.write(path, YAML.dump({}))
       expect(File.exist?(path)).to be true
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = path
       rcfile.delete
       expect(File.exist?(path)).to be false
@@ -142,7 +142,7 @@ describe T::RCFile do
   describe '#empty?' do
     context 'when a non-empty file exists' do
       it 'returns false' do
-        rcfile = T::RCFile.instance
+        rcfile = described_class.instance
         rcfile.path = "#{fixture_path}/.trc"
         expect(rcfile.empty?).to be false
       end
@@ -150,7 +150,7 @@ describe T::RCFile do
 
     context 'when file does not exist at path' do
       it 'returns true' do
-        rcfile = T::RCFile.instance
+        rcfile = described_class.instance
         rcfile.path = File.expand_path('fixtures/foo', __dir__)
         expect(rcfile.empty?).to be true
       end
@@ -160,7 +160,7 @@ describe T::RCFile do
   describe '#load_file' do
     context 'when file exists at path' do
       it 'loads data from file' do
-        rcfile = T::RCFile.instance
+        rcfile = described_class.instance
         rcfile.path = "#{fixture_path}/.trc"
         expect(rcfile.load_file['profiles']['testcli']['abc123']['username']).to eq 'testcli'
       end
@@ -168,7 +168,7 @@ describe T::RCFile do
 
     context 'when file does not exist at path' do
       it 'loads default structure' do
-        rcfile = T::RCFile.instance
+        rcfile = described_class.instance
         rcfile.path = File.expand_path('fixtures/foo', __dir__)
         expect(rcfile.load_file.keys.sort).to eq %w[configuration profiles]
       end
@@ -177,19 +177,19 @@ describe T::RCFile do
 
   describe '#path' do
     it 'defaults to ~/.trc' do
-      expect(T::RCFile.instance.path).to eq File.join(File.expand_path('~'), '.trc')
+      expect(described_class.instance.path).to eq File.join(File.expand_path('~'), '.trc')
     end
   end
 
   describe '#path=' do
     it 'overrides path' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{project_path}/tmp/trc"
       expect(rcfile.path).to eq "#{project_path}/tmp/trc"
     end
 
     it 'reloads data' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{fixture_path}/.trc"
       expect(rcfile['testcli']['abc123']['username']).to eq 'testcli'
     end
@@ -197,7 +197,7 @@ describe T::RCFile do
 
   describe '#profiles' do
     it 'returns profiles' do
-      rcfile = T::RCFile.instance
+      rcfile = described_class.instance
       rcfile.path = "#{fixture_path}/.trc"
       expect(rcfile.profiles.keys).to eq %w[testcli]
     end

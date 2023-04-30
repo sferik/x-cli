@@ -10,7 +10,7 @@ describe T::List do
 
   before do
     T::RCFile.instance.path = "#{fixture_path}/.trc"
-    @list = T::List.new
+    @list = described_class.new
     @old_stderr = $stderr
     $stderr = StringIO.new
     @old_stdout = $stdout
