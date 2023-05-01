@@ -54,13 +54,13 @@ module BashCompletion
         options_str = options(cmd).join(" ")
         subcmds = subcommands(cmd)
 
-        opts_args = cmd.options.collect do |_, opt|
+        opts_args = cmd.options.filter_map do |_, opt|
           cases = opt.enum
           if cases
             %[#{option_str(opt).tr(' ', '|')})
                completions='#{cases.join(' ')}' ;;]
           end
-        end.compact
+        end
 
         if subcmds.empty?
           %[#{cmd.name})
