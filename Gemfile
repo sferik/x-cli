@@ -1,8 +1,6 @@
 source "https://rubygems.org"
 
 gem "rake"
-gem "rubocop-rake"
-gem "rubocop-rspec"
 
 group :development do
   gem "pry"
@@ -13,6 +11,9 @@ group :test do
   gem "rb-readline", ">= 0.5.5"
   gem "rspec", ">= 3"
   gem "rubocop", ">= 0.79"
+  gem "rubocop-performance"
+  gem "rubocop-rake"
+  gem "rubocop-rspec"
   gem "simplecov", ">= 0.18.2"
   gem "timecop"
   gem "tins"
