@@ -966,7 +966,7 @@ module T
         ([a-zA-Z0-9_]{1,20})                # $3: Screen name
       /ox
 
-      return [] if !text&.match?(at_signs)
+      return [] unless text&.match?(at_signs)
 
       text.to_s.scan(valid_mentions).collect do |_, _, screen_name|
         screen_name
