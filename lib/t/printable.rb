@@ -140,7 +140,7 @@ module T
       icon = Identicon.for_user_name(from_user)
 
       # Save 6 chars for icon, ensure at least 3 lines long
-      lines = wrapped(HTMLEntities.new.decode(message), indent: 2, width: terminal_width - (6 + 5))
+      lines = wrapped(HTMLEntities.new.decode(message), indent: 2, width: Thor::Shell::Terminal.terminal_width - (6 + 5))
       lines.unshift(set_color("  @#{from_user}", :bold, :yellow))
       lines.concat(Array.new([3 - lines.length, 0].max) { "" })
 
@@ -149,7 +149,7 @@ module T
 
     def wrapped(message, options = {})
       indent = options[:indent] || 0
-      width = options[:width] || (terminal_width - indent)
+      width = options[:width] || (Thor::Shell::Terminal.terminal_width - indent)
       paras = message.split("\n\n")
 
       paras.map! do |unwrapped|
