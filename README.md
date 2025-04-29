@@ -26,7 +26,7 @@ First, make sure you have Ruby installed.
 
 If the output looks something like this, you're in good shape:
 
-    ruby 2.3.1p112 (2016-04-26 revision 54768) [x86_64-darwin15]
+    ruby 3.4.3 (2025-04-14 revision d0b7e5b6a0) +PRISM [arm64-darwin24]
 
 If the output looks more like this, you need to [install Ruby][ruby]:
 
@@ -288,9 +288,9 @@ the original code.
 This library aims to support and is [tested against][travis] the following Ruby
 implementations:
 
-* Ruby 3.1
 * Ruby 3.2
 * Ruby 3.3
+* Ruby 3.4
 
 If something doesn't work on one of these Ruby versions, it's a bug.
 
@@ -311,7 +311,7 @@ If you are running t on a remote computer you can use the flag --display-uri dur
     t authorize --display-uri
 
 ## Copyright
-Copyright (c) 2011-2024 Erik Berlin. See [LICENSE][] for details.
+Copyright (c) 2011-2025 Erik Berlin. See [LICENSE][] for details.
 Application icon by [@nvk][nvk].
 
 [license]: https://github.com/sferik/t/blob/master/LICENSE.md

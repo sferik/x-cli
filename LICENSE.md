@@ -1,4 +1,4 @@
-Copyright (c) 2011-2024 Erik Berlin
+Copyright (c) 2011-2025 Erik Berlin
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
