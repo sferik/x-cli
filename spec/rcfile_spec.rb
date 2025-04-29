@@ -12,7 +12,7 @@ describe T::RCFile do
     expect(described_class).to be_a Class
     expect do
       described_class.new
-    end.to raise_error(NoMethodError, /private method `new' called/)
+    end.to raise_error(NoMethodError, /private method (`|')new' called/)
   end
 
   describe "#[]" do
