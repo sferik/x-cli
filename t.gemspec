@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "oauth", "~> 1.1"
   spec.add_dependency "retryable", "~> 3.0"
   spec.add_dependency "thor", "~> 1.3"
-  spec.add_dependency "twitter", "~> 8.1"
+  spec.add_dependency "twitter", "~> 8.2"
   spec.author = "Erik Berlin"
   spec.description = "A command-line power tool for Twitter."
   spec.email = "sferik@gmail.com"
