@@ -1,0 +1,36 @@
+{
+  "data": {
+    "id": "263813522369159169",
+    "created_at": "2012-11-01T01:23:39.000Z",
+    "author_id": "19110970",
+    "source": "Tweetbot for iOS",
+    "public_metrics": {
+      "retweet_count": 0,
+      "reply_count": 0,
+      "like_count": 0,
+      "quote_count": 0
+    }
+  },
+  "includes": {
+    "users": [
+      {
+        "id": "19110970",
+        "username": "joshfrench",
+        "name": "Josh French",
+        "location": "San Francisco",
+        "description": "B, B+ tops",
+        "url": "http://joshfrench.tumblr.com",
+        "protected": false,
+        "verified": false,
+        "created_at": "2009-01-17T14:14:16.000Z",
+        "public_metrics": {
+          "followers_count": 464,
+          "following_count": 375,
+          "tweet_count": 4678,
+          "listed_count": 27,
+          "like_count": 540
+        }
+      }
+    ]
+  }
+}

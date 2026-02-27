@@ -1,0 +1,16 @@
+{
+  "data": {
+    "id": "1773478249",
+    "event_type": "MessageCreate",
+    "sender_id": "7505382",
+    "text": "testing",
+    "created_at": "2012-10-26T21:24:23.000Z",
+    "dm_conversation_id": "7505382-14100886"
+  },
+  "includes": {
+    "users": [
+      {"id": "7505382", "username": "sferik"},
+      {"id": "14100886", "username": "pengwynn"}
+    ]
+  }
+}

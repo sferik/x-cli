@@ -1,0 +1,61 @@
+{
+  "data": [
+    {
+      "id": "14100886",
+      "username": "pengwynn",
+      "name": "Wynn Netherland",
+      "location": "Denton, TX",
+      "description": "Christian, husband, father, GitHubber, Co-host of @thechangelog, Co-author of Sass, Compass, #CSS book  http://wynn.fm/sass-meap",
+      "url": "http://wynnnetherland.com",
+      "protected": false,
+      "verified": false,
+      "created_at": "Sat Mar 08 16:34:22 +0000 2008",
+      "public_metrics": {
+        "followers_count": 5457,
+        "following_count": 3427,
+        "tweet_count": 6940,
+        "listed_count": 358,
+        "like_count": 192
+      },
+      "pinned_tweet_id": "221703464277917696"
+    },
+    {
+      "id": "7505382",
+      "username": "sferik",
+      "name": "Erik Michaels-Ober",
+      "location": "San Francisco",
+      "description": "Vagabond.",
+      "url": "https://github.com/sferik",
+      "protected": false,
+      "verified": false,
+      "created_at": "Mon Jul 16 12:59:01 +0000 2007",
+      "public_metrics": {
+        "followers_count": 2262,
+        "following_count": 212,
+        "tweet_count": 7890,
+        "listed_count": 118,
+        "like_count": 3755
+      },
+      "pinned_tweet_id": "222034648631484416"
+    }
+  ],
+  "meta": {
+    "result_count": 2
+  },
+  "includes": {
+    "tweets": [
+      {
+        "id": "221703464277917696",
+        "text": "@akosmasoftware Sass book! @hcatlin @nex3 are the brains behind Sass. :-)",
+        "created_at": "Sat Jul 07 20:33:19 +0000 2012",
+        "author_id": "14100886"
+      },
+      {
+        "id": "222034648631484416",
+        "text": "@goldman You're near my home town! Say hi to Woodstock for me.",
+        "created_at": "Sun Jul 08 18:29:20 +0000 2012",
+        "author_id": "7505382"
+      }
+    ]
+  }
+}

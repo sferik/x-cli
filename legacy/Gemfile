@@ -1,0 +1,26 @@
+source "https://rubygems.org"
+
+gem "rake"
+gem "x", path: "../../x-ruby"
+
+group :development do
+  gem "pry"
+end
+
+group :test do
+  gem "csv"
+  gem "minitest", "~> 6.0"
+  gem "minitest-mock"
+  gem "minitest-strict"
+  gem "rb-readline", ">= 0.5.5"
+  gem "rubocop", ">= 0.79"
+  gem "rubocop-minitest"
+  gem "rubocop-performance"
+  gem "rubocop-rake"
+  gem "simplecov", ">= 0.16"
+  gem "timecop"
+  gem "tins"
+  gem "webmock", ">= 3.8.2"
+end
+
+gemspec

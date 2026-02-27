@@ -1,0 +1,20 @@
+{
+  "data": {
+    "id": "14100886",
+    "username": "pengwynn",
+    "name": "Wynn Netherland",
+    "location": "Denton, TX",
+    "description": "Christian, husband, father, GitHubber",
+    "url": "http://wynnnetherland.com",
+    "protected": false,
+    "verified": false,
+    "created_at": "2008-03-08T16:34:22.000Z",
+    "public_metrics": {
+      "followers_count": 6182,
+      "following_count": 3528,
+      "tweet_count": 7384,
+      "listed_count": 397,
+      "like_count": 338
+    }
+  }
+}

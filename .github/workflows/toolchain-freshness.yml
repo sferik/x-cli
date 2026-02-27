@@ -1,0 +1,45 @@
+name: Toolchain Freshness
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rust-stable-check:
+    name: rust-toolchain.toml matches latest stable
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compare pinned version with latest stable
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          pinned="$(python3 - <<'PY'
+          import tomllib
+          from pathlib import Path
+
+          toolchain = tomllib.loads(Path("rust-toolchain.toml").read_text())
+          print(toolchain["toolchain"]["channel"])
+          PY
+          )"
+
+          latest="$(curl -fsSL https://static.rust-lang.org/dist/channel-rust-stable.toml \
+            | awk -F'"' '/^version = / { print $2; exit }' \
+            | sed 's/ .*//')"
+
+          echo "Pinned rust-toolchain.toml channel: $pinned"
+          echo "Latest stable Rust release: $latest"
+
+          if [ "$pinned" != "$latest" ]; then
+            echo "::error::rust-toolchain.toml is $pinned, latest stable is $latest"
+            exit 1
+          fi

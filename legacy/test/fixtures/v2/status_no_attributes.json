@@ -1,0 +1,48 @@
+{
+  "data": {
+    "id": "55709764298092546",
+    "text": "The problem with your code is that it's doing exactly what you told it to do.",
+    "created_at": "2011-04-06T19:13:37.000Z",
+    "author_id": "7505382",
+    "source": "Twitter for iPhone",
+    "public_metrics": {
+      "retweet_count": 320,
+      "like_count": 50
+    },
+    "geo": {
+      "place_id": "f29bbd03562e37d2"
+    }
+  },
+  "includes": {
+    "users": [
+      {
+        "id": "7505382",
+        "username": "sferik",
+        "name": "Erik Michaels-Ober",
+        "location": "San Francisco",
+        "description": "My heart is in the work.",
+        "url": "https://github.com/sferik",
+        "protected": false,
+        "verified": false,
+        "created_at": "2007-07-16T12:59:01.000Z",
+        "public_metrics": {
+          "followers_count": 2094,
+          "following_count": 203,
+          "tweet_count": 6890,
+          "listed_count": 114,
+          "like_count": 3073
+        }
+      }
+    ],
+    "places": [
+      {
+        "id": "f29bbd03562e37d2",
+        "name": "Blowfish Sushi To Die For",
+        "full_name": "Blowfish Sushi To Die For, San Francisco",
+        "country": "United States",
+        "country_code": "US",
+        "place_type": "poi"
+      }
+    ]
+  }
+}

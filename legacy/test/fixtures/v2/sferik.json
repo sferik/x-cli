@@ -1,0 +1,36 @@
+{
+  "data": {
+    "id": "7505382",
+    "name": "Erik Michaels-Ober",
+    "username": "sferik",
+    "location": "San Francisco",
+    "description": "Vagabond.",
+    "url": "https://github.com/sferik",
+    "protected": false,
+    "verified": false,
+    "created_at": "2007-07-16T12:59:01.000Z",
+    "pinned_tweet_id": "222034648631484416",
+    "public_metrics": {
+      "followers_count": 2262,
+      "following_count": 212,
+      "tweet_count": 7890,
+      "listed_count": 118,
+      "like_count": 3755
+    }
+  },
+  "includes": {
+    "tweets": [
+      {
+        "id": "222034648631484416",
+        "text": "@goldman You're near my home town! Say hi to Woodstock for me.",
+        "created_at": "2012-07-08T18:29:20.000Z",
+        "source": "Twitter for Mac",
+        "author_id": "7505382",
+        "public_metrics": {
+          "retweet_count": 0,
+          "like_count": 0
+        }
+      }
+    ]
+  }
+}

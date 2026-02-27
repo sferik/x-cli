@@ -8,9 +8,13 @@
 .yardoc
 Gemfile.lock
 coverage/*
+legacy/coverage/
 doc/*
 log/*
 pkg/*
 tmp/*
 .DS_Store
 .idea
+target/
+mutants.out/
+x-api/Cargo.lock

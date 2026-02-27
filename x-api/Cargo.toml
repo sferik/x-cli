@@ -1,0 +1,19 @@
+[package]
+name = "x-api"
+version = "5.0.0"
+edition = "2024"
+description = "X API client primitives for HTTP/auth/retry used by x CLI"
+license = "MIT"
+
+[lib]
+name = "x_api"
+path = "src/lib.rs"
+
+[dependencies]
+oauth-client = "0.8.0"
+reqwest = { version = "0.11.27", features = ["blocking", "json"] }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+serde_urlencoded = "0.7.1"
+thiserror = "2.0.12"
+base64 = "0.22.1"

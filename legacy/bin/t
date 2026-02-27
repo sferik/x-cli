@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+# Trap interrupts to quit cleanly. See
+# https://twitter.com/mitchellh/status/283014103189053442
+Signal.trap("INT") { abort }
+
+require "bundler/setup"
+require "oauth"
+require "t"
+require "x"
+
+# Output message to $stderr, prefixed with the program name
+def pute(*args)
+  first = args.shift.dup
+  first.insert(0, "#{$PROGRAM_NAME}: ")
+  args.unshift(first)
+  abort(args.join("\n"))
+end
+
+begin
+  T::CLI.start(ARGV)
+rescue Interrupt
+  pute "Quitting..."
+rescue OAuth::Unauthorized
+  pute "Authorization failed"
+rescue X::TooManyRequests => e
+  reset_in = e.reset_in
+  pute e.message, "The rate limit for this request will reset in #{reset_in} #{reset_in == 1 ? 'second' : 'seconds'}."
+rescue X::BadRequest => e
+  pute e.message, "Run `t authorize` to authorize."
+rescue X::Error => e
+  pute e.message
+end

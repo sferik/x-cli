@@ -1,0 +1,19 @@
+---
+configuration:
+  default_profile:
+  - testcli
+  - abc123
+profiles:
+  testcli:
+    abc123:
+      consumer_key: abc123
+      secret: epzrjvxtumoc
+      token: 428004849-cebdct6bwobn
+      username: testcli
+      consumer_secret: asdfasd223sd2
+    def456:
+      consumer_key: def456
+      secret: anothertoken
+      token: 428004849-anothertoken
+      username: testcli
+      consumer_secret: anothersecret

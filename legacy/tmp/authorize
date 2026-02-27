@@ -1,0 +1,13 @@
+---
+configuration:
+  default_profile:
+  - sferik
+  - abc123
+profiles:
+  sferik:
+    abc123:
+      username: sferik
+      consumer_key: abc123
+      consumer_secret: asdfasd223sd2
+      token: 6253282-eWudHldSbIaelX7swmsiHImEL4KinwaGloHANdrY
+      secret: 2EEfA6BG3ly3sR3RjE0IBSnlQu4ZrUzPiYKmrkVU

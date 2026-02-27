@@ -1,0 +1,59 @@
+{
+  "data": [
+    {
+      "id": "1129440",
+      "name": "rubyists",
+      "member_count": 499,
+      "follower_count": 39,
+      "private": false,
+      "owner_id": "14100886",
+      "created_at": "2009-10-30T14:39:25.000Z"
+    },
+    {
+      "id": "574",
+      "name": "team",
+      "member_count": 1199,
+      "follower_count": 78078,
+      "mode": "other",
+      "owner_id": "783214",
+      "created_at": "2009-09-23T01:18:01.000Z"
+    },
+    {
+      "id": "73546689",
+      "name": "test",
+      "member_count": 2,
+      "follower_count": 0,
+      "private": true,
+      "owner_id": "7505382",
+      "created_at": "2012-07-08T22:19:05.000Z"
+    }
+  ],
+  "includes": {
+    "users": [
+      {
+        "id": "14100886",
+        "username": "pengwynn",
+        "name": "Wynn Netherland",
+        "created_at": "2008-03-08T16:34:22.000Z",
+        "public_metrics": {"followers_count": 6182, "following_count": 3528, "tweet_count": 7384, "listed_count": 397, "like_count": 338}
+      },
+      {
+        "id": "783214",
+        "username": "twitter",
+        "name": "Twitter",
+        "created_at": "2007-02-20T14:35:54.000Z",
+        "public_metrics": {"followers_count": 13711595, "following_count": 1249, "tweet_count": 1433, "listed_count": 73287, "like_count": 18}
+      },
+      {
+        "id": "7505382",
+        "username": "sferik",
+        "name": "Erik Michaels-Ober",
+        "created_at": "2007-07-16T12:59:01.000Z",
+        "public_metrics": {"followers_count": 2449, "following_count": 203, "tweet_count": 8576, "listed_count": 129, "like_count": 4321}
+      }
+    ]
+  },
+  "meta": {
+    "result_count": 3
+  }
+}

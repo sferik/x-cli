@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "id": "8863586",
+      "slug": "presidents",
+      "name": "presidents",
+      "full_name": "@sferik/presidents",
+      "member_count": 2,
+      "subscriber_count": 1,
+      "following": true,
+      "mode": "public",
+      "uri": "https://x.com/i/lists/8863586",
+      "owner_id": "7505382",
+      "created_at": "2010-03-15T12:10:13.000Z",
+      "user": {
+        "id": 7505382,
+        "screen_name": "sferik",
+        "name": "Erik Michaels-Ober",
+        "created_at": "2007-07-16T12:59:01.000Z"
+      }
+    }
+  ],
+  "meta": {
+    "result_count": 1
+  }
+}

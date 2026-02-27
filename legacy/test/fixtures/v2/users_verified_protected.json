@@ -1,0 +1,25 @@
+{
+  "data": [
+    {
+      "id": "14100886",
+      "username": "pengwynn",
+      "name": "Wynn Netherland",
+      "location": "Denton, TX",
+      "description": "Christian husband father",
+      "url": "http://wynnnetherland.com",
+      "protected": true,
+      "verified": true,
+      "created_at": "Sat Mar 08 16:34:22 +0000 2008",
+      "public_metrics": {
+        "followers_count": 5457,
+        "following_count": 3427,
+        "tweet_count": 6940,
+        "listed_count": 358,
+        "like_count": 192
+      }
+    }
+  ],
+  "meta": {
+    "result_count": 1
+  }
+}
