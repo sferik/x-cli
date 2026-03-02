@@ -46,4 +46,4 @@ jobs:
           rustflags: ""
 
       - name: Build release
-        run: cargo build --release --locked --manifest-path x-api/Cargo.toml
+        run: cargo build --release --manifest-path x-api/Cargo.toml

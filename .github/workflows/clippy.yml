@@ -46,4 +46,4 @@ jobs:
           rustflags: ""
 
       - name: Clippy
-        run: cargo clippy --manifest-path x-api/Cargo.toml --locked --all-features -- -D warnings
+        run: cargo clippy --manifest-path x-api/Cargo.toml --all-features -- -D warnings

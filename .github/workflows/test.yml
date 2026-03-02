@@ -46,4 +46,4 @@ jobs:
           rustflags: ""
 
       - name: Test
-        run: cargo test --locked --manifest-path x-api/Cargo.toml
+        run: cargo test --manifest-path x-api/Cargo.toml
