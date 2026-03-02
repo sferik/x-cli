@@ -1,7 +1,6 @@
 source "https://rubygems.org"
 
 gem "rake"
-gem "x", path: "../../x-ruby"
 
 group :development do
   gem "pry"
