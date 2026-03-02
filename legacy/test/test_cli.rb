@@ -1974,7 +1974,10 @@ class TestCLI < TTestCase
     rules_set_up = false
     fake_client = Object.new
     fake_client.define_singleton_method(:stream) { |_endpoint, &_block| nil }
-    @cli.stub(:install_matrix_stream_rules, -> { rules_set_up = true; [] }) do
+    @cli.stub(:install_matrix_stream_rules, -> { 
+      rules_set_up = true
+      []
+    }) do
       @cli.stub(:bearer_client, fake_client) do
         @cli.matrix
       end

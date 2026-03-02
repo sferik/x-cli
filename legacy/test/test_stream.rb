@@ -261,7 +261,10 @@ class TestStream < TTestCase
     rules_called = false
     T::List.stub(:new, t_class) do
       @stream_cmd.stub(:print_message, ->(*_) {}) do
-        @stream_cmd.stub(:setup_stream_rules, ->(*_) { rules_called = true; [] }) do
+        @stream_cmd.stub(:setup_stream_rules, ->(*_) { 
+          rules_called = true
+          []
+        }) do
           @stream_cmd.stub(:stream_tweets, ->(_endpoint, &block) { block&.call(@tweet) }) do
             @stream_cmd.list("presidents")
           end
@@ -316,7 +319,10 @@ class TestStream < TTestCase
 
   def test_matrix_sets_up_stream_rules
     rules_set = false
-    @stream_cmd.stub(:setup_stream_rules, ->(*_) { rules_set = true; [] }) do
+    @stream_cmd.stub(:setup_stream_rules, ->(*_) { 
+      rules_set = true
+      []
+    }) do
       @stream_cmd.stub(:say, ->(*_) {}) do
         @stream_cmd.stub(:stream_tweets, ->(_endpoint, &_block) {}) do
           @stream_cmd.matrix
@@ -417,7 +423,10 @@ class TestStream < TTestCase
     received_rules = nil
     T::Search.stub(:new, t_class) do
       @stream_cmd.stub(:print_message, ->(*_) {}) do
-        @stream_cmd.stub(:setup_stream_rules, ->(*args) { received_rules = args.first; [] }) do
+        @stream_cmd.stub(:setup_stream_rules, ->(*args) { 
+          received_rules = args.first
+          []
+        }) do
           @stream_cmd.stub(:stream_tweets, ->(_endpoint, &block) { block&.call(@tweet) }) do
             @stream_cmd.search("twitter", "gem")
           end
@@ -518,7 +527,10 @@ class TestStream < TTestCase
     received_rules = nil
     T::CLI.stub(:new, t_class) do
       @stream_cmd.stub(:print_message, ->(*_) {}) do
-        @stream_cmd.stub(:setup_stream_rules, ->(*args) { received_rules = args.first; [] }) do
+        @stream_cmd.stub(:setup_stream_rules, ->(*args) { 
+          received_rules = args.first
+          []
+        }) do
           @stream_cmd.stub(:stream_tweets, ->(_endpoint, &block) { block&.call(@tweet) }) do
             @stream_cmd.timeline
           end
@@ -617,7 +629,10 @@ class TestStream < TTestCase
   def test_users_sets_up_stream_rules_for_the_specified_users
     received_rules = nil
     @stream_cmd.stub(:print_message, ->(*_) {}) do
-      @stream_cmd.stub(:setup_stream_rules, ->(*args) { received_rules = args.first; [] }) do
+      @stream_cmd.stub(:setup_stream_rules, ->(*args) { 
+        received_rules = args.first
+        []
+      }) do
         @stream_cmd.stub(:stream_tweets, ->(_endpoint, &block) { block&.call(@tweet) }) do
           @stream_cmd.users("123", "456", "789")
         end
@@ -738,10 +753,10 @@ class TestStream < TTestCase
   end
 
   def test_remove_stream_rules_posts_delete_request
-    stub_v2_post("tweets/search/stream/rules").to_return(body: '{}', headers: V2_JSON_HEADERS)
+    stub_v2_post("tweets/search/stream/rules").to_return(body: "{}", headers: V2_JSON_HEADERS)
     bearer = X::Client.new(bearer_token: "test-token")
     @stream_cmd.stub(:bearer_client, bearer) do
-      @stream_cmd.send(:remove_stream_rules, ["42", "43"])
+      @stream_cmd.send(:remove_stream_rules, %w[42 43])
     end
 
     assert_requested(:post, v2_pattern("tweets/search/stream/rules"), times: 1)
