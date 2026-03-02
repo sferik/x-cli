@@ -6,11 +6,17 @@ module T
     private
 
       def v1_client
-        @v1_client ||= X::Client.new(**@requestable_api_credentials, base_url: BASE_URL_V1)
+        @v1_client ||= begin
+          client # ensure credentials are initialized
+          X::Client.new(**@requestable_api_credentials, base_url: BASE_URL_V1)
+        end
       end
 
       def upload_client
-        @upload_client ||= X::Client.new(**@requestable_api_credentials, base_url: BASE_URL_UPLOAD)
+        @upload_client ||= begin
+          client # ensure credentials are initialized
+          X::Client.new(**@requestable_api_credentials, base_url: BASE_URL_UPLOAD)
+        end
       end
 
       def bearer_client
