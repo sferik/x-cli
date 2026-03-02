@@ -50,4 +50,4 @@ jobs:
           rustflags: ""
 
       - name: Verify docs coverage
-        run: cargo doc --package x-api --no-deps --all-features
+        run: cargo doc --manifest-path x-api/Cargo.toml --no-deps --all-features
