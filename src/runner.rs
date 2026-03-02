@@ -1947,10 +1947,10 @@ fn print_whois(user: &Value, leaf: &ArgMatches, out: &mut dyn Write) {
 
     rows.push(("Screen name", format!("@{}", user_screen_name(user))));
 
-    if let Some(name) = user.get("name").and_then(Value::as_str) {
-        if !name.is_empty() {
-            rows.push((name_label, name.to_string()));
-        }
+    if let Some(name) = user.get("name").and_then(Value::as_str)
+        && !name.is_empty()
+    {
+        rows.push((name_label, name.to_string()));
     }
 
     rows.push((
