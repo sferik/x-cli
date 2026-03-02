@@ -58,7 +58,8 @@ fn version_command_and_flag_work() {
 fn ruler_respects_indent_option() {
     let mut cmd = cargo_bin_cmd!("x");
     let assert = cmd.args(["ruler", "--indent", "2"]).assert().success();
-    let output = String::from_utf8(assert.get_output().stdout.clone()).expect("stdout should be utf8");
+    let output =
+        String::from_utf8(assert.get_output().stdout.clone()).expect("stdout should be utf8");
     let lines = output.lines().collect::<Vec<_>>();
 
     assert_eq!(lines.len(), 1);

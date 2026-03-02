@@ -2,8 +2,8 @@
 
 use base64::Engine;
 use oauth_client::{ParamList, Token};
-use reqwest::blocking::Client;
 use reqwest::StatusCode;
+use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::borrow::Cow;
@@ -135,10 +135,7 @@ fn is_retryable(error: &BackendError) -> bool {
         return false;
     };
     // format_api_error prefixes with "NNN: " — check the leading digits
-    let code: u16 = msg
-        .get(..3)
-        .and_then(|s| s.parse().ok())
-        .unwrap_or(0);
+    let code: u16 = msg.get(..3).and_then(|s| s.parse().ok()).unwrap_or(0);
     (500..600).contains(&code) || code == 429
 }
 
@@ -171,7 +168,9 @@ pub fn get_json_with_retry(
     path: &str,
     params: Vec<(String, String)>,
 ) -> Result<Value, BackendError> {
-    retry_with(DEFAULT_RETRY_TRIES, || backend.get_json(path, params.clone()))
+    retry_with(DEFAULT_RETRY_TRIES, || {
+        backend.get_json(path, params.clone())
+    })
 }
 
 /// Calls [`Backend::post_json`] with [`DEFAULT_RETRY_TRIES`] attempts.
@@ -180,7 +179,9 @@ pub fn post_json_with_retry(
     path: &str,
     params: Vec<(String, String)>,
 ) -> Result<Value, BackendError> {
-    retry_with(DEFAULT_RETRY_TRIES, || backend.post_json(path, params.clone()))
+    retry_with(DEFAULT_RETRY_TRIES, || {
+        backend.post_json(path, params.clone())
+    })
 }
 
 /// Calls [`Backend::get_json_oauth2`] with [`DEFAULT_RETRY_TRIES`] attempts.
@@ -920,7 +921,10 @@ mod tests {
             .delete_json("/2/tweets/1", Vec::new())
             .expect("delete response should exist");
 
-        assert_eq!(created.get("data").and_then(|d| d.get("id")), Some(&json!("1")));
+        assert_eq!(
+            created.get("data").and_then(|d| d.get("id")),
+            Some(&json!("1"))
+        );
         assert_eq!(
             deleted.get("data").and_then(|d| d.get("deleted")),
             Some(&json!(true))
@@ -1015,7 +1019,8 @@ mod tests {
 
     #[test]
     fn format_api_error_errors_array_takes_priority_over_title_detail() {
-        let body = r#"{"errors":[{"message":"Specific error"}],"title":"General","detail":"Something"}"#;
+        let body =
+            r#"{"errors":[{"message":"Specific error"}],"title":"General","detail":"Something"}"#;
         let result = format_api_error(StatusCode::BAD_REQUEST, body);
         assert_eq!(result, "400: Specific error");
     }
@@ -1029,19 +1034,31 @@ mod tests {
 
     #[test]
     fn is_retryable_true_for_5xx_and_429() {
-        assert!(is_retryable(&BackendError::Http("500: Internal Server Error".into())));
+        assert!(is_retryable(&BackendError::Http(
+            "500: Internal Server Error".into()
+        )));
         assert!(is_retryable(&BackendError::Http("502: Bad Gateway".into())));
-        assert!(is_retryable(&BackendError::Http("503: Service Unavailable".into())));
-        assert!(is_retryable(&BackendError::Http("429: Too Many Requests".into())));
+        assert!(is_retryable(&BackendError::Http(
+            "503: Service Unavailable".into()
+        )));
+        assert!(is_retryable(&BackendError::Http(
+            "429: Too Many Requests".into()
+        )));
     }
 
     #[test]
     fn is_retryable_false_for_4xx_and_non_http() {
-        assert!(!is_retryable(&BackendError::Http("400: Bad Request".into())));
-        assert!(!is_retryable(&BackendError::Http("401: Unauthorized".into())));
+        assert!(!is_retryable(&BackendError::Http(
+            "400: Bad Request".into()
+        )));
+        assert!(!is_retryable(&BackendError::Http(
+            "401: Unauthorized".into()
+        )));
         assert!(!is_retryable(&BackendError::Http("403: Forbidden".into())));
         assert!(!is_retryable(&BackendError::Http("404: Not Found".into())));
-        assert!(!is_retryable(&BackendError::Http("connection refused".into())));
+        assert!(!is_retryable(&BackendError::Http(
+            "connection refused".into()
+        )));
         assert!(!is_retryable(&BackendError::MissingCredentials));
     }
 
