@@ -164,9 +164,7 @@ where
     match result {
         Ok(code) => code,
         Err(error) => {
-            let program = std::env::args()
-                .next()
-                .unwrap_or_else(|| "x".to_string());
+            let program = std::env::args().next().unwrap_or_else(|| "x".to_string());
             let _ = writeln!(err, "{program}: {}", format_error_for_display(&error));
             if let Some(hint) = backend_error_hint(&error) {
                 let _ = writeln!(err, "{hint}");
@@ -754,8 +752,7 @@ fn execute_remote_command(
             Ok(0)
         }
         [single] if single == "matrix" => {
-            let rule_ids =
-                install_filtered_stream_rules(backend, &["の lang:ja".to_string()])?;
+            let rule_ids = install_filtered_stream_rules(backend, &["の lang:ja".to_string()])?;
             let max_events = stream_max_events();
             let mut seen = 0usize;
             let stream_result = backend.stream_json_lines(
@@ -1606,8 +1603,7 @@ fn execute_remote_command(
             Ok(0)
         }
         [first, second] if first == "stream" && second == "matrix" => {
-            let rule_ids =
-                install_filtered_stream_rules(backend, &["の lang:ja".to_string()])?;
+            let rule_ids = install_filtered_stream_rules(backend, &["の lang:ja".to_string()])?;
             let max_events = stream_max_events();
             let mut seen = 0usize;
             let stream_result = backend.stream_json_lines(
@@ -4689,9 +4685,7 @@ mod tests {
                     params,
                 });
                 match path {
-                    "/2/dm_events" => Err(BackendError::Http(
-                        "403: Forbidden".to_string(),
-                    )),
+                    "/2/dm_events" => Err(BackendError::Http("403: Forbidden".to_string())),
                     "/1.1/direct_messages/events/list.json" => Ok(json!({
                         "events": [{
                             "type": "message_create",
@@ -4853,8 +4847,7 @@ mod tests {
             backend
                 .calls()
                 .iter()
-                .any(|call| call.method == "STREAM"
-                    && call.path == "/2/tweets/search/stream")
+                .any(|call| call.method == "STREAM" && call.path == "/2/tweets/search/stream")
         );
     }
 
@@ -4965,9 +4958,9 @@ mod tests {
                     params,
                 });
                 match path {
-                    "/2/users/me" => Err(BackendError::Http(
-                        "503: Service Unavailable".to_string(),
-                    )),
+                    "/2/users/me" => {
+                        Err(BackendError::Http("503: Service Unavailable".to_string()))
+                    }
                     "/1.1/account/verify_credentials.json" => Ok(json!({
                         "id": 42,
                         "id_str": "42",
@@ -5110,8 +5103,9 @@ mod tests {
 
     #[test]
     fn format_error_for_display_strips_status_code_prefix() {
-        let error =
-            CommandError::Backend(BackendError::Http("402: CreditsDepleted: Account out of credits".to_string()));
+        let error = CommandError::Backend(BackendError::Http(
+            "402: CreditsDepleted: Account out of credits".to_string(),
+        ));
         let displayed = format_error_for_display(&error);
         assert_eq!(displayed, "CreditsDepleted: Account out of credits");
     }

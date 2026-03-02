@@ -162,8 +162,7 @@ fn status_default_format_uses_column_layout_like_legacy() {
         fixture_json("status.json"),
     );
 
-    let (code, out, err) =
-        run_cmd_with_profile(&["status", "55709764298092545"], &mut backend);
+    let (code, out, err) = run_cmd_with_profile(&["status", "55709764298092545"], &mut backend);
 
     assert_success(code, &err);
     // Ruby output uses left-aligned labels padded to max width + 2 spaces gap:
@@ -175,15 +174,39 @@ fn status_default_format_uses_column_layout_like_legacy() {
     // Favorites    50
     // Source       Twitter for iPhone
     // Location     Blowfish Sushi To Die For, ...
-    assert!(out.contains("ID           55709764298092545"), "ID row missing: {out}");
-    assert!(out.contains("Screen name  @sferik"), "Screen name row missing: {out}");
-    assert!(out.contains("Retweets     320"), "Retweets row missing: {out}");
-    assert!(out.contains("Favorites    50"), "Favorites row missing: {out}");
-    assert!(out.contains("Source       Twitter for iPhone"), "Source row missing: {out}");
-    assert!(out.contains("Location     Blowfish Sushi To Die For"), "Location row missing: {out}");
+    assert!(
+        out.contains("ID           55709764298092545"),
+        "ID row missing: {out}"
+    );
+    assert!(
+        out.contains("Screen name  @sferik"),
+        "Screen name row missing: {out}"
+    );
+    assert!(
+        out.contains("Retweets     320"),
+        "Retweets row missing: {out}"
+    );
+    assert!(
+        out.contains("Favorites    50"),
+        "Favorites row missing: {out}"
+    );
+    assert!(
+        out.contains("Source       Twitter for iPhone"),
+        "Source row missing: {out}"
+    );
+    assert!(
+        out.contains("Location     Blowfish Sushi To Die For"),
+        "Location row missing: {out}"
+    );
     // Posted at should contain absolute date + relative time in parentheses
-    assert!(out.contains("Posted at    "), "Posted at row missing: {out}");
-    assert!(out.contains("ago)"), "Posted at should contain relative time: {out}");
+    assert!(
+        out.contains("Posted at    "),
+        "Posted at row missing: {out}"
+    );
+    assert!(
+        out.contains("ago)"),
+        "Posted at should contain relative time: {out}"
+    );
     // Should NOT use colon format
     assert!(!out.contains("ID: "), "Should not use colon format: {out}");
 }
@@ -214,19 +237,55 @@ fn whois_default_format_uses_column_layout_with_last_update() {
     // Bio          Vagabond.
     // Location     San Francisco
     // URL          https://github.com/sferik
-    assert!(out.contains("ID           7505382"), "ID row missing: {out}");
-    assert!(out.contains("Screen name  @sferik"), "Screen name row missing: {out}");
-    assert!(out.contains("Name         Erik Michaels-Ober"), "Name row missing: {out}");
-    assert!(out.contains("Tweets       7,890"), "Tweets row missing: {out}");
-    assert!(out.contains("Favorites    3,755"), "Favorites row missing: {out}");
-    assert!(out.contains("Listed       118"), "Listed row missing: {out}");
-    assert!(out.contains("Following    212"), "Following row missing: {out}");
-    assert!(out.contains("Followers    2,262"), "Followers row missing: {out}");
-    assert!(out.contains("Bio          Vagabond."), "Bio row missing: {out}");
-    assert!(out.contains("Location     San Francisco"), "Location row missing: {out}");
-    assert!(out.contains("URL          https://github.com/sferik"), "URL row missing: {out}");
+    assert!(
+        out.contains("ID           7505382"),
+        "ID row missing: {out}"
+    );
+    assert!(
+        out.contains("Screen name  @sferik"),
+        "Screen name row missing: {out}"
+    );
+    assert!(
+        out.contains("Name         Erik Michaels-Ober"),
+        "Name row missing: {out}"
+    );
+    assert!(
+        out.contains("Tweets       7,890"),
+        "Tweets row missing: {out}"
+    );
+    assert!(
+        out.contains("Favorites    3,755"),
+        "Favorites row missing: {out}"
+    );
+    assert!(
+        out.contains("Listed       118"),
+        "Listed row missing: {out}"
+    );
+    assert!(
+        out.contains("Following    212"),
+        "Following row missing: {out}"
+    );
+    assert!(
+        out.contains("Followers    2,262"),
+        "Followers row missing: {out}"
+    );
+    assert!(
+        out.contains("Bio          Vagabond."),
+        "Bio row missing: {out}"
+    );
+    assert!(
+        out.contains("Location     San Francisco"),
+        "Location row missing: {out}"
+    );
+    assert!(
+        out.contains("URL          https://github.com/sferik"),
+        "URL row missing: {out}"
+    );
     // Last update field should be present (from pinned tweet)
-    assert!(out.contains("Last update  "), "Last update row missing: {out}");
+    assert!(
+        out.contains("Last update  "),
+        "Last update row missing: {out}"
+    );
     assert!(
         out.contains("You're near my home town"),
         "Last update should contain tweet text: {out}"
@@ -250,8 +309,14 @@ fn whois_no_status_excludes_last_update() {
     let (code, out, err) = run_cmd_with_profile(&["whois", "sferik"], &mut backend);
 
     assert_success(code, &err);
-    assert!(out.contains("ID           7505382"), "ID row missing: {out}");
-    assert!(!out.contains("Last update"), "Last update should not appear without status: {out}");
+    assert!(
+        out.contains("ID           7505382"),
+        "ID row missing: {out}"
+    );
+    assert!(
+        !out.contains("Last update"),
+        "Last update should not appear without status: {out}"
+    );
 }
 
 #[test]
