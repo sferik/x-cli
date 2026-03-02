@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.description = "A command-line power tool for Twitter."
   spec.email = "sferik@gmail.com"
   spec.executables = Dir["bin/*"].map { |f| File.basename(f) }
-  spec.files = %w[CONTRIBUTING.md LICENSE.md README.md t.gemspec] + Dir["bin/*"] + Dir["lib/**/*.rb"]
+  spec.files = %w[CHANGELOG.md CONTRIBUTING.md LICENSE.md README.md t.gemspec] + Dir["bin/*"] + Dir["lib/**/*.rb"]
   spec.homepage = "http://sferik.github.com/t/"
   spec.licenses = %w[MIT]
 

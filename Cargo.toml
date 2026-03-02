@@ -1,6 +1,6 @@
 [package]
 name = "x"
-version = "5.0.0"
+version = "6.0.0"
 edition = "2024"
 description = "Rust rewrite of the t Twitter CLI with legacy-compatible command surface"
 license = "MIT"
