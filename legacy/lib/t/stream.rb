@@ -124,7 +124,10 @@ module T
     def stream_tweets(endpoint)
       bearer_client.stream("#{endpoint}?#{STREAM_FIELDS}") do |json|
         tweet = extract_tweets(json).first
-        yield tweet if tweet
+        next unless tweet
+
+        yield tweet
+        $stdout.flush
       end
     end
 
