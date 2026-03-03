@@ -1375,8 +1375,36 @@ fn execute_remote_command(
         }
         [first, second] if first == "delete" && second == "status" => {
             ensure_min_args(path, args, 1)?;
+            let force = opt_bool(leaf, "force");
             for id in resolve_id_list(args) {
-                let _ = backend.delete_json(&format!("/2/tweets/{id}"), Vec::new())?;
+                if force {
+                    let _ = backend.delete_json(&format!("/2/tweets/{id}"), Vec::new())?;
+                    writeln!(out, "@{active_name} deleted Tweet {id}.").ok();
+                } else {
+                    let response =
+                        backend.get_json_oauth2(&format!("/2/tweets/{id}"), v2_tweet_params())?;
+                    let status = extract_tweets(&response)
+                        .into_iter()
+                        .next()
+                        .unwrap_or(response);
+                    let screen_name = status
+                        .get("user")
+                        .and_then(|u| u.get("screen_name"))
+                        .and_then(Value::as_str)
+                        .unwrap_or("unknown");
+                    let text = tweet_text(&status, false);
+                    let answer = prompt(
+                        out,
+                        &format!(
+                            "Are you sure you want to permanently delete @{screen_name}'s status: \"{text}\"? [y/N]"
+                        ),
+                    )?;
+                    if !answer.eq_ignore_ascii_case("y") {
+                        continue;
+                    }
+                    let _ = backend.delete_json(&format!("/2/tweets/{id}"), Vec::new())?;
+                    writeln!(out, "@{active_name} deleted the Tweet: \"{text}\"").ok();
+                }
             }
             Ok(0)
         }
@@ -4274,16 +4302,8 @@ fn ip_geolocation() -> Result<(f64, f64, String, String, String), CommandError> 
         .and_then(Value::as_str)
         .unwrap_or_default();
     let mut parts = loc.split(',');
-    let lat: f64 = parts
-        .next()
-        .unwrap_or("0")
-        .parse()
-        .unwrap_or(0.0);
-    let lng: f64 = parts
-        .next()
-        .unwrap_or("0")
-        .parse()
-        .unwrap_or(0.0);
+    let lat: f64 = parts.next().unwrap_or("0").parse().unwrap_or(0.0);
+    let lng: f64 = parts.next().unwrap_or("0").parse().unwrap_or(0.0);
     let city = ipinfo_body
         .get("city")
         .and_then(Value::as_str)
@@ -4317,9 +4337,7 @@ fn geocode_address(address: &str) -> Result<(f64, f64), CommandError> {
     let first = response
         .as_array()
         .and_then(|arr: &Vec<Value>| arr.first())
-        .ok_or_else(|| {
-            CommandError::Other(format!("Could not geocode address: {address}"))
-        })?;
+        .ok_or_else(|| CommandError::Other(format!("Could not geocode address: {address}")))?;
 
     let lat: f64 = first
         .get("lat")
@@ -4344,9 +4362,11 @@ fn resolve_geo_coordinates(args: &[String]) -> Result<(f64, f64), CommandError> 
     } else {
         let address = args.join(" ");
         if let Some((lat_str, lng_str)) = address.split_once(',')
-            && let (Ok(lat), Ok(lng)) = (lat_str.trim().parse::<f64>(), lng_str.trim().parse::<f64>()) {
-                return Ok((lat, lng));
-            }
+            && let (Ok(lat), Ok(lng)) =
+                (lat_str.trim().parse::<f64>(), lng_str.trim().parse::<f64>())
+        {
+            return Ok((lat, lng));
+        }
         geocode_address(&address)
     }
 }
@@ -5546,9 +5566,6 @@ mod tests {
     }
 
     fn profile_path() -> String {
-        format!(
-            "{}/legacy/test/fixtures/.trc",
-            env!("CARGO_MANIFEST_DIR")
-        )
+        format!("{}/legacy/test/fixtures/.trc", env!("CARGO_MANIFEST_DIR"))
     }
 }

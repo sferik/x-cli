@@ -403,7 +403,11 @@ fn trends_and_trend_locations_match_legacy_values() {
 #[test]
 fn place_displays_key_value_table() {
     let mut backend = MockBackend::new();
-    backend.enqueue_json_response("GET", "/1.1/geo/id/5a110d312052166f.json", fixture_json("place.json"));
+    backend.enqueue_json_response(
+        "GET",
+        "/1.1/geo/id/5a110d312052166f.json",
+        fixture_json("place.json"),
+    );
 
     let (code, out, err) = run_cmd_with_profile(&["place", "5a110d312052166f"], &mut backend);
     assert_success(code, &err);
@@ -417,9 +421,14 @@ fn place_displays_key_value_table() {
 #[test]
 fn place_csv_format() {
     let mut backend = MockBackend::new();
-    backend.enqueue_json_response("GET", "/1.1/geo/id/5a110d312052166f.json", fixture_json("place.json"));
+    backend.enqueue_json_response(
+        "GET",
+        "/1.1/geo/id/5a110d312052166f.json",
+        fixture_json("place.json"),
+    );
 
-    let (code, out, err) = run_cmd_with_profile(&["place", "--csv", "5a110d312052166f"], &mut backend);
+    let (code, out, err) =
+        run_cmd_with_profile(&["place", "--csv", "5a110d312052166f"], &mut backend);
     assert_success(code, &err);
     assert!(out.contains("ID,Type,Name,Country"));
     assert!(out.contains("5a110d312052166f,city,\"San Francisco, CA\",United States"));
@@ -428,9 +437,14 @@ fn place_csv_format() {
 #[test]
 fn nearby_places_displays_results() {
     let mut backend = MockBackend::new();
-    backend.enqueue_json_response("GET", "/1.1/geo/reverse_geocode.json", fixture_json("geo_reverse_geocode.json"));
+    backend.enqueue_json_response(
+        "GET",
+        "/1.1/geo/reverse_geocode.json",
+        fixture_json("geo_reverse_geocode.json"),
+    );
 
-    let (code, out, err) = run_cmd_with_profile(&["nearby_places", "37.7697,-122.3933"], &mut backend);
+    let (code, out, err) =
+        run_cmd_with_profile(&["nearby_places", "37.7697,-122.3933"], &mut backend);
     assert_success(code, &err);
     assert!(out.contains("San Francisco, CA"));
     assert!(out.contains("SoMa, San Francisco"));
@@ -439,9 +453,16 @@ fn nearby_places_displays_results() {
 #[test]
 fn nearby_places_csv_format() {
     let mut backend = MockBackend::new();
-    backend.enqueue_json_response("GET", "/1.1/geo/reverse_geocode.json", fixture_json("geo_reverse_geocode.json"));
+    backend.enqueue_json_response(
+        "GET",
+        "/1.1/geo/reverse_geocode.json",
+        fixture_json("geo_reverse_geocode.json"),
+    );
 
-    let (code, out, err) = run_cmd_with_profile(&["nearby_places", "--csv", "37.7697,-122.3933"], &mut backend);
+    let (code, out, err) = run_cmd_with_profile(
+        &["nearby_places", "--csv", "37.7697,-122.3933"],
+        &mut backend,
+    );
     assert_success(code, &err);
     assert!(out.contains("ID,Type,Name,Country"));
     assert!(out.contains("5a110d312052166f"));
@@ -451,9 +472,16 @@ fn nearby_places_csv_format() {
 #[test]
 fn nearby_places_long_format() {
     let mut backend = MockBackend::new();
-    backend.enqueue_json_response("GET", "/1.1/geo/reverse_geocode.json", fixture_json("geo_reverse_geocode.json"));
+    backend.enqueue_json_response(
+        "GET",
+        "/1.1/geo/reverse_geocode.json",
+        fixture_json("geo_reverse_geocode.json"),
+    );
 
-    let (code, out, err) = run_cmd_with_profile(&["nearby_places", "--long", "37.7697,-122.3933"], &mut backend);
+    let (code, out, err) = run_cmd_with_profile(
+        &["nearby_places", "--long", "37.7697,-122.3933"],
+        &mut backend,
+    );
     assert_success(code, &err);
     assert!(out.contains("5a110d312052166f"));
     assert!(out.contains("San Francisco, CA"));
@@ -462,9 +490,16 @@ fn nearby_places_long_format() {
 #[test]
 fn places_search_displays_results() {
     let mut backend = MockBackend::new();
-    backend.enqueue_json_response("GET", "/1.1/geo/search.json", fixture_json("geo_search.json"));
+    backend.enqueue_json_response(
+        "GET",
+        "/1.1/geo/search.json",
+        fixture_json("geo_search.json"),
+    );
 
-    let (code, out, err) = run_cmd_with_profile(&["places", "San Francisco", "37.7697,-122.3933"], &mut backend);
+    let (code, out, err) = run_cmd_with_profile(
+        &["places", "San Francisco", "37.7697,-122.3933"],
+        &mut backend,
+    );
     assert_success(code, &err);
     assert!(out.contains("San Francisco, CA"));
     assert!(out.contains("SoMa, San Francisco"));
@@ -473,9 +508,16 @@ fn places_search_displays_results() {
 #[test]
 fn places_search_csv_format() {
     let mut backend = MockBackend::new();
-    backend.enqueue_json_response("GET", "/1.1/geo/search.json", fixture_json("geo_search.json"));
+    backend.enqueue_json_response(
+        "GET",
+        "/1.1/geo/search.json",
+        fixture_json("geo_search.json"),
+    );
 
-    let (code, out, err) = run_cmd_with_profile(&["places", "--csv", "San Francisco", "37.7697,-122.3933"], &mut backend);
+    let (code, out, err) = run_cmd_with_profile(
+        &["places", "--csv", "San Francisco", "37.7697,-122.3933"],
+        &mut backend,
+    );
     assert_success(code, &err);
     assert!(out.contains("ID,Type,Name,Country"));
     assert!(out.contains("5a110d312052166f"));
