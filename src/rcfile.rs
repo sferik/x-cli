@@ -17,7 +17,7 @@ pub enum RcFileError {
     Io(#[from] std::io::Error),
     /// YAML serialization/deserialization failure.
     #[error("YAML parse error: {0}")]
-    Yaml(#[from] serde_yaml::Error),
+    Yaml(#[from] serde_yaml_ng::Error),
     /// The requested username did not match any configured profile.
     #[error("Username {0} is not found.")]
     UsernameNotFound(String),
@@ -94,7 +94,7 @@ impl RcFile {
 
         let file = File::open(resolved_path)?;
         let reader = BufReader::new(file);
-        let data = serde_yaml::from_reader(reader)?;
+        let data = serde_yaml_ng::from_reader(reader)?;
 
         Ok(Self { data })
     }
@@ -119,14 +119,14 @@ impl RcFile {
                 .mode(0o600)
                 .open(path)?;
             let writer = BufWriter::new(file);
-            serde_yaml::to_writer(writer, &self.data)?;
+            serde_yaml_ng::to_writer(writer, &self.data)?;
         }
 
         #[cfg(not(unix))]
         {
             let file = File::create(path)?;
             let writer = BufWriter::new(file);
-            serde_yaml::to_writer(writer, &self.data)?;
+            serde_yaml_ng::to_writer(writer, &self.data)?;
         }
 
         Ok(())
