@@ -718,12 +718,15 @@ class TestStream < TTestCase
       @stream_cmd.send(:stream_tweets, "tweets/sample/stream") { |_t| nil }
     end
 
-    assert_match(/tweet\.fields=.*&expansions=author_id&user\.fields=/, received_url)
+    assert_match(/tweet\.fields=.*referenced_tweets.*&expansions=author_id,referenced_tweets\.id&user\.fields=/, received_url)
   end
 
   # setup_stream_rules / remove_stream_rules
 
   def test_setup_stream_rules_posts_add_request
+    stub_v2_get("tweets/search/stream/rules").to_return(
+      body: '{"data":[]}', headers: V2_JSON_HEADERS
+    )
     stub_v2_post("tweets/search/stream/rules").to_return(
       body: '{"data":[{"id":"42","value":"ruby OR rails"}],"meta":{"summary":{"created":1}}}',
       headers: V2_JSON_HEADERS
@@ -734,11 +737,33 @@ class TestStream < TTestCase
       rule_ids = @stream_cmd.send(:setup_stream_rules, [{value: "ruby OR rails"}])
     end
 
+    assert_requested(:get, v2_pattern("tweets/search/stream/rules"), times: 1)
     assert_requested(:post, v2_pattern("tweets/search/stream/rules"), times: 1)
     assert_equal ["42"], rule_ids
   end
 
+  def test_setup_stream_rules_clears_existing_rules_before_adding
+    stub_v2_get("tweets/search/stream/rules").to_return(
+      body: '{"data":[{"id":"old-1","value":"stale query"}]}', headers: V2_JSON_HEADERS
+    )
+    stub_v2_post("tweets/search/stream/rules").to_return(
+      body: '{"data":[{"id":"new-1","value":"ruby"}]}', headers: V2_JSON_HEADERS
+    )
+    bearer = X::Client.new(bearer_token: "test-token")
+    rule_ids = nil
+    @stream_cmd.stub(:bearer_client, bearer) do
+      rule_ids = @stream_cmd.send(:setup_stream_rules, [{value: "ruby"}])
+    end
+
+    assert_requested(:get, v2_pattern("tweets/search/stream/rules"), times: 1)
+    assert_requested(:post, v2_pattern("tweets/search/stream/rules"), times: 2)
+    assert_equal ["new-1"], rule_ids
+  end
+
   def test_setup_stream_rules_returns_empty_when_no_data
+    stub_v2_get("tweets/search/stream/rules").to_return(
+      body: '{"data":[]}', headers: V2_JSON_HEADERS
+    )
     stub_v2_post("tweets/search/stream/rules").to_return(
       body: '{"meta":{"summary":{"created":1}}}',
       headers: V2_JSON_HEADERS

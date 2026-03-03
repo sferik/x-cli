@@ -128,7 +128,14 @@ module T
       end
     end
 
+    def clear_stream_rules
+      response = bearer_client.get(t_normalize_path("tweets/search/stream/rules"))
+      existing_ids = (response["data"] || []).filter_map { |rule| rule["id"] }
+      remove_stream_rules(existing_ids)
+    end
+
     def setup_stream_rules(rules)
+      clear_stream_rules
       response = t_post_bearer_json("tweets/search/stream/rules", add: rules)
       (response["data"] || []).filter_map { |rule| rule["id"] }
     end

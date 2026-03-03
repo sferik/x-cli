@@ -2062,6 +2062,9 @@ class TestCLI < TTestCase
   end
 
   def test_matrix_installs_and_removes_rules
+    stub_v2_get("tweets/search/stream/rules").to_return(
+      body: '{"data":[{"id":"old-1","value":"stale"}]}', headers: V2_JSON_HEADERS
+    )
     stub_v2_post("tweets/search/stream/rules").to_return(
       body: '{"data":[{"id":"42","value":"の lang:ja"}]}', headers: V2_JSON_HEADERS
     )
@@ -2070,8 +2073,8 @@ class TestCLI < TTestCase
       @cli.matrix
     end
 
-    assert_requested(:post, v2_pattern("tweets/search/stream/rules"), times: 2)
-    assert_not_requested(:get, v2_pattern("tweets/search/stream/rules"))
+    assert_requested(:get, v2_pattern("tweets/search/stream/rules"), times: 1)
+    assert_requested(:post, v2_pattern("tweets/search/stream/rules"), times: 3)
   end
 
   def build_matrix_bearer_client

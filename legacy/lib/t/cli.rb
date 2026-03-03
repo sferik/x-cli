@@ -898,8 +898,15 @@ module T
   private
 
     def install_matrix_stream_rules
+      clear_matrix_stream_rules
       response = t_post_bearer_json("tweets/search/stream/rules", add: [{value: "の lang:ja"}])
       (response["data"] || []).filter_map { |rule| rule["id"] }
+    end
+
+    def clear_matrix_stream_rules
+      response = bearer_client.get(t_normalize_path("tweets/search/stream/rules"))
+      existing_ids = (response["data"] || []).filter_map { |rule| rule["id"] }
+      remove_matrix_stream_rules(existing_ids)
     end
 
     def remove_matrix_stream_rules(rule_ids)

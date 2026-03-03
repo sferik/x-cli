@@ -1012,6 +1012,32 @@ class TestRequestableAPI < TTestCase
     assert_equal "full version", result["full_text"]
   end
 
+  def test_normalize_v2_tweet_expands_truncated_retweet_text
+    tweet = {
+      "id" => "1", "text" => "RT @alice: truncated…",
+      "author_id" => "200",
+      "referenced_tweets" => [{"type" => "retweeted", "id" => "99"}]
+    }
+    users = {"200" => {"id" => "200", "username" => "bob"}, "100" => {"id" => "100", "username" => "alice"}}
+    tweets = {"99" => {"id" => "99", "text" => "full original retweet text", "author_id" => "100"}}
+    result = @probe.send(:normalize_v2_tweet, tweet, users, {}, tweets)
+
+    assert_equal "RT @alice: full original retweet text", result["text"]
+    assert_equal "RT @alice: full original retweet text", result["full_text"]
+  end
+
+  def test_normalize_v2_tweet_keeps_original_text_when_referenced_tweet_has_no_text
+    tweet = {
+      "id" => "1", "text" => "RT @alice: truncated…",
+      "author_id" => "200",
+      "referenced_tweets" => [{"type" => "retweeted", "id" => "99"}]
+    }
+    tweets = {"99" => {"id" => "99", "author_id" => "100"}}
+    result = @probe.send(:normalize_v2_tweet, tweet, {}, {}, tweets)
+
+    assert_equal "RT @alice: truncated…", result["text"]
+  end
+
   # ---------- normalize_v2_user ----------
 
   def test_normalize_v2_user_returns_as_is_with_screen_name

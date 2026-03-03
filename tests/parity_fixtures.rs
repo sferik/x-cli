@@ -612,6 +612,12 @@ fn stream_subcommand_streams_events() {
         "/2/users/7505382/following",
         fixture_json("friends_ids.json"),
     );
+    // clear_filtered_stream_rules: GET existing rules (none)
+    backend.enqueue_json_response(
+        "GET_OAUTH2",
+        "/2/tweets/search/stream/rules",
+        serde_json::json!({"data": []}),
+    );
     backend.enqueue_json_response(
         "POST_JSON_OAUTH2",
         "/2/tweets/search/stream/rules",
@@ -733,6 +739,12 @@ fn timeline_paginates_when_number_exceeds_single_page() {
 #[test]
 fn stream_search_uses_v2_filtered_stream_rules_lifecycle() {
     let mut backend = MockBackend::new();
+    // clear_filtered_stream_rules: GET existing rules (none)
+    backend.enqueue_json_response(
+        "GET_OAUTH2",
+        "/2/tweets/search/stream/rules",
+        serde_json::json!({"data": []}),
+    );
     backend.enqueue_json_response(
         "POST_JSON_OAUTH2",
         "/2/tweets/search/stream/rules",
@@ -768,14 +780,16 @@ fn stream_search_uses_v2_filtered_stream_rules_lifecycle() {
     assert!(out.contains("ID,Posted at,Screen name,Text"));
 
     let calls = backend.calls();
-    assert_eq!(calls[0].method, "POST_JSON_OAUTH2");
+    assert_eq!(calls[0].method, "GET_OAUTH2");
     assert_eq!(calls[0].path, "/2/tweets/search/stream/rules");
-    assert_eq!(calls[1].method, "STREAM");
-    assert_eq!(calls[1].path, "/2/tweets/search/stream");
-    assert_eq!(calls[2].method, "POST_JSON_OAUTH2");
-    assert_eq!(calls[2].path, "/2/tweets/search/stream/rules");
+    assert_eq!(calls[1].method, "POST_JSON_OAUTH2");
+    assert_eq!(calls[1].path, "/2/tweets/search/stream/rules");
+    assert_eq!(calls[2].method, "STREAM");
+    assert_eq!(calls[2].path, "/2/tweets/search/stream");
+    assert_eq!(calls[3].method, "POST_JSON_OAUTH2");
+    assert_eq!(calls[3].path, "/2/tweets/search/stream/rules");
 
-    let add_payload = serde_json::from_str::<Value>(&calls[0].params[0].1)
+    let add_payload = serde_json::from_str::<Value>(&calls[1].params[0].1)
         .expect("rule add payload should be valid json");
     let first_rule = add_payload
         .get("add")

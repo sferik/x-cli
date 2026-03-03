@@ -3258,10 +3258,30 @@ fn filtered_stream_rule_tag(index: usize) -> String {
     format!("x-rust-{millis}-{index}")
 }
 
+fn clear_filtered_stream_rules(backend: &mut dyn Backend) -> Result<(), CommandError> {
+    let response =
+        get_json_oauth2_with_retry(backend, "/2/tweets/search/stream/rules", Vec::new())?;
+    let ids: Vec<String> = response
+        .get("data")
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default()
+        .into_iter()
+        .filter_map(|rule| {
+            rule.get("id")
+                .and_then(Value::as_str)
+                .map(ToString::to_string)
+        })
+        .collect();
+    remove_filtered_stream_rules(backend, &ids)
+}
+
 fn install_filtered_stream_rules(
     backend: &mut dyn Backend,
     terms: &[String],
 ) -> Result<Vec<String>, CommandError> {
+    clear_filtered_stream_rules(backend)?;
+
     let rule_values = build_stream_rule_values(terms);
     if rule_values.is_empty() {
         return Ok(Vec::new());
@@ -5201,6 +5221,12 @@ mod tests {
     #[test]
     fn matrix_streams_from_filtered_stream() {
         let mut backend = MockBackend::new();
+        // clear_filtered_stream_rules: GET existing rules (none)
+        backend.enqueue_json_response(
+            "GET_OAUTH2",
+            "/2/tweets/search/stream/rules",
+            json!({"data": []}),
+        );
         // install_filtered_stream_rules: POST to rules endpoint, returns rule ID
         backend.enqueue_json_response(
             "POST_JSON_OAUTH2",
