@@ -42,6 +42,7 @@ const LIST_HEADINGS: [&str; 8] = [
     "Mode",
     "Description",
 ];
+const COLLECTION_HEADINGS: [&str; 4] = ["ID", "Name", "Description", "URL"];
 const PLACE_HEADINGS: [&str; 4] = ["ID", "Type", "Name", "Country"];
 const TREND_HEADINGS: [&str; 5] = ["WOEID", "Parent ID", "Type", "Name", "Country"];
 const USER_HEADINGS: [&str; 16] = [
@@ -1116,6 +1117,12 @@ fn execute_remote_command(
             print_lists(&lists, leaf, out);
             Ok(0)
         }
+        [single] if single == "collections" => {
+            let user = arg_or_active_name(args, &active_name);
+            let collections = fetch_user_collections(backend, &user, opt_bool(leaf, "id"))?;
+            print_collections(&collections, leaf, out);
+            Ok(0)
+        }
         [single] if single == "trends" => {
             let mut params = vec![("max_trends".to_string(), "50".to_string())];
             if opt_bool(leaf, "exclude-hashtags") {
@@ -1415,11 +1422,136 @@ fn execute_remote_command(
             }
             Ok(0)
         }
+        [first, second] if first == "delete" && second == "collection" => {
+            ensure_min_args(path, args, 1)?;
+            let default_owner = active_profile_name_or_unknown(&rcfile);
+            let collection_id =
+                resolve_collection_id(backend, &args[0], opt_bool(leaf, "id"), default_owner)?;
+            let _ = post_json_with_retry(
+                backend,
+                "/1.1/collections/destroy.json",
+                vec![("id".to_string(), collection_id)],
+            )?;
+            writeln!(out, "@{active_name} deleted the collection.").ok();
+            Ok(0)
+        }
         [first, second] if first == "delete" && second == "list" => {
             ensure_min_args(path, args, 1)?;
             let default_owner = active_profile_name_or_unknown(&rcfile);
             let list_id = resolve_list_id(backend, &args[0], opt_bool(leaf, "id"), default_owner)?;
             let _ = backend.delete_json(&format!("/2/lists/{list_id}"), Vec::new())?;
+            Ok(0)
+        }
+        [first, second] if first == "collection" && second == "create" => {
+            ensure_min_args(path, args, 1)?;
+            let mut params = vec![("name".to_string(), args[0].clone())];
+            if let Some(desc) = args.get(1) {
+                params.push(("description".to_string(), desc.clone()));
+            }
+            if let Some(url) = opt_string(leaf, "url") {
+                params.push(("url".to_string(), url.to_string()));
+            }
+            if let Some(order) = opt_string(leaf, "timeline_order") {
+                params.push(("timeline_order".to_string(), order.to_string()));
+            }
+            let _ = post_json_with_retry(backend, "/1.1/collections/create.json", params)?;
+            writeln!(
+                out,
+                "@{} created the collection \"{}\".",
+                active_name, args[0]
+            )
+            .ok();
+            Ok(0)
+        }
+        [first, second] if first == "collection" && second == "add" => {
+            ensure_min_args(path, args, 2)?;
+            let default_owner = active_profile_name_or_unknown(&rcfile);
+            let collection_id =
+                resolve_collection_id(backend, &args[0], opt_bool(leaf, "id"), default_owner)?;
+            let tweet_ids = resolve_id_list(&args[1..]);
+            for tweet_id in &tweet_ids {
+                let _ = post_json_with_retry(
+                    backend,
+                    "/1.1/collections/entries/add.json",
+                    vec![
+                        ("id".to_string(), collection_id.clone()),
+                        ("tweet_id".to_string(), tweet_id.clone()),
+                    ],
+                )?;
+            }
+            writeln!(
+                out,
+                "@{active_name} added {} to the collection.",
+                pluralize(tweet_ids.len(), "tweet", None)
+            )
+            .ok();
+            Ok(0)
+        }
+        [first, second] if first == "collection" && second == "entries" => {
+            ensure_min_args(path, args, 1)?;
+            let default_owner = active_profile_name_or_unknown(&rcfile);
+            let collection_id =
+                resolve_collection_id(backend, &args[0], opt_bool(leaf, "id"), default_owner)?;
+            let number = opt_usize(leaf, "number").unwrap_or(DEFAULT_NUM_RESULTS);
+            let tweets = collect_collection_entries(backend, &collection_id, number)?;
+            print_tweets(&tweets, leaf, out, &context.color);
+            Ok(0)
+        }
+        [first, second] if first == "collection" && second == "information" => {
+            ensure_min_args(path, args, 1)?;
+            let default_owner = active_profile_name_or_unknown(&rcfile);
+            let collection_id =
+                resolve_collection_id(backend, &args[0], opt_bool(leaf, "id"), default_owner)?;
+            let response = get_json_with_retry(
+                backend,
+                "/1.1/collections/show.json",
+                vec![("id".to_string(), collection_id.clone())],
+            )?;
+            let collection = extract_collection_metadata(&response, &collection_id);
+            print_collection_information(&collection, leaf, out);
+            Ok(0)
+        }
+        [first, second] if first == "collection" && second == "remove" => {
+            ensure_min_args(path, args, 2)?;
+            let default_owner = active_profile_name_or_unknown(&rcfile);
+            let collection_id =
+                resolve_collection_id(backend, &args[0], opt_bool(leaf, "id"), default_owner)?;
+            let tweet_ids = resolve_id_list(&args[1..]);
+            for tweet_id in &tweet_ids {
+                let _ = post_json_with_retry(
+                    backend,
+                    "/1.1/collections/entries/remove.json",
+                    vec![
+                        ("id".to_string(), collection_id.clone()),
+                        ("tweet_id".to_string(), tweet_id.clone()),
+                    ],
+                )?;
+            }
+            writeln!(
+                out,
+                "@{active_name} removed {} from the collection.",
+                pluralize(tweet_ids.len(), "tweet", None)
+            )
+            .ok();
+            Ok(0)
+        }
+        [first, second] if first == "collection" && second == "update" => {
+            ensure_min_args(path, args, 1)?;
+            let default_owner = active_profile_name_or_unknown(&rcfile);
+            let collection_id =
+                resolve_collection_id(backend, &args[0], opt_bool(leaf, "id"), default_owner)?;
+            let mut params = vec![("id".to_string(), collection_id)];
+            if let Some(name) = opt_string(leaf, "name") {
+                params.push(("name".to_string(), name.to_string()));
+            }
+            if let Some(desc) = opt_string(leaf, "description") {
+                params.push(("description".to_string(), desc.to_string()));
+            }
+            if let Some(url) = opt_string(leaf, "url") {
+                params.push(("url".to_string(), url.to_string()));
+            }
+            let _ = post_json_with_retry(backend, "/1.1/collections/update.json", params)?;
+            writeln!(out, "@{active_name} updated the collection.").ok();
             Ok(0)
         }
         [first, second] if first == "list" && second == "create" => {
@@ -2622,6 +2754,166 @@ fn print_list_information(list: &Value, leaf: &ArgMatches, out: &mut dyn Write) 
     }
 }
 
+fn print_collections(collections: &[Value], leaf: &ArgMatches, out: &mut dyn Write) {
+    let mut collections = collections.to_vec();
+    if !opt_bool(leaf, "unsorted") {
+        let sort = opt_string(leaf, "sort").unwrap_or("name");
+        match sort {
+            "since" => collections.sort_by_key(|c| {
+                c.get("created_at")
+                    .and_then(Value::as_str)
+                    .unwrap_or_default()
+                    .to_string()
+            }),
+            _ => collections.sort_by_key(|c| {
+                c.get("name")
+                    .and_then(Value::as_str)
+                    .unwrap_or_default()
+                    .to_ascii_lowercase()
+            }),
+        }
+    }
+    if opt_bool(leaf, "reverse") {
+        collections.reverse();
+    }
+
+    if opt_bool(leaf, "csv") {
+        if !collections.is_empty() {
+            writeln!(out, "{}", csv_row(COLLECTION_HEADINGS)).ok();
+        }
+        for c in collections {
+            let row = vec![
+                value_id(&c).unwrap_or_default(),
+                c.get("name").and_then(value_to_string).unwrap_or_default(),
+                c.get("description")
+                    .and_then(value_to_string)
+                    .unwrap_or_default(),
+                c.get("collection_url")
+                    .or_else(|| c.get("url"))
+                    .and_then(value_to_string)
+                    .unwrap_or_default(),
+            ];
+            writeln!(out, "{}", csv_row(row)).ok();
+        }
+        return;
+    }
+
+    if opt_bool(leaf, "long") {
+        let mut rows = Vec::new();
+        for c in collections {
+            rows.push(vec![
+                value_id(&c).unwrap_or_default(),
+                c.get("name").and_then(value_to_string).unwrap_or_default(),
+                c.get("description")
+                    .and_then(value_to_string)
+                    .unwrap_or_default(),
+                c.get("collection_url")
+                    .or_else(|| c.get("url"))
+                    .and_then(value_to_string)
+                    .unwrap_or_default(),
+            ]);
+        }
+        print_table(&COLLECTION_HEADINGS, &rows, out);
+        return;
+    }
+
+    for c in collections {
+        let name = c.get("name").and_then(Value::as_str).unwrap_or_default();
+        let id = value_id(&c).unwrap_or_default();
+        writeln!(out, "{name} ({id})").ok();
+    }
+}
+
+fn print_collection_information(collection: &Value, leaf: &ArgMatches, out: &mut dyn Write) {
+    if opt_bool(leaf, "csv") {
+        let headings = [
+            "ID",
+            "Name",
+            "Description",
+            "URL",
+            "Timeline order",
+            "Visibility",
+        ];
+        writeln!(out, "{}", csv_row(headings)).ok();
+        writeln!(
+            out,
+            "{}",
+            csv_row([
+                value_id(collection).unwrap_or_default(),
+                collection
+                    .get("name")
+                    .and_then(value_to_string)
+                    .unwrap_or_default(),
+                collection
+                    .get("description")
+                    .and_then(value_to_string)
+                    .unwrap_or_default(),
+                collection
+                    .get("collection_url")
+                    .or_else(|| collection.get("url"))
+                    .and_then(value_to_string)
+                    .unwrap_or_default(),
+                collection
+                    .get("timeline_order")
+                    .and_then(value_to_string)
+                    .unwrap_or_default(),
+                collection
+                    .get("visibility")
+                    .and_then(value_to_string)
+                    .unwrap_or_default(),
+            ])
+        )
+        .ok();
+        return;
+    }
+
+    let rows = [
+        ("ID", value_id(collection).unwrap_or_default()),
+        (
+            "Name",
+            collection
+                .get("name")
+                .and_then(value_to_string)
+                .unwrap_or_default(),
+        ),
+        (
+            "Description",
+            collection
+                .get("description")
+                .and_then(value_to_string)
+                .unwrap_or_default(),
+        ),
+        (
+            "URL",
+            collection
+                .get("collection_url")
+                .or_else(|| collection.get("url"))
+                .and_then(value_to_string)
+                .unwrap_or_default(),
+        ),
+        (
+            "Timeline order",
+            collection
+                .get("timeline_order")
+                .and_then(value_to_string)
+                .unwrap_or_default(),
+        ),
+        (
+            "Visibility",
+            collection
+                .get("visibility")
+                .and_then(value_to_string)
+                .unwrap_or_default(),
+        ),
+    ];
+
+    for (key, value) in rows {
+        if !value.is_empty() {
+            writeln!(out, "{key}: {value}").ok();
+        }
+    }
+}
+
 fn print_message(out: &mut dyn Write, from_user: &str, message: &str) {
     writeln!(out, "   @{}", from_user).ok();
     for line in wrap_text(message, 77) {
@@ -3608,6 +3900,221 @@ fn resolve_list_id(
     Ok(matched
         .and_then(|list| value_id(&list))
         .unwrap_or(list_name))
+}
+
+/// Fetches all collections owned by a user using the v1.1 collections/list endpoint.
+fn fetch_user_collections(
+    backend: &mut dyn Backend,
+    user: &str,
+    by_id: bool,
+) -> Result<Vec<Value>, CommandError> {
+    let mut params = vec![user_query_param(by_id, user)];
+    let mut collections = Vec::new();
+
+    for _ in 0..MAX_PAGE {
+        let response = get_json_with_retry(backend, "/1.1/collections/list.json", params.clone())?;
+
+        // Extract timelines from objects.timelines map
+        let timelines = response
+            .get("objects")
+            .and_then(|o| o.get("timelines"))
+            .and_then(Value::as_object)
+            .cloned()
+            .unwrap_or_default();
+
+        // Use response.results to get the ordering
+        let results = response
+            .get("response")
+            .and_then(|r| r.get("results"))
+            .and_then(Value::as_array)
+            .cloned()
+            .unwrap_or_default();
+
+        for result in &results {
+            let timeline_id = result
+                .get("timeline_id")
+                .and_then(Value::as_str)
+                .unwrap_or_default();
+            if let Some(timeline) = timelines.get(timeline_id) {
+                let mut obj = timeline.clone();
+                if let Some(map) = obj.as_object_mut() {
+                    map.insert("id_str".to_string(), Value::String(timeline_id.to_string()));
+                }
+                collections.push(obj);
+            }
+        }
+
+        // Check for next cursor
+        let next_cursor = response
+            .get("response")
+            .and_then(|r| r.get("cursors"))
+            .and_then(|c| c.get("next_cursor"))
+            .and_then(Value::as_str)
+            .filter(|s| !s.is_empty());
+
+        let Some(cursor) = next_cursor else {
+            break;
+        };
+
+        params.retain(|(key, _)| key != "cursor");
+        params.push(("cursor".to_string(), cursor.to_string()));
+    }
+
+    Ok(collections)
+}
+
+/// Resolves a collection name or ID to a collection timeline ID (e.g. "custom-123456").
+fn resolve_collection_id(
+    backend: &mut dyn Backend,
+    name_or_id: &str,
+    by_id: bool,
+    default_owner: &str,
+) -> Result<String, CommandError> {
+    if by_id {
+        return Ok(name_or_id.to_string());
+    }
+
+    let collections = fetch_user_collections(backend, default_owner, false)?;
+    let matched = collections.into_iter().find(|c| {
+        c.get("name")
+            .and_then(Value::as_str)
+            .unwrap_or_default()
+            .eq_ignore_ascii_case(name_or_id)
+    });
+
+    Ok(matched
+        .and_then(|c| value_id(&c))
+        .unwrap_or_else(|| name_or_id.to_string()))
+}
+
+/// Extracts ordered tweets from the v1.1 collections/entries response format.
+fn extract_collection_entries(value: &Value) -> Vec<Value> {
+    let tweets_map = value
+        .get("objects")
+        .and_then(|o| o.get("tweets"))
+        .and_then(Value::as_object)
+        .cloned()
+        .unwrap_or_default();
+
+    let users_map = value
+        .get("objects")
+        .and_then(|o| o.get("users"))
+        .and_then(Value::as_object)
+        .cloned()
+        .unwrap_or_default();
+
+    let timeline = value
+        .get("response")
+        .and_then(|r| r.get("timeline"))
+        .and_then(Value::as_array)
+        .cloned()
+        .unwrap_or_default();
+
+    let mut tweets = Vec::new();
+    for entry in &timeline {
+        let tweet_id = entry
+            .get("tweet")
+            .and_then(|t| t.get("id"))
+            .and_then(Value::as_str)
+            .unwrap_or_default();
+
+        if let Some(mut tweet) = tweets_map.get(tweet_id).cloned() {
+            // Attach full user object from objects.users if available
+            let user_id = tweet
+                .get("user")
+                .and_then(Value::as_object)
+                .and_then(|u| u.get("id_str").or_else(|| u.get("id")))
+                .and_then(value_to_string);
+            if let Some(uid) = user_id
+                && let Some(user) = users_map.get(&uid)
+                && let Some(map) = tweet.as_object_mut()
+            {
+                map.insert("user".to_string(), user.clone());
+            }
+            tweets.push(tweet);
+        }
+    }
+    tweets
+}
+
+/// Collects tweets from a collection, handling pagination via position cursors.
+fn collect_collection_entries(
+    backend: &mut dyn Backend,
+    collection_id: &str,
+    limit: usize,
+) -> Result<Vec<Value>, CommandError> {
+    let mut tweets = Vec::new();
+    if limit == 0 {
+        return Ok(tweets);
+    }
+
+    let mut params = vec![
+        ("id".to_string(), collection_id.to_string()),
+        ("count".to_string(), limit.min(200).to_string()),
+    ];
+
+    for _ in 0..MAX_PAGE {
+        let response =
+            get_json_with_retry(backend, "/1.1/collections/entries.json", params.clone())?;
+
+        tweets.extend(extract_collection_entries(&response));
+
+        if tweets.len() >= limit {
+            break;
+        }
+
+        // Check if there are more entries
+        let was_truncated = response
+            .get("response")
+            .and_then(|r| r.get("position"))
+            .and_then(|p| p.get("was_truncated"))
+            .and_then(Value::as_bool)
+            .unwrap_or(false);
+
+        if !was_truncated {
+            break;
+        }
+
+        let min_position = response
+            .get("response")
+            .and_then(|r| r.get("position"))
+            .and_then(|p| p.get("min_position"))
+            .and_then(Value::as_str)
+            .map(ToString::to_string);
+
+        let Some(pos) = min_position else {
+            break;
+        };
+
+        params.retain(|(key, _)| key != "max_position");
+        params.push(("max_position".to_string(), pos));
+    }
+
+    tweets.truncate(limit);
+    Ok(tweets)
+}
+
+/// Extracts collection metadata from a collections/show response.
+fn extract_collection_metadata(value: &Value, collection_id: &str) -> Value {
+    let timelines = value
+        .get("objects")
+        .and_then(|o| o.get("timelines"))
+        .and_then(Value::as_object);
+
+    if let Some(timelines) = timelines
+        && let Some(timeline) = timelines.get(collection_id)
+    {
+        let mut obj = timeline.clone();
+        if let Some(map) = obj.as_object_mut() {
+            map.insert(
+                "id_str".to_string(),
+                Value::String(collection_id.to_string()),
+            );
+        }
+        return obj;
+    }
+
+    Value::Null
 }
 
 fn fetch_list_member_ids_v2(
@@ -5630,6 +6137,659 @@ mod tests {
         let output = String::from_utf8(stdout).expect("utf8");
         assert!(output.contains("test123"));
         assert!(output.contains("Test City, TS"));
+    }
+
+    #[test]
+    fn collection_create_calls_v1_api() {
+        let mut backend = MockBackend::new();
+        backend.enqueue_json_response(
+            "POST",
+            "/1.1/collections/create.json",
+            json!({"response": {"timeline_id": "custom-123"}}),
+        );
+
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+        let code = run_with_backend(
+            [
+                "x",
+                "collection",
+                "create",
+                "My Collection",
+                "A test collection",
+                "--profile",
+                &profile_path(),
+            ],
+            &mut stdout,
+            &mut stderr,
+            &mut backend,
+        );
+
+        assert_eq!(code, 0);
+        assert_eq!(backend.calls()[0].path, "/1.1/collections/create.json");
+        assert!(
+            backend.calls()[0]
+                .params
+                .contains(&("name".to_string(), "My Collection".to_string()))
+        );
+        assert!(
+            backend.calls()[0]
+                .params
+                .contains(&("description".to_string(), "A test collection".to_string()))
+        );
+        let output = String::from_utf8(stdout).expect("utf8");
+        assert!(output.contains("created the collection"));
+    }
+
+    #[test]
+    fn collection_add_calls_entries_add() {
+        let mut backend = MockBackend::new();
+        // Enqueue for resolve_collection_id -> fetch_user_collections
+        backend.enqueue_json_response(
+            "GET",
+            "/1.1/collections/list.json",
+            json!({
+                "objects": {
+                    "timelines": {
+                        "custom-999": {"name": "My Coll"}
+                    }
+                },
+                "response": {
+                    "results": [{"timeline_id": "custom-999"}],
+                    "cursors": {}
+                }
+            }),
+        );
+        backend.enqueue_json_response(
+            "POST",
+            "/1.1/collections/entries/add.json",
+            json!({"response": {"errors": []}}),
+        );
+
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+        let code = run_with_backend(
+            [
+                "x",
+                "collection",
+                "add",
+                "--id",
+                "custom-999",
+                "12345",
+                "--profile",
+                &profile_path(),
+            ],
+            &mut stdout,
+            &mut stderr,
+            &mut backend,
+        );
+
+        assert_eq!(code, 0);
+        assert_eq!(backend.calls()[0].path, "/1.1/collections/entries/add.json");
+        assert!(
+            backend.calls()[0]
+                .params
+                .contains(&("tweet_id".to_string(), "12345".to_string()))
+        );
+    }
+
+    #[test]
+    fn collection_entries_extracts_v1_tweets() {
+        let response = json!({
+            "objects": {
+                "tweets": {
+                    "111": {
+                        "id_str": "111",
+                        "text": "Hello world",
+                        "created_at": "Mon Apr 06 19:13:37 +0000 2011",
+                        "user": {"id_str": "42"}
+                    }
+                },
+                "users": {
+                    "42": {
+                        "id_str": "42",
+                        "screen_name": "alice"
+                    }
+                }
+            },
+            "response": {
+                "timeline": [
+                    {"tweet": {"id": "111", "sort_index": "0"}}
+                ],
+                "position": {"min_position": "0", "max_position": "0", "was_truncated": false}
+            }
+        });
+
+        let tweets = extract_collection_entries(&response);
+        assert_eq!(tweets.len(), 1);
+        assert_eq!(tweets[0].get("id_str").and_then(Value::as_str), Some("111"));
+        assert_eq!(
+            tweets[0].get("text").and_then(Value::as_str),
+            Some("Hello world")
+        );
+    }
+
+    #[test]
+    fn collections_lists_user_collections() {
+        let mut backend = MockBackend::new();
+        backend.enqueue_json_response(
+            "GET",
+            "/1.1/collections/list.json",
+            json!({
+                "objects": {
+                    "timelines": {
+                        "custom-100": {"name": "First Collection", "description": "desc1"},
+                        "custom-200": {"name": "Second Collection", "description": "desc2"}
+                    }
+                },
+                "response": {
+                    "results": [
+                        {"timeline_id": "custom-100"},
+                        {"timeline_id": "custom-200"}
+                    ],
+                    "cursors": {}
+                }
+            }),
+        );
+
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+        let code = run_with_backend(
+            [
+                "x",
+                "collections",
+                "--id",
+                "99",
+                "--profile",
+                &profile_path(),
+            ],
+            &mut stdout,
+            &mut stderr,
+            &mut backend,
+        );
+
+        assert_eq!(code, 0);
+        let output = String::from_utf8(stdout).expect("utf8");
+        assert!(output.contains("First Collection"));
+        assert!(output.contains("Second Collection"));
+        assert_eq!(backend.calls()[0].path, "/1.1/collections/list.json");
+    }
+
+    #[test]
+    fn collection_without_subcommand_prints_help() {
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+
+        let code = run_with_io(["x", "collection"], &mut stdout, &mut stderr);
+
+        assert_eq!(code, 0);
+        assert!(stderr.is_empty());
+        let output = String::from_utf8(stdout).expect("valid utf8");
+        assert!(output.contains("collection"));
+    }
+
+    #[test]
+    fn delete_collection_calls_destroy() {
+        let mut backend = MockBackend::new();
+        backend.enqueue_json_response(
+            "POST",
+            "/1.1/collections/destroy.json",
+            json!({"destroyed": true}),
+        );
+
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+        let code = run_with_backend(
+            [
+                "x",
+                "delete",
+                "collection",
+                "--id",
+                "custom-123",
+                "--profile",
+                &profile_path(),
+            ],
+            &mut stdout,
+            &mut stderr,
+            &mut backend,
+        );
+
+        assert_eq!(code, 0);
+        assert_eq!(backend.calls()[0].path, "/1.1/collections/destroy.json");
+        assert!(
+            backend.calls()[0]
+                .params
+                .contains(&("id".to_string(), "custom-123".to_string()))
+        );
+    }
+
+    #[test]
+    fn collection_entries_command_wired_to_backend() {
+        let mut backend = MockBackend::new();
+        backend.enqueue_json_response(
+            "GET",
+            "/1.1/collections/entries.json",
+            json!({
+                "objects": {
+                    "tweets": {
+                        "555": {
+                            "id_str": "555",
+                            "text": "Hello from collection",
+                            "created_at": "Mon Apr 06 19:13:37 +0000 2011",
+                            "user": {"id_str": "42"}
+                        }
+                    },
+                    "users": {
+                        "42": {"id_str": "42", "screen_name": "alice"}
+                    }
+                },
+                "response": {
+                    "timeline": [{"tweet": {"id": "555", "sort_index": "0"}}],
+                    "position": {"min_position": "0", "max_position": "0", "was_truncated": false}
+                }
+            }),
+        );
+
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+        let code = run_with_backend(
+            [
+                "x",
+                "collection",
+                "entries",
+                "--id",
+                "custom-999",
+                "--profile",
+                &profile_path(),
+            ],
+            &mut stdout,
+            &mut stderr,
+            &mut backend,
+        );
+
+        assert_eq!(code, 0);
+        assert_eq!(backend.calls()[0].path, "/1.1/collections/entries.json");
+        let output = String::from_utf8(stdout).expect("utf8");
+        assert!(output.contains("Hello from collection"));
+    }
+
+    #[test]
+    fn collection_information_command_wired_to_backend() {
+        let mut backend = MockBackend::new();
+        backend.enqueue_json_response(
+            "GET",
+            "/1.1/collections/show.json",
+            json!({
+                "objects": {
+                    "timelines": {
+                        "custom-777": {
+                            "name": "My Timeline",
+                            "description": "A great collection",
+                            "collection_url": "https://x.com/test/timelines/777",
+                            "timeline_order": "curation_reverse_chron",
+                            "visibility": "public"
+                        }
+                    }
+                },
+                "response": {"timeline_id": "custom-777"}
+            }),
+        );
+
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+        let code = run_with_backend(
+            [
+                "x",
+                "collection",
+                "information",
+                "--id",
+                "custom-777",
+                "--profile",
+                &profile_path(),
+            ],
+            &mut stdout,
+            &mut stderr,
+            &mut backend,
+        );
+
+        assert_eq!(code, 0);
+        assert_eq!(backend.calls()[0].path, "/1.1/collections/show.json");
+        let output = String::from_utf8(stdout).expect("utf8");
+        assert!(output.contains("My Timeline"));
+        assert!(output.contains("A great collection"));
+    }
+
+    #[test]
+    fn collection_information_csv_mode() {
+        let mut backend = MockBackend::new();
+        backend.enqueue_json_response(
+            "GET",
+            "/1.1/collections/show.json",
+            json!({
+                "objects": {
+                    "timelines": {
+                        "custom-777": {
+                            "name": "My Timeline",
+                            "description": "desc",
+                            "collection_url": "https://x.com/test/timelines/777",
+                            "timeline_order": "curation_reverse_chron",
+                            "visibility": "public"
+                        }
+                    }
+                },
+                "response": {"timeline_id": "custom-777"}
+            }),
+        );
+
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+        let code = run_with_backend(
+            [
+                "x",
+                "collection",
+                "information",
+                "--id",
+                "custom-777",
+                "--csv",
+                "--profile",
+                &profile_path(),
+            ],
+            &mut stdout,
+            &mut stderr,
+            &mut backend,
+        );
+
+        assert_eq!(code, 0);
+        let output = String::from_utf8(stdout).expect("utf8");
+        assert!(output.contains("ID,Name,Description"));
+        assert!(output.contains("My Timeline"));
+    }
+
+    #[test]
+    fn collection_remove_calls_entries_remove() {
+        let mut backend = MockBackend::new();
+        backend.enqueue_json_response(
+            "POST",
+            "/1.1/collections/entries/remove.json",
+            json!({"response": {"errors": []}}),
+        );
+
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+        let code = run_with_backend(
+            [
+                "x",
+                "collection",
+                "remove",
+                "--id",
+                "custom-999",
+                "12345",
+                "--profile",
+                &profile_path(),
+            ],
+            &mut stdout,
+            &mut stderr,
+            &mut backend,
+        );
+
+        assert_eq!(code, 0);
+        assert_eq!(
+            backend.calls()[0].path,
+            "/1.1/collections/entries/remove.json"
+        );
+        assert!(
+            backend.calls()[0]
+                .params
+                .contains(&("tweet_id".to_string(), "12345".to_string()))
+        );
+        let output = String::from_utf8(stdout).expect("utf8");
+        assert!(output.contains("removed"));
+    }
+
+    #[test]
+    fn collection_update_calls_update_endpoint() {
+        let mut backend = MockBackend::new();
+        backend.enqueue_json_response(
+            "POST",
+            "/1.1/collections/update.json",
+            json!({"response": {"timeline_id": "custom-999"}}),
+        );
+
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+        let code = run_with_backend(
+            [
+                "x",
+                "collection",
+                "update",
+                "--id",
+                "custom-999",
+                "--name",
+                "New Name",
+                "--description",
+                "New Desc",
+                "--url",
+                "https://example.com",
+                "--profile",
+                &profile_path(),
+            ],
+            &mut stdout,
+            &mut stderr,
+            &mut backend,
+        );
+
+        assert_eq!(code, 0);
+        assert_eq!(backend.calls()[0].path, "/1.1/collections/update.json");
+        assert!(
+            backend.calls()[0]
+                .params
+                .contains(&("name".to_string(), "New Name".to_string()))
+        );
+        assert!(
+            backend.calls()[0]
+                .params
+                .contains(&("description".to_string(), "New Desc".to_string()))
+        );
+        assert!(
+            backend.calls()[0]
+                .params
+                .contains(&("url".to_string(), "https://example.com".to_string()))
+        );
+        let output = String::from_utf8(stdout).expect("utf8");
+        assert!(output.contains("updated"));
+    }
+
+    #[test]
+    fn collections_csv_mode() {
+        let mut backend = MockBackend::new();
+        backend.enqueue_json_response(
+            "GET",
+            "/1.1/collections/list.json",
+            json!({
+                "objects": {
+                    "timelines": {
+                        "custom-100": {"name": "Coll A", "description": "d1", "collection_url": "https://x.com/a"}
+                    }
+                },
+                "response": {
+                    "results": [{"timeline_id": "custom-100"}],
+                    "cursors": {}
+                }
+            }),
+        );
+
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+        let code = run_with_backend(
+            [
+                "x",
+                "collections",
+                "--id",
+                "99",
+                "--csv",
+                "--profile",
+                &profile_path(),
+            ],
+            &mut stdout,
+            &mut stderr,
+            &mut backend,
+        );
+
+        assert_eq!(code, 0);
+        let output = String::from_utf8(stdout).expect("utf8");
+        assert!(output.contains("ID,Name,Description,URL"));
+        assert!(output.contains("Coll A"));
+    }
+
+    #[test]
+    fn collections_long_mode() {
+        let mut backend = MockBackend::new();
+        backend.enqueue_json_response(
+            "GET",
+            "/1.1/collections/list.json",
+            json!({
+                "objects": {
+                    "timelines": {
+                        "custom-100": {"name": "Coll A", "description": "d1"}
+                    }
+                },
+                "response": {
+                    "results": [{"timeline_id": "custom-100"}],
+                    "cursors": {}
+                }
+            }),
+        );
+
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+        let code = run_with_backend(
+            [
+                "x",
+                "collections",
+                "--id",
+                "99",
+                "--long",
+                "--profile",
+                &profile_path(),
+            ],
+            &mut stdout,
+            &mut stderr,
+            &mut backend,
+        );
+
+        assert_eq!(code, 0);
+        let output = String::from_utf8(stdout).expect("utf8");
+        assert!(output.contains("Coll A"));
+        assert!(output.contains("ID"));
+    }
+
+    #[test]
+    fn collections_reverse_mode() {
+        let mut backend = MockBackend::new();
+        backend.enqueue_json_response(
+            "GET",
+            "/1.1/collections/list.json",
+            json!({
+                "objects": {
+                    "timelines": {
+                        "custom-100": {"name": "AAA", "description": ""},
+                        "custom-200": {"name": "ZZZ", "description": ""}
+                    }
+                },
+                "response": {
+                    "results": [
+                        {"timeline_id": "custom-100"},
+                        {"timeline_id": "custom-200"}
+                    ],
+                    "cursors": {}
+                }
+            }),
+        );
+
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+        let code = run_with_backend(
+            [
+                "x",
+                "collections",
+                "--id",
+                "99",
+                "--reverse",
+                "--profile",
+                &profile_path(),
+            ],
+            &mut stdout,
+            &mut stderr,
+            &mut backend,
+        );
+
+        assert_eq!(code, 0);
+        let output = String::from_utf8(stdout).expect("utf8");
+        let aaa_pos = output.find("AAA").unwrap();
+        let zzz_pos = output.find("ZZZ").unwrap();
+        assert!(
+            zzz_pos < aaa_pos,
+            "ZZZ should appear before AAA when reversed"
+        );
+    }
+
+    #[test]
+    fn resolve_collection_id_by_name() {
+        let mut backend = MockBackend::new();
+        backend.enqueue_json_response(
+            "GET",
+            "/1.1/collections/list.json",
+            json!({
+                "objects": {
+                    "timelines": {
+                        "custom-42": {"name": "My Coll"}
+                    }
+                },
+                "response": {
+                    "results": [{"timeline_id": "custom-42"}],
+                    "cursors": {}
+                }
+            }),
+        );
+        // Add the entries response for the actual command
+        backend.enqueue_json_response(
+            "GET",
+            "/1.1/collections/entries.json",
+            json!({
+                "objects": {"tweets": {}, "users": {}},
+                "response": {
+                    "timeline": [],
+                    "position": {"min_position": "0", "max_position": "0", "was_truncated": false}
+                }
+            }),
+        );
+
+        let mut stdout = Vec::new();
+        let mut stderr = Vec::new();
+        let code = run_with_backend(
+            [
+                "x",
+                "collection",
+                "entries",
+                "My Coll",
+                "--profile",
+                &profile_path(),
+            ],
+            &mut stdout,
+            &mut stderr,
+            &mut backend,
+        );
+
+        assert_eq!(code, 0);
+        // First call resolves the name via collections/list
+        assert_eq!(backend.calls()[0].path, "/1.1/collections/list.json");
+        // Second call fetches entries with the resolved ID
+        assert_eq!(backend.calls()[1].path, "/1.1/collections/entries.json");
+        assert!(
+            backend.calls()[1]
+                .params
+                .contains(&("id".to_string(), "custom-42".to_string()))
+        );
     }
 
     fn profile_path() -> String {

@@ -4,6 +4,7 @@ require "forwardable"
 require "oauth"
 require "thor"
 require "t/collectable"
+require "t/collection"
 require "t/delete"
 require "t/editor"
 require "t/list"
@@ -448,6 +449,16 @@ module T
       print_lists(lists)
     end
 
+    desc "collections [USER]", "Returns the collections created by a user."
+    method_option "csv", aliases: "-c", type: :boolean, desc: "Output in CSV format."
+    method_option "id", aliases: "-i", type: :boolean, desc: "Specify user via ID instead of screen name."
+    method_option "long", aliases: "-l", type: :boolean, desc: "Output in long format."
+    method_option "relative_dates", aliases: "-a", type: :boolean, desc: "Show relative dates."
+    method_option "reverse", aliases: "-r", type: :boolean, desc: "Reverse the order of the sort."
+    method_option "sort", aliases: "-s", type: :string, enum: %w[name since], default: "name", desc: "Specify the order of the results.", banner: "ORDER"
+    method_option "unsorted", aliases: "-u", type: :boolean, desc: "Output is not sorted."
+    def collections(user = nil); end
+
     desc "matrix", "Unfortunately, no one can be told what the Matrix is. You have to see it for yourself."
     def matrix
       rule_ids = install_matrix_stream_rules
@@ -867,6 +878,9 @@ module T
         warn "You haven't authorized an account, run `t authorize` to get started."
       end
     end
+
+    desc "collection SUBCOMMAND ...ARGS", "Do various things with collections."
+    subcommand "collection", T::Collection
 
     desc "delete SUBCOMMAND ...ARGS", "Delete Tweets, Direct Messages, etc."
     subcommand "delete", T::Delete

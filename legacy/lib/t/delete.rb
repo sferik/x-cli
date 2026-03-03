@@ -84,6 +84,11 @@ module T
       say "@#{@rcfile.active_profile[0]} deleted the list \"#{list['name']}\"."
     end
 
+    desc "collection COLLECTION", "Delete a collection."
+    method_option "force", aliases: "-f", type: :boolean
+    method_option "id", aliases: "-i", type: :boolean, desc: "Specify collection via ID instead of name."
+    def collection(collection); end
+
     desc "mute USER [USER...]", "Unmute users."
     method_option "id", aliases: "-i", type: :boolean, desc: "Specify input as Twitter user IDs instead of screen names."
     method_option "force", aliases: "-f", type: :boolean

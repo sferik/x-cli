@@ -6,6 +6,7 @@ use regex::Regex;
 use std::collections::HashMap;
 
 const CLI_RB: &str = include_str!("../legacy/lib/t/cli.rb");
+const COLLECTION_RB: &str = include_str!("../legacy/lib/t/collection.rb");
 const DELETE_RB: &str = include_str!("../legacy/lib/t/delete.rb");
 const LIST_RB: &str = include_str!("../legacy/lib/t/list.rb");
 const SEARCH_RB: &str = include_str!("../legacy/lib/t/search.rb");
@@ -71,6 +72,7 @@ struct ClassSpec {
 pub fn legacy_app_spec() -> AppSpec {
     let mut classes = HashMap::new();
     classes.insert("CLI".to_string(), parse_class(CLI_RB));
+    classes.insert("Collection".to_string(), parse_class(COLLECTION_RB));
     classes.insert("Delete".to_string(), parse_class(DELETE_RB));
     classes.insert("List".to_string(), parse_class(LIST_RB));
     classes.insert("Search".to_string(), parse_class(SEARCH_RB));
