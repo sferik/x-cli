@@ -31,7 +31,7 @@ x-api = { path = "x-api" }
 [dev-dependencies]
 assert_cmd = "2.1.2"
 predicates = "3.1.4"
-tempfile = "3.26.0"
+tempfile = "3.27.0"
 
 [package.metadata.release]
 publish = false
