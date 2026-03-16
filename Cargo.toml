@@ -29,7 +29,7 @@ reqwest = { version = "0.13.2", features = ["blocking"] }
 x-api = { path = "x-api" }
 
 [dev-dependencies]
-assert_cmd = "2.1.2"
+assert_cmd = "2.2.0"
 predicates = "3.1.4"
 tempfile = "3.26.0"
 
