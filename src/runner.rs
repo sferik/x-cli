@@ -3,7 +3,6 @@ use crate::rcfile::{Credentials, RcFile, RcFileError, default_profile_path};
 use base64::Engine;
 use chrono::{DateTime, Duration, Local, TimeZone, Utc};
 use clap::{ArgMatches, Command as ClapCommand};
-use oauth_client::{DefaultRequestBuilder, ParamList, Token};
 use serde_json::Value;
 use std::collections::{BTreeSet, HashMap};
 use std::ffi::OsString;
@@ -17,6 +16,7 @@ use x_api::backend::{
     get_json_with_retry, post_json_body_oauth2_with_retry as post_json_oauth2_with_retry,
     post_json_with_retry,
 };
+use x_api::oauth1::{self, ParamList, Token};
 
 const DEFAULT_NUM_RESULTS: usize = 20;
 const MAX_SEARCH_RESULTS: usize = 100;
@@ -2926,7 +2926,7 @@ fn run_authorize(
     let (request_token, request_secret) = oauth_request_token(&key, &secret)?;
     let authorize_uri = format!(
         "https://api.twitter.com/oauth/authorize?oauth_token={}",
-        oauth_client::percent_encode_string(&request_token)
+        oauth1::percent_encode(&request_token)
     );
 
     writeln!(out)?;
@@ -2975,14 +2975,13 @@ fn oauth_request_token(key: &str, secret: &str) -> Result<(String, String), Comm
     let mut params = ParamList::new();
     params.insert("oauth_callback".into(), "oob".into());
 
-    let body = oauth_client::post::<DefaultRequestBuilder>(
+    let body = oauth1::post(
         "https://api.twitter.com/oauth/request_token",
         &consumer,
         None,
         Some(&params),
-        &(),
     )
-    .map_err(|error| CommandError::Backend(BackendError::Http(error.to_string())))?;
+    .map_err(|error| CommandError::Backend(BackendError::Http(error)))?;
 
     let map: HashMap<String, String> = serde_urlencoded::from_str(&body)
         .map_err(|error| CommandError::Backend(BackendError::Http(error.to_string())))?;
@@ -3021,14 +3020,13 @@ fn oauth_access_token(
     let mut params = ParamList::new();
     params.insert("oauth_verifier".into(), pin.trim().into());
 
-    let body = oauth_client::post::<DefaultRequestBuilder>(
+    let body = oauth1::post(
         "https://api.twitter.com/oauth/access_token",
         &consumer,
         Some(&request),
         Some(&params),
-        &(),
     )
-    .map_err(|error| CommandError::Backend(BackendError::Http(error.to_string())))?;
+    .map_err(|error| CommandError::Backend(BackendError::Http(error)))?;
 
     let map: HashMap<String, String> = serde_urlencoded::from_str(&body)
         .map_err(|error| CommandError::Backend(BackendError::Http(error.to_string())))?;
@@ -3069,12 +3067,11 @@ fn oauth_verify_screen_name(
     let access = Token::new(token, token_secret);
     let mut params = ParamList::new();
     params.insert("user.fields".into(), "username".into());
-    let body = oauth_client::get::<DefaultRequestBuilder>(
+    let body = oauth1::get(
         "https://api.twitter.com/2/users/me",
         &consumer,
         Some(&access),
         Some(&params),
-        &(),
     )
     .ok()?;
 

@@ -1,7 +1,7 @@
 //! HTTP backend abstractions and implementations for X/Twitter API calls.
 
+use crate::oauth1::{self, ParamList, Token};
 use base64::Engine;
-use oauth_client::{ParamList, Token};
 use reqwest::StatusCode;
 use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
@@ -327,8 +327,8 @@ impl TwitterBackend {
             self.credentials.token.as_str(),
             self.credentials.secret.as_str(),
         );
-        let (auth_value, _body) =
-            oauth_client::authorization_header(method, &url, &consumer, Some(&access), other);
+        let auth_value =
+            oauth1::authorization_header(method, &url, &consumer, Some(&access), other);
 
         let query = if params.is_empty() {
             String::new()
@@ -459,8 +459,8 @@ impl TwitterBackend {
             return Ok(token.to_string());
         }
 
-        let encoded_key = oauth_client::percent_encode_string(&self.credentials.consumer_key);
-        let encoded_secret = oauth_client::percent_encode_string(&self.credentials.consumer_secret);
+        let encoded_key = oauth1::percent_encode(&self.credentials.consumer_key);
+        let encoded_secret = oauth1::percent_encode(&self.credentials.consumer_secret);
         let credentials = format!("{}:{}", encoded_key, encoded_secret);
         let basic = base64::engine::general_purpose::STANDARD.encode(credentials.as_bytes());
 
@@ -609,13 +609,8 @@ impl Backend for TwitterBackend {
                 } else {
                     Some(&other_param)
                 };
-                let (auth_value, _body) = oauth_client::authorization_header(
-                    "GET",
-                    &url,
-                    &consumer,
-                    Some(&access),
-                    other,
-                );
+                let auth_value =
+                    oauth1::authorization_header("GET", &url, &consumer, Some(&access), other);
                 request = request.header("Authorization", &auth_value);
             }
             AuthScheme::OAuth2Bearer => {
