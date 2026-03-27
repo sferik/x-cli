@@ -102,6 +102,8 @@ pub fn legacy_app_spec() -> AppSpec {
         version_cmd.aliases = retained;
     }
 
+    apply_descriptions(&mut commands, "");
+
     AppSpec {
         class_options,
         commands,
@@ -581,6 +583,241 @@ fn build_arg(option_spec: &OptionSpec, global: bool) -> Arg {
     arg
 }
 
+fn apply_descriptions(commands: &mut [CommandSpec], parent: &str) {
+    let descs = descriptions();
+    let group = descs.get(parent);
+    for command in commands.iter_mut() {
+        if let Some(desc) = group.and_then(|g| g.get(command.method.as_str())) {
+            command.about = (*desc).to_string();
+        }
+        if !command.subcommands.is_empty() {
+            let parent_name = command.name.clone();
+            apply_descriptions(&mut command.subcommands, &parent_name);
+        }
+    }
+}
+
+/// Canonical command descriptions, keyed by `(parent_command, method_name)`.
+///
+/// Top-level commands use `""` as the parent. Subcommands use the parent
+/// command's display name (e.g. `"delete"`, `"list"`, `"search"`).
+fn descriptions() -> HashMap<&'static str, HashMap<&'static str, &'static str>> {
+    let mut map: HashMap<&str, HashMap<&str, &str>> = HashMap::new();
+
+    // Top-level commands
+    let top = map.entry("").or_default();
+    top.insert("accounts", "List accounts.");
+    top.insert("authorize", "Authorize an application via OAuth.");
+    top.insert("block", "Block users.");
+    top.insert("blocks", "Returns a list of blocked users.");
+    top.insert(
+        "direct_messages",
+        "Returns the 20 most recent Direct Messages sent to you.",
+    );
+    top.insert(
+        "direct_messages_sent",
+        "Returns the 20 most recent Direct Messages you've sent.",
+    );
+    top.insert("dm", "Sends that person a Direct Message.");
+    top.insert("does_contain", "Find out whether a list contains a user.");
+    top.insert("does_follow", "Find out whether one user follows another.");
+    top.insert("favorite", "Marks posts as favorites.");
+    top.insert(
+        "favorites",
+        "Returns the 20 most recent posts you favorited.",
+    );
+    top.insert("follow", "Follow users.");
+    top.insert("followings", "Returns a list of the people you follow.");
+    top.insert(
+        "followings_following",
+        "Displays your friends who follow the specified user.",
+    );
+    top.insert("followers", "Returns a list of the people who follow you.");
+    top.insert(
+        "friends",
+        "Returns the list of people who you follow and follow you back.",
+    );
+    top.insert(
+        "groupies",
+        "Returns the list of people who follow you but you don't follow back.",
+    );
+    top.insert(
+        "intersection",
+        "Displays the intersection of users followed by the specified users.",
+    );
+    top.insert(
+        "leaders",
+        "Returns the list of people who you follow but don't follow you back.",
+    );
+    top.insert("lists", "Returns the lists created by a user.");
+    top.insert("collections", "Returns the collections created by a user.");
+    top.insert(
+        "matrix",
+        "Unfortunately, no one can be told what the Matrix is. You have to see it for yourself.",
+    );
+    top.insert(
+        "mentions",
+        "Returns the 20 most recent posts mentioning you.",
+    );
+    top.insert("mute", "Mute users.");
+    top.insert("muted", "Returns a list of the people you have muted.");
+    top.insert("open", "Opens that user's profile in a web browser.");
+    top.insert("reach", "Shows the maximum number of people who may have seen the specified post in their timeline.");
+    top.insert("reply", "Post a reply directed at another person.");
+    top.insert("report_spam", "Report users for spam.");
+    top.insert("retweet", "Repost posts to your followers.");
+    top.insert("retweets", "Returns the 20 most recent reposts by a user.");
+    top.insert("retweets_of_me", "Returns the 20 most recent posts of the authenticated user that have been reposted by others.");
+    top.insert("ruler", "Prints a 280-character ruler.");
+    top.insert("status", "Retrieves detailed information about a post.");
+    top.insert("timeline", "Returns the 20 most recent posts by a user.");
+    top.insert("trends", "Returns the top 50 trending topics.");
+    top.insert(
+        "my_location",
+        "Retrieves place information based on your IP address.",
+    );
+    top.insert(
+        "nearby_places",
+        "Retrieves nearby places using an address or your IP geolocation.",
+    );
+    top.insert("place", "Retrieves detailed information about a place.");
+    top.insert(
+        "places",
+        "Retrieves places with similar names near an address or your IP geolocation.",
+    );
+    top.insert(
+        "trend_locations",
+        "Returns the locations for which X has trending topic information.",
+    );
+    top.insert("unfollow", "Unfollow users.");
+    top.insert("update", "Post to your timeline.");
+    top.insert("users", "Returns a list of users you specify.");
+    top.insert("version", "Show version.");
+    top.insert("whois", "Retrieves profile information for the user.");
+    top.insert(
+        "whoami",
+        "Retrieves profile information for the authenticated user.",
+    );
+
+    // Subcommand parents
+    top.insert("collection", "Manage collections.");
+    top.insert("delete", "Delete posts, Direct Messages, etc.");
+    top.insert("list", "Manage lists.");
+    top.insert("search", "Search posts.");
+    top.insert("set", "Change various account settings.");
+    top.insert("stream", "Stream posts in real time.");
+
+    // delete subcommands
+    let delete = map.entry("delete").or_default();
+    delete.insert("block", "Unblock users.");
+    delete.insert("dm", "Delete the last Direct Message sent.");
+    delete.insert("favorite", "Delete favorites.");
+    delete.insert("list", "Delete a list.");
+    delete.insert("collection", "Delete a collection.");
+    delete.insert("mute", "Unmute users.");
+    delete.insert("account", "Delete account or consumer key.");
+    delete.insert("status", "Delete posts.");
+
+    // list subcommands
+    let list = map.entry("list").or_default();
+    list.insert("add", "Add members to a list.");
+    list.insert("create", "Create a new list.");
+    list.insert(
+        "information",
+        "Retrieves detailed information about a list.",
+    );
+    list.insert("members", "Returns the members of a list.");
+    list.insert("remove", "Remove members from a list.");
+    list.insert(
+        "timeline",
+        "Show post timeline for members of the specified list.",
+    );
+
+    // search subcommands
+    let search = map.entry("search").or_default();
+    search.insert(
+        "all",
+        "Returns the 20 most recent posts that match the specified query.",
+    );
+    search.insert(
+        "favorites",
+        "Returns posts you've favorited that match the specified query.",
+    );
+    search.insert(
+        "list",
+        "Returns posts on a list that match the specified query.",
+    );
+    search.insert(
+        "mentions",
+        "Returns posts mentioning you that match the specified query.",
+    );
+    search.insert(
+        "retweets",
+        "Returns posts you've reposted that match the specified query.",
+    );
+    search.insert(
+        "timeline",
+        "Returns posts in your timeline that match the specified query.",
+    );
+    search.insert("users", "Returns users that match the specified query.");
+
+    // set subcommands
+    let set = map.entry("set").or_default();
+    set.insert("active", "Set your active account.");
+    set.insert("bio", "Edits your Bio information on your profile.");
+    set.insert(
+        "language",
+        "Selects the language you'd like to receive notifications in.",
+    );
+    set.insert("location", "Updates the location field in your profile.");
+    set.insert("name", "Sets the name field on your profile.");
+    set.insert(
+        "profile_background_image",
+        "Sets the background image on your profile.",
+    );
+    set.insert("profile_image", "Sets the image on your profile.");
+    set.insert(
+        "profile_link_color",
+        "Sets the color scheme of links on your profile page.",
+    );
+    set.insert("website", "Sets the website field on your profile.");
+
+    // stream subcommands
+    let stream = map.entry("stream").or_default();
+    stream.insert(
+        "all",
+        "Stream a random sample of all posts (Control-C to stop).",
+    );
+    stream.insert(
+        "list",
+        "Stream a timeline for members of the specified list (Control-C to stop).",
+    );
+    stream.insert(
+        "matrix",
+        "Unfortunately, no one can be told what the Matrix is. You have to see it for yourself.",
+    );
+    stream.insert("search", "Stream posts that contain specified keywords, joined with logical ORs (Control-C to stop).");
+    stream.insert("timeline", "Stream your timeline (Control-C to stop).");
+    stream.insert(
+        "users",
+        "Stream posts either from or in reply to specified users (Control-C to stop).",
+    );
+
+    // collection subcommands
+    let collection = map.entry("collection").or_default();
+    collection.insert("add", "Add posts to a collection.");
+    collection.insert("create", "Create a new collection.");
+    collection.insert("entries", "Show posts in a collection.");
+    collection.insert(
+        "information",
+        "Retrieves detailed information about a collection.",
+    );
+    collection.insert("remove", "Remove posts from a collection.");
+    collection.insert("update", "Update a collection's metadata.");
+
+    map
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -616,7 +853,7 @@ mod tests {
     }
 
     #[test]
-    fn interpolates_constants_in_command_help_and_option_defaults() {
+    fn descriptions_override_ruby_help_text() {
         let app = legacy_app_spec();
         let timeline = app
             .commands
@@ -626,7 +863,7 @@ mod tests {
 
         assert_eq!(
             timeline.about,
-            "Returns the 20 most recent Tweets posted by a user."
+            "Returns the 20 most recent posts by a user."
         );
 
         let number_option = timeline
@@ -648,7 +885,7 @@ mod tests {
             .expect("search all command exists");
         assert_eq!(
             search_all.about,
-            "Returns the 20 most recent Tweets that match the specified query."
+            "Returns the 20 most recent posts that match the specified query."
         );
     }
 }

@@ -1,507 +1,191 @@
-.\" x(1) man page
-.TH X 1 "2026-03-25" "x 6.0.0" "User Commands"
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH x 1  "x " 
 .SH NAME
-x \- command\-line client for X
+x
 .SH SYNOPSIS
-.B x
-.RI [ OPTIONS ]
-.RI [ COMMAND ]
+\fBx\fR [\fB\-C\fR|\fB\-\-color\fR] [\fB\-P\fR|\fB\-\-profile\fR] [\fB\-v\fR|\fB\-\-version\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fIsubcommands\fR]
 .SH DESCRIPTION
-.B x
-is a command\-line interface for the X API.
-.PP
-Credentials are stored in
-.I ~/.xrc
-(YAML).
-If
-.I ~/.xrc
-does not exist,
-.I ~/.trc
-is used as a fallback and migrated on write.
 .SH OPTIONS
 .TP
-.BR \-C ", " \-\-color " " \fIMODE\fR
-Colorize output.
-.I MODE
-is one of
-.BR icon ", " auto ", or " never .
-Default:
-.BR auto .
+\fB\-C\fR, \fB\-\-color\fR [default: auto]
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+icon
+.IP \(bu 2
+auto
+.IP \(bu 2
+never
+.RE
 .TP
-.BR \-P ", " \-\-profile " " \fIFILE\fR
-Path to the profile (rc) file.
-Default:
-.IR ~/.xrc .
+\fB\-P\fR, \fB\-\-profile\fR \fI<FILE>\fR
+
 .TP
-.BR \-v ", " \-\-version
-Print version and exit.
+\fB\-v\fR, \fB\-\-version\fR
+Show version
 .TP
-.BR \-h ", " \-\-help
-Print help and exit.
-.SH COMMANDS
-.SS Account Management
+\fB\-h\fR, \fB\-\-help\fR
+Print help
+.SH SUBCOMMANDS
 .TP
-.B accounts
-List configured accounts.
+x\-accounts(1)
+List accounts.
 .TP
-.B authorize \fR[\fICONSUMER_KEY CONSUMER_SECRET\fR]
+x\-authorize(1)
 Authorize an application via OAuth.
-Use
-.B \-d
-/
-.B \-\-display\-uri
-to print the authorization URL instead of opening a browser.
 .TP
-.B set active \fR[\fIUSERNAME\fR]
-Set the active account.
-Aliases:
-.BR "set account" ", " "set default" .
+x\-block(1)
+Block users.
 .TP
-.B delete account \fR[\fIUSERNAME\fR]
-Remove an account from the profile file.
+x\-blocks(1)
+Returns a list of blocked users.
 .TP
-.B whoami
-Show profile information for the authenticated user.
-.SS Tweets
+x\-direct_messages(1)
+Returns the 20 most recent Direct Messages sent to you.
 .TP
-.B timeline \fR[\fIUSER\fR]
-Show the 20 most recent Tweets posted by a user.
-Alias:
-.BR tl .
+x\-direct_messages_sent(1)
+Returns the 20 most recent Direct Messages you\*(Aqve sent.
 .TP
-.B mentions
-Show the 20 most recent Tweets mentioning you.
-Alias:
-.BR replies .
+x\-dm(1)
+Sends that person a Direct Message.
 .TP
-.B retweets \fR[\fIUSER\fR]
-Show the 20 most recent Retweets by a user.
-Alias:
-.BR rts .
+x\-does_contain(1)
+Find out whether a list contains a user.
 .TP
-.B retweets_of_me
-Show the 20 most recent Tweets of the authenticated user
-that have been retweeted by others.
-Alias:
-.BR retweetsofme .
+x\-does_follow(1)
+Find out whether one user follows another.
 .TP
-.B favorites \fR[\fIUSER\fR]
-Show the 20 most recent favorited Tweets.
-Aliases:
-.BR faves ", " favourites .
+x\-favorite(1)
+Marks posts as favorites.
 .TP
-.B status \fITWEET_ID\fR
-Retrieve detailed information about a Tweet.
+x\-favorites(1)
+Returns the 20 most recent posts you favorited.
 .TP
-.B update \fIMESSAGE\fR
-Post a Tweet.
-Aliases:
-.BR post ", " tweet .
-Use
-.B \-l
-/
-.B \-\-location
-to attach a location and
-.B \-f
-/
-.B \-\-file
-to attach media.
+x\-follow(1)
+Follow users.
 .TP
-.B reply \fITWEET_ID MESSAGE\fR
+x\-followings(1)
+Returns a list of the people you follow.
+.TP
+x\-followings_following(1)
+Displays your friends who follow the specified user.
+.TP
+x\-followers(1)
+Returns a list of the people who follow you.
+.TP
+x\-friends(1)
+Returns the list of people who you follow and follow you back.
+.TP
+x\-groupies(1)
+Returns the list of people who follow you but you don\*(Aqt follow back.
+.TP
+x\-intersection(1)
+Displays the intersection of users followed by the specified users.
+.TP
+x\-leaders(1)
+Returns the list of people who you follow but don\*(Aqt follow you back.
+.TP
+x\-lists(1)
+Returns the lists created by a user.
+.TP
+x\-collections(1)
+Returns the collections created by a user.
+.TP
+x\-matrix(1)
+Unfortunately, no one can be told what the Matrix is. You have to see it for yourself.
+.TP
+x\-mentions(1)
+Returns the 20 most recent posts mentioning you.
+.TP
+x\-mute(1)
+Mute users.
+.TP
+x\-muted(1)
+Returns a list of the people you have muted.
+.TP
+x\-open(1)
+Opens that user\*(Aqs profile in a web browser.
+.TP
+x\-reach(1)
+Shows the maximum number of people who may have seen the specified post in their timeline.
+.TP
+x\-reply(1)
 Post a reply directed at another person.
 .TP
-.B retweet \fITWEET_ID...\fR
-Retweet one or more Tweets.
-Alias:
-.BR rt .
-.TP
-.B favorite \fITWEET_ID...\fR
-Mark Tweets as favorites.
-Aliases:
-.BR fave ", " favourite .
-.TP
-.B reach \fITWEET_ID\fR
-Show the maximum number of people who may have seen a Tweet.
-.SS Direct Messages
-.TP
-.B dm \fIUSER MESSAGE\fR
-Send a Direct Message.
-Aliases:
-.BR d ", " m .
-.TP
-.B direct_messages
-Show the 20 most recent Direct Messages received.
-Aliases:
-.BR directmessages ", " dms .
-.TP
-.B direct_messages_sent
-Show the 20 most recent Direct Messages sent.
-Aliases:
-.BR directmessagessent ", " sent_messages ", " sentmessages ", " sms .
-.SS Users
-.TP
-.B whois \fIUSER\fR
-Retrieve profile information for a user.
-Alias:
-.BR user .
-.TP
-.B users \fIUSER...\fR
-Return information for one or more users.
-Alias:
-.BR stats .
-.TP
-.B follow \fIUSER...\fR
-Follow one or more users.
-.TP
-.B unfollow \fIUSER...\fR
-Unfollow one or more users.
-.TP
-.B block \fIUSER...\fR
-Block one or more users.
+x\-report_spam(1)
+Report users for spam.
 .TP
-.B mute \fIUSER...\fR
-Mute one or more users.
-.TP
-.B report_spam \fIUSER...\fR
-Report one or more users for spam.
-Aliases:
-.BR report ", " reportspam ", " spam .
+x\-retweet(1)
+Repost posts to your followers.
 .TP
-.B followings \fR[\fIUSER\fR]
-List the people you follow.
+x\-retweets(1)
+Returns the 20 most recent reposts by a user.
 .TP
-.B followers \fR[\fIUSER\fR]
-List the people who follow you.
+x\-retweets_of_me(1)
+Returns the 20 most recent posts of the authenticated user that have been reposted by others.
 .TP
-.B friends
-List people who you follow and who follow you back.
+x\-ruler(1)
+Prints a 280\-character ruler.
 .TP
-.B leaders
-List people who you follow but who don\(aqt follow you back.
+x\-status(1)
+Retrieves detailed information about a post.
 .TP
-.B groupies
-List people who follow you but whom you don\(aqt follow back.
-Alias:
-.BR disciples .
+x\-timeline(1)
+Returns the 20 most recent posts by a user.
 .TP
-.B blocks
-List blocked users.
+x\-trends(1)
+Returns the top 50 trending topics.
 .TP
-.B muted
-List muted users.
-Alias:
-.BR mutes .
-.TP
-.B followings_following \fIUSER\fR
-Show your friends who also follow the specified user.
-Aliases:
-.BR ff ", " followingsfollowing .
-.TP
-.B intersection \fIUSER USER\fR
-Show the intersection of users followed by two users.
-Alias:
-.BR overlap .
-.TP
-.B does_follow \fIUSER USER\fR
-Check whether one user follows another.
-Aliases:
-.BR df ", " doesfollow .
+x\-my_location(1)
+Retrieves place information based on your IP address.
 .TP
-.B does_contain \fILIST USER\fR
-Check whether a list contains a user.
-Aliases:
-.BR dc ", " doescontain .
+x\-nearby_places(1)
+Retrieves nearby places using an address or your IP geolocation.
 .TP
-.B open \fIUSER\fR
-Open a user\(aqs profile in a web browser.
-.SS Lists
+x\-place(1)
+Retrieves detailed information about a place.
 .TP
-.B lists \fR[\fIUSER\fR]
-Show lists created by a user.
+x\-places(1)
+Retrieves places with similar names near an address or your IP geolocation.
 .TP
-.B list add \fILIST USER...\fR
-Add members to a list.
+x\-trend_locations(1)
+Returns the locations for which X has trending topic information.
 .TP
-.B list create \fINAME\fR
-Create a new list.
+x\-unfollow(1)
+Unfollow users.
 .TP
-.B list information \fILIST\fR
-Show detailed information about a list.
-Alias:
-.BR "list details" .
+x\-update(1)
+Post to your timeline.
 .TP
-.B list members \fILIST\fR
-Show members of a list.
+x\-users(1)
+Returns a list of users you specify.
 .TP
-.B list remove \fILIST USER...\fR
-Remove members from a list.
+x\-version(1)
+Show version.
 .TP
-.B list timeline \fILIST\fR
-Show the tweet timeline for a list.
-Alias:
-.BR "list tl" .
+x\-whois(1)
+Retrieves profile information for the user.
 .TP
-.B delete list \fILIST\fR
-Delete a list.
-.SS Collections
+x\-whoami(1)
+Retrieves profile information for the authenticated user.
 .TP
-.B collections \fR[\fIUSER\fR]
-Show collections created by a user.
+x\-collection(1)
+Manage collections.
 .TP
-.B collection add \fICOLLECTION TWEET_ID...\fR
-Add tweets to a collection.
+x\-delete(1)
+Delete posts, Direct Messages, etc.
 .TP
-.B collection create \fINAME\fR
-Create a new collection.
+x\-list(1)
+Manage lists.
 .TP
-.B collection entries \fICOLLECTION\fR
-Show tweets in a collection.
+x\-search(1)
+Search posts.
 .TP
-.B collection information \fICOLLECTION\fR
-Show detailed information about a collection.
-Alias:
-.BR "collection details" .
+x\-set(1)
+Change various account settings.
 .TP
-.B collection remove \fICOLLECTION TWEET_ID...\fR
-Remove tweets from a collection.
-.TP
-.B collection update \fICOLLECTION\fR
-Update a collection\(aqs metadata.
-.TP
-.B delete collection \fICOLLECTION\fR
-Delete a collection.
-.SS Search
-.TP
-.B search all \fIQUERY\fR
-Search recent Tweets.
-.TP
-.B search favorites \fIQUERY\fR
-Search your favorited Tweets.
-Alias:
-.BR "search faves" .
-.TP
-.B search list \fILIST QUERY\fR
-Search Tweets on a list.
-.TP
-.B search mentions \fIQUERY\fR
-Search Tweets mentioning you.
-Alias:
-.BR "search replies" .
-.TP
-.B search retweets \fIQUERY\fR
-Search your Retweets.
-Alias:
-.BR "search rts" .
-.TP
-.B search timeline \fIQUERY\fR
-Search Tweets in your timeline.
-Alias:
-.BR "search tl" .
-.TP
-.B search users \fIQUERY\fR
-Search for users.
-.SS Streaming
-.TP
-.B stream all
-Stream a random sample of all Tweets.
-.TP
-.B stream list \fILIST\fR
-Stream a timeline for list members.
-.TP
-.B stream search \fIKEYWORDS\fR
-Stream Tweets matching keywords.
-.TP
-.B stream timeline
-Stream your timeline.
-.TP
-.B stream users \fIUSER...\fR
-Stream Tweets from or in reply to specified users.
-.TP
-.B stream matrix
-You have to see it for yourself.
-.SS Delete
-.TP
-.B delete status \fITWEET_ID...\fR
-Delete Tweets.
-Aliases:
-.BR "delete post" ", " "delete tweet" ", " "delete update" .
-.TP
-.B delete dm
-Delete the last Direct Message sent.
-Aliases:
-.BR "delete d" ", " "delete m" .
-.TP
-.B delete favorite \fITWEET_ID...\fR
-Remove favorites.
-Aliases:
-.BR "delete fave" ", " "delete favourite" .
-.TP
-.B delete block \fIUSER...\fR
-Unblock users.
-.TP
-.B delete mute \fIUSER...\fR
-Unmute users.
-.SS Profile Settings
-.TP
-.B set bio \fITEXT\fR
-Edit your bio.
-.TP
-.B set language \fILANG\fR
-Set your notification language.
-.TP
-.B set location \fITEXT\fR
-Update your profile location.
-.TP
-.B set name \fINAME\fR
-Set your display name.
-.TP
-.B set profile_background_image \fIFILE\fR
-Set your profile background image.
-Aliases:
-.BR "set background" ", " "set background_image" .
-.TP
-.B set profile_image \fIFILE\fR
-Set your profile image.
-Aliases:
-.BR "set avatar" ", " "set image" .
-.TP
-.B set profile_link_color \fICOLOR\fR
-Set the link color on your profile.
-.TP
-.B set website \fIURL\fR
-Set your profile website.
-.SS Places & Trends
-.TP
-.B trends \fR[\fIWOEID\fR]
-Show the top 50 trending topics.
-.TP
-.B trend_locations
-Show locations with trending topic information.
-Aliases:
-.BR locations ", " trendlocations .
-.TP
-.B my_location
-Retrieve place information based on your IP address.
-Aliases:
-.BR ip_location ", " mylocation .
-.TP
-.B nearby_places \fR[\fIADDRESS\fR]
-Retrieve nearby places.
-Aliases:
-.BR nearbyplaces ", " nearby .
-.TP
-.B place \fIPLACE_ID\fR
-Retrieve detailed information about a place.
-.TP
-.B places \fINAME\fR
-Retrieve places with similar names near an address.
-.SS Miscellaneous
-.TP
-.B ruler
-Print a 280\-character ruler.
-.TP
-.B matrix
-You have to see it for yourself.
-.TP
-.B version
-Print version.
-.SH COMMON OPTIONS
-Many commands accept the following options:
-.TP
-.BR \-c ", " \-\-csv
-Output in CSV format.
-.TP
-.BR \-d ", " \-\-decode\-uris
-Decode t.co shortened URLs.
-.TP
-.BR \-i ", " \-\-id
-Refer to users by numeric ID instead of screen name.
-.TP
-.BR \-l ", " \-\-long
-Output in long (detailed) format.
-.TP
-.BR \-n ", " \-\-number " " \fIN\fR
-Limit the number of results returned.
-Default: 20.
-.TP
-.BR \-a ", " \-\-relative\-dates
-Show dates relative to now (e.g., "3 hours ago").
-.TP
-.BR \-r ", " \-\-reverse
-Reverse the order of results.
-.TP
-.BR \-s ", " \-\-since\-id " " \fIID\fR
-Return only results with an ID greater than the given value.
-.TP
-.BR \-m ", " \-\-max\-id " " \fIID\fR
-Return only results with an ID less than or equal to the given value.
-.SH ENVIRONMENT
-.TP
-.B X_STREAM_MAX_EVENTS
-Maximum number of events to emit in streaming commands.
-Also recognized as
-.BR T_STREAM_MAX_EVENTS .
-Useful for testing and automation.
-.SH FILES
-.TP
-.I ~/.xrc
-Default profile and credentials file (YAML, mode 0600).
-Falls back to reading
-.I ~/.trc
-if not found.
-.SH EXAMPLES
-Authorize a new account:
-.PP
-.RS
-.nf
-x authorize
-.fi
-.RE
-.PP
-Show your timeline:
-.PP
-.RS
-.nf
-x timeline
-.fi
-.RE
-.PP
-Post a Tweet:
-.PP
-.RS
-.nf
-x update "Hello, world!"
-.fi
-.RE
-.PP
-Show who you follow in long format:
-.PP
-.RS
-.nf
-x followings \-\-long
-.fi
-.RE
-.PP
-Search for recent Tweets:
-.PP
-.RS
-.nf
-x search all "rust lang"
-.fi
-.RE
-.PP
-Stream your timeline:
-.PP
-.RS
-.nf
-x stream timeline
-.fi
-.RE
-.SH AUTHORS
-Erik Berlin
-.SH LICENSE
-MIT
-.SH SEE ALSO
-.UR https://github.com/sferik/x\-cli
-GitHub repository
-.UE
+x\-stream(1)
+Stream posts in real time.

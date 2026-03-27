@@ -5581,7 +5581,7 @@ mod tests {
         assert!(stderr.is_empty());
         let output = String::from_utf8(stdout).expect("valid utf8");
         assert!(output.contains("Usage: x stream"));
-        assert!(output.contains("Commands for streaming Tweets."));
+        assert!(output.contains("Stream posts in real time."));
     }
 
     #[test]
