@@ -41,6 +41,7 @@ Tagging a new `v*` release triggers GitHub Actions to build and publish binaries
 - macOS Intel (`x86_64-apple-darwin`)
 - macOS Apple Silicon (`aarch64-apple-darwin`)
 - Windows (`x86_64-pc-windows-msvc`)
+- Windows ARM64 (`aarch64-pc-windows-msvc`)
 
 Install `cargo-release`:
 
