@@ -2,7 +2,7 @@
 name = "x"
 version = "6.0.0"
 edition = "2024"
-description = "Rust rewrite of the t Twitter CLI with legacy-compatible command surface"
+description = "Command-line interface for the X API"
 license = "MIT"
 
 [lib]

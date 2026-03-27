@@ -9,13 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Rust rewrite of the t Twitter CLI with legacy-compatible command surface
+- Command-line interface for the X API
 - X API client library (x-api) for HTTP, auth, and retry primitives
 - OAuth 1.0a and OAuth 2.0 authentication support
 - Automatic retry with backoff for transient API errors
-- V1.1 and V2 Twitter API support with automatic fallback
+- V1.1 and V2 X API support with automatic fallback
 - Streaming support for filtered and sampled streams
-- Column-aligned output format matching legacy Ruby CLI
+- Column-aligned output formatting
 - YAML configuration file support
 - Bash completion support
 

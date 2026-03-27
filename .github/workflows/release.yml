@@ -62,7 +62,8 @@ jobs:
         run: |
           mkdir -p dist
           cp "target/${{ matrix.target }}/release/x" x
-          tar -czf "dist/x-${{ github.ref_name }}-${{ matrix.target }}.tar.gz" x
+          cp man/x.1 x.1
+          tar -czf "dist/x-${{ github.ref_name }}-${{ matrix.target }}.tar.gz" x x.1
 
       - name: Package (Windows)
         if: runner.os == 'Windows'
