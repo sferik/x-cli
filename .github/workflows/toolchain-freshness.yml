@@ -32,9 +32,10 @@ jobs:
           PY
           )"
 
-          latest="$(curl -fsSL https://static.rust-lang.org/dist/channel-rust-stable.toml \
-            | awk -F'"' '/^version = / { print $2; exit }' \
-            | sed 's/ .*//')"
+          tmp="$(mktemp)"
+          curl -fsSL -o "$tmp" https://static.rust-lang.org/dist/channel-rust-stable.toml
+          latest="$(awk -F'"' '/^version = / { print $2; exit }' "$tmp" | sed 's/ .*//')"
+          rm -f "$tmp"
 
           echo "Pinned rust-toolchain.toml channel: $pinned"
           echo "Latest stable Rust release: $latest"
