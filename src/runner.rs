@@ -445,7 +445,7 @@ fn execute_remote_command(
             let tweets = collect_tweets_paginated(
                 backend,
                 &format!("/2/users/{me_id}/bookmarks"),
-                timeline_v2_params(leaf),
+                bookmark_v2_params(leaf),
                 AuthScheme::OAuth2User,
                 number,
             )?;
@@ -4700,6 +4700,18 @@ fn timeline_like_v2_params(leaf: &ArgMatches) -> Vec<(String, String)> {
         params.push(("since_id".to_string(), since_id.to_string()));
     }
 
+    params
+}
+
+fn bookmark_v2_params(leaf: &ArgMatches) -> Vec<(String, String)> {
+    let mut params = vec![(
+        "max_results".to_string(),
+        opt_usize(leaf, "number")
+            .unwrap_or(DEFAULT_NUM_RESULTS)
+            .min(MAX_SEARCH_RESULTS)
+            .to_string(),
+    )];
+    params.extend(v2_tweet_params());
     params
 }
 

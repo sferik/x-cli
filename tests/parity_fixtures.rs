@@ -150,6 +150,122 @@ fn bookmarks_use_oauth2_user_context() {
 }
 
 #[test]
+fn bookmarks_does_not_send_timeline_only_params() {
+    let mut backend = MockBackend::new();
+    backend.enqueue_json_response("GET_OAUTH2_USER", "/2/users/me", me_fixture());
+    backend.enqueue_json_response(
+        "GET_OAUTH2_USER",
+        "/2/users/7505382/bookmarks",
+        serde_json::json!({
+            "data": [{
+                "id": "1",
+                "text": "saved post",
+                "created_at": "2011-04-06T19:13:37.000Z",
+                "author_id": "42"
+            }],
+            "includes": {
+                "users": [{
+                    "id": "42",
+                    "username": "alice"
+                }]
+            }
+        }),
+    );
+
+    let (code, _out, err) = run_cmd_with_profile(&["bookmarks", "--csv"], &mut backend);
+
+    assert_success(code, &err);
+    let bookmark_call = backend
+        .calls()
+        .iter()
+        .find(|c| c.path == "/2/users/7505382/bookmarks")
+        .expect("should have called bookmarks endpoint");
+    let param_keys: Vec<&str> = bookmark_call.params.iter().map(|(k, _)| k.as_str()).collect();
+    assert!(
+        !param_keys.contains(&"since_id"),
+        "bookmarks must not send since_id; got params: {param_keys:?}"
+    );
+    assert!(
+        !param_keys.contains(&"until_id"),
+        "bookmarks must not send until_id; got params: {param_keys:?}"
+    );
+    assert!(
+        !param_keys.contains(&"exclude"),
+        "bookmarks must not send exclude; got params: {param_keys:?}"
+    );
+}
+
+#[test]
+fn bookmarks_paginates_with_next_token() {
+    let mut backend = MockBackend::new();
+    backend.enqueue_json_response("GET_OAUTH2_USER", "/2/users/me", me_fixture());
+    // Page 1
+    backend.enqueue_json_response(
+        "GET_OAUTH2_USER",
+        "/2/users/7505382/bookmarks",
+        serde_json::json!({
+            "data": [{
+                "id": "1",
+                "text": "first page post",
+                "created_at": "2011-04-06T19:13:37.000Z",
+                "author_id": "42"
+            }],
+            "includes": {
+                "users": [{ "id": "42", "username": "alice" }]
+            },
+            "meta": {
+                "next_token": "abc123",
+                "result_count": 1
+            }
+        }),
+    );
+    // Page 2
+    backend.enqueue_json_response(
+        "GET_OAUTH2_USER",
+        "/2/users/7505382/bookmarks",
+        serde_json::json!({
+            "data": [{
+                "id": "2",
+                "text": "second page post",
+                "created_at": "2011-04-06T19:14:37.000Z",
+                "author_id": "42"
+            }],
+            "includes": {
+                "users": [{ "id": "42", "username": "alice" }]
+            }
+        }),
+    );
+
+    let (code, out, err) =
+        run_cmd_with_profile(&["bookmarks", "--csv", "--number", "5"], &mut backend);
+
+    assert_success(code, &err);
+    assert!(out.contains("first page post"), "should contain page 1 tweet");
+    assert!(
+        out.contains("second page post"),
+        "should contain page 2 tweet"
+    );
+
+    let bookmark_calls: Vec<_> = backend
+        .calls()
+        .iter()
+        .filter(|c| c.path == "/2/users/7505382/bookmarks")
+        .collect();
+    assert_eq!(bookmark_calls.len(), 2, "should have made two paginated requests");
+
+    // Second call should include pagination_token
+    let second_params: Vec<(&str, &str)> = bookmark_calls[1]
+        .params
+        .iter()
+        .map(|(k, v)| (k.as_str(), v.as_str()))
+        .collect();
+    assert!(
+        second_params.contains(&("pagination_token", "abc123")),
+        "second request should contain pagination_token=abc123; got: {second_params:?}"
+    );
+}
+
+#[test]
 fn bookmark_uses_oauth2_user_context() {
     let mut backend = MockBackend::new();
     backend.enqueue_json_response("GET_OAUTH2_USER", "/2/users/me", me_fixture());
