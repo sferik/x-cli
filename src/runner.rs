@@ -3,6 +3,9 @@ use crate::rcfile::{Credentials, RcFile, RcFileError, default_profile_path};
 use base64::Engine;
 use chrono::{DateTime, Duration, Local, TimeZone, Utc};
 use clap::{ArgMatches, Command as ClapCommand};
+use reqwest::Url;
+use ring::digest::{SHA256, digest};
+use ring::rand::{SecureRandom, SystemRandom};
 use serde_json::Value;
 use std::collections::{BTreeSet, HashMap};
 use std::ffi::OsString;
@@ -12,9 +15,11 @@ use std::path::PathBuf;
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 use x_api::backend::{
-    AuthScheme, Backend, BackendError, TwitterBackend, get_json_oauth2_with_retry,
-    get_json_with_retry, post_json_body_oauth2_with_retry as post_json_oauth2_with_retry,
-    post_json_with_retry,
+    AuthScheme, Backend, BackendError, OAuth2UserContext, TwitterBackend,
+    delete_json_oauth2_user_with_retry, format_api_error, get_json_oauth2_user_with_retry,
+    get_json_oauth2_with_retry, get_json_with_retry,
+    post_json_body_oauth2_user_with_retry as post_json_oauth2_user_with_retry,
+    post_json_body_oauth2_with_retry as post_json_oauth2_with_retry, post_json_with_retry,
 };
 use x_api::oauth1::{self, ParamList, Token};
 
@@ -30,6 +35,14 @@ const V2_TWEET_EXPANSIONS: &str = "author_id,geo.place_id";
 const V2_USER_EXPANSIONS: &str = "pinned_tweet_id";
 const V2_PLACE_FIELDS: &str =
     "contained_within,country,country_code,full_name,geo,id,name,place_type";
+const DEFAULT_OAUTH2_REDIRECT_URI: &str = "http://127.0.0.1:8080/callback";
+const OAUTH2_DEFAULT_SCOPES: [&str; 5] = [
+    "tweet.read",
+    "users.read",
+    "bookmark.read",
+    "bookmark.write",
+    "offline.access",
+];
 const TWEET_HEADINGS: [&str; 4] = ["ID", "Posted at", "Screen name", "Text"];
 const DIRECT_MESSAGE_HEADINGS: [&str; 4] = ["ID", "Posted at", "Screen name", "Text"];
 const LIST_HEADINGS: [&str; 8] = [
@@ -183,13 +196,27 @@ fn execute_remote_with_profile_backend(
     out: &mut dyn Write,
     err: &mut dyn Write,
 ) -> Result<i32, CommandError> {
-    let rcfile = RcFile::load(&context.profile_path)?;
+    let mut rcfile = RcFile::load(&context.profile_path)?;
+    let active_profile = rcfile
+        .active_profile()
+        .map(|(username, key)| (username.to_string(), key.to_string()));
     let Some(credentials) = rcfile.active_credentials().cloned() else {
         return Err(CommandError::Backend(BackendError::MissingCredentials));
     };
+    let original_credentials = credentials.clone();
 
     let mut backend = TwitterBackend::from_credentials(credentials)?;
-    execute_remote_command(path, leaf, args, context, &mut backend, out, err)
+    let result = execute_remote_command(path, leaf, args, context, &mut backend, out, err);
+
+    if let Ok(_) = result
+        && backend.credentials() != &original_credentials
+        && let Some((username, key)) = active_profile
+    {
+        rcfile.upsert_profile_credentials(&username, &key, backend.credentials().clone());
+        rcfile.save(&context.profile_path)?;
+    }
+
+    result
 }
 
 struct CommandContext {
@@ -379,10 +406,50 @@ fn execute_remote_command(
         .active_profile()
         .map(|(name, _)| name.to_string())
         .unwrap_or_else(|| "unknown".to_string());
+    let active_credentials = rcfile.active_credentials().cloned();
 
     match path {
         [single] if single == "authorize" => {
-            run_authorize(leaf, &context.profile_path, out, err)?;
+            run_authorize(
+                leaf,
+                &context.profile_path,
+                active_credentials.as_ref(),
+                out,
+                err,
+            )?;
+            Ok(0)
+        }
+        [single] if single == "bookmark" => {
+            ensure_min_args(path, args, 1)?;
+            let me_id = authenticated_user_id_for_bookmarks(backend)?;
+            let ids = resolve_id_list(args);
+            for id in &ids {
+                let _ = post_json_oauth2_user_with_retry(
+                    backend,
+                    &format!("/2/users/{me_id}/bookmarks"),
+                    serde_json::json!({ "tweet_id": id }),
+                )?;
+            }
+            writeln!(
+                out,
+                "@{} bookmarked {}.",
+                active_name,
+                pluralize(ids.len(), "post", None)
+            )
+            .ok();
+            Ok(0)
+        }
+        [single] if single == "bookmarks" => {
+            let me_id = authenticated_user_id_for_bookmarks(backend)?;
+            let number = opt_usize(leaf, "number").unwrap_or(DEFAULT_NUM_RESULTS);
+            let tweets = collect_tweets_paginated(
+                backend,
+                &format!("/2/users/{me_id}/bookmarks"),
+                timeline_v2_params(leaf),
+                AuthScheme::OAuth2User,
+                number,
+            )?;
+            print_tweets(&tweets, leaf, out, &context.color);
             Ok(0)
         }
         [single] if single == "open" => {
@@ -493,6 +560,26 @@ fn execute_remote_command(
                 "@{} is no longer following {}.",
                 active_name,
                 pluralize(unfollowed.len(), "user", None)
+            )
+            .ok();
+            Ok(0)
+        }
+        [single] if single == "unbookmark" => {
+            ensure_min_args(path, args, 1)?;
+            let me_id = authenticated_user_id_for_bookmarks(backend)?;
+            let ids = resolve_id_list(args);
+            for id in &ids {
+                let _ = delete_json_oauth2_user_with_retry(
+                    backend,
+                    &format!("/2/users/{me_id}/bookmarks/{id}"),
+                    Vec::new(),
+                )?;
+            }
+            writeln!(
+                out,
+                "@{} removed {}.",
+                active_name,
+                pluralize(ids.len(), "bookmark", None)
             )
             .ok();
             Ok(0)
@@ -783,7 +870,7 @@ fn execute_remote_command(
             Ok(0)
         }
         [single] if single == "mentions" => {
-            let me = fetch_current_user(backend)?;
+            let me = fetch_current_user_with_credentials(backend, active_credentials.as_ref())?;
             let me_id = value_id(&me).unwrap_or_default();
             let number = opt_usize(leaf, "number").unwrap_or(DEFAULT_NUM_RESULTS);
             let tweets = collect_tweets_paginated(
@@ -848,7 +935,7 @@ fn execute_remote_command(
                     number,
                 )?
             } else {
-                let me = fetch_current_user(backend)?;
+                let me = fetch_current_user_with_credentials(backend, active_credentials.as_ref())?;
                 let me_id = value_id(&me).unwrap_or_default();
                 collect_tweets_paginated(
                     backend,
@@ -936,7 +1023,8 @@ fn execute_remote_command(
         }
         [single] if single == "whoami" => {
             if let Some((_username, _)) = rcfile.active_profile() {
-                let user = fetch_current_user(backend)?;
+                let user =
+                    fetch_current_user_with_credentials(backend, active_credentials.as_ref())?;
                 print_whois(&user, leaf, out);
             } else {
                 writeln!(
@@ -1668,7 +1756,7 @@ fn execute_remote_command(
                     MAX_SEARCH_RESULTS * MAX_PAGE,
                 )?
             } else {
-                let me = fetch_current_user(backend)?;
+                let me = fetch_current_user_with_credentials(backend, active_credentials.as_ref())?;
                 let me_id = value_id(&me).unwrap_or_default();
                 collect_tweets_paginated(
                     backend,
@@ -1684,7 +1772,7 @@ fn execute_remote_command(
         }
         [first, second] if first == "search" && second == "mentions" => {
             ensure_min_args(path, args, 1)?;
-            let me = fetch_current_user(backend)?;
+            let me = fetch_current_user_with_credentials(backend, active_credentials.as_ref())?;
             let me_id = value_id(&me).unwrap_or_default();
             let tweets = collect_tweets_paginated(
                 backend,
@@ -2869,9 +2957,20 @@ fn print_message(out: &mut dyn Write, from_user: &str, message: &str) {
 fn run_authorize(
     leaf: &ArgMatches,
     profile_path: &std::path::Path,
+    existing_credentials: Option<&Credentials>,
     out: &mut dyn Write,
     err: &mut dyn Write,
 ) -> Result<(), CommandError> {
+    if opt_bool(leaf, "oauth2") {
+        return run_authorize_oauth2(
+            profile_path,
+            existing_credentials,
+            opt_bool(leaf, "display-uri"),
+            out,
+            err,
+        );
+    }
+
     let mut rcfile = RcFile::load(profile_path)?;
     let display_uri = opt_bool(leaf, "display-uri");
 
@@ -2961,6 +3060,7 @@ fn run_authorize(
         token: access_token,
         secret: access_secret,
         bearer_token: None,
+        oauth2_user: None,
     };
     rcfile.upsert_profile_credentials(&screen_name, &key, credentials);
     let _ = rcfile.set_active(&screen_name, Some(&key))?;
@@ -3084,6 +3184,398 @@ fn oauth_verify_screen_name(
                 .and_then(Value::as_str)
         })
         .map(ToString::to_string)
+}
+
+fn run_authorize_oauth2(
+    profile_path: &std::path::Path,
+    existing_credentials: Option<&Credentials>,
+    display_uri: bool,
+    out: &mut dyn Write,
+    err: &mut dyn Write,
+) -> Result<(), CommandError> {
+    let mut rcfile = RcFile::load(profile_path)?;
+
+    writeln!(
+        out,
+        "OAuth 2.0 user-context authorization is required for bookmarks."
+    )?;
+    writeln!(
+        out,
+        "Configure your X app with OAuth 2.0 enabled and an exact callback URL match."
+    )?;
+    writeln!(
+        out,
+        "Recommended scopes: {}",
+        OAUTH2_DEFAULT_SCOPES.join(" ")
+    )?;
+    writeln!(out)?;
+    prompt(out, "Press [Enter] to open the X Developer site.")?;
+    writeln!(out)?;
+    open_or_print(
+        "https://developer.twitter.com/en/portal/projects-and-apps",
+        display_uri,
+        out,
+        err,
+    );
+
+    let client_id = env_first(&[
+        "X_AUTHORIZE_OAUTH2_CLIENT_ID",
+        "T_AUTHORIZE_OAUTH2_CLIENT_ID",
+    ])
+    .unwrap_or(prompt(out, "Enter your OAuth2 client ID:")?);
+    let client_secret = env_first(&[
+        "X_AUTHORIZE_OAUTH2_CLIENT_SECRET",
+        "T_AUTHORIZE_OAUTH2_CLIENT_SECRET",
+    ])
+    .or({
+        let entered = prompt(
+            out,
+            "Enter your OAuth2 client secret (press Enter for public clients):",
+        )?;
+        if entered.trim().is_empty() {
+            None
+        } else {
+            Some(entered)
+        }
+    });
+    let redirect_uri = env_first(&[
+        "X_AUTHORIZE_OAUTH2_REDIRECT_URI",
+        "T_AUTHORIZE_OAUTH2_REDIRECT_URI",
+    ])
+    .unwrap_or(prompt_with_default(
+        out,
+        "Enter your OAuth2 redirect URI:",
+        DEFAULT_OAUTH2_REDIRECT_URI,
+    )?);
+    let scopes = oauth2_scopes();
+
+    let state = random_urlsafe_token(24)?;
+    let code_verifier = random_urlsafe_token(48)?;
+    let authorize_uri =
+        build_oauth2_authorize_uri(&client_id, &redirect_uri, &scopes, &state, &code_verifier)?;
+
+    writeln!(out)?;
+    writeln!(
+        out,
+        "Open the authorization page, sign in, and approve the app."
+    )?;
+    writeln!(
+        out,
+        "After X redirects to your callback URL, copy the full URL from the browser and paste it below."
+    )?;
+    writeln!(out)?;
+    prompt(
+        out,
+        "Press [Enter] to open the OAuth 2.0 authorization page.",
+    )?;
+    writeln!(out)?;
+    open_or_print(&authorize_uri, display_uri, out, err);
+
+    let redirected_input = env_first(&[
+        "X_AUTHORIZE_OAUTH2_REDIRECTED_URL",
+        "T_AUTHORIZE_OAUTH2_REDIRECTED_URL",
+    ])
+    .unwrap_or(prompt(
+        out,
+        "Paste the full redirected URL, or just the code value:",
+    )?);
+    let (code, returned_state) = parse_oauth2_redirect_input(&redirected_input)?;
+    if let Some(returned_state) = returned_state
+        && returned_state != state
+    {
+        return Err(CommandError::Other(
+            "OAuth2 state mismatch; authorization response could not be verified".to_string(),
+        ));
+    }
+
+    let oauth2_user = oauth2_exchange_authorization_code(
+        &client_id,
+        client_secret.as_deref(),
+        &redirect_uri,
+        &code,
+        &code_verifier,
+        &scopes,
+    )?;
+    let screen_name = oauth2_fetch_screen_name(&oauth2_user.access_token)?;
+
+    let storage_key = existing_credentials
+        .filter(|credentials| credentials.username.eq_ignore_ascii_case(&screen_name))
+        .map(|credentials| credentials.consumer_key.clone())
+        .filter(|key| !key.trim().is_empty())
+        .unwrap_or_else(|| client_id.clone());
+
+    let mut credentials = existing_credentials
+        .filter(|credentials| credentials.username.eq_ignore_ascii_case(&screen_name))
+        .cloned()
+        .unwrap_or_else(|| Credentials {
+            username: screen_name.clone(),
+            consumer_key: storage_key.clone(),
+            consumer_secret: String::new(),
+            token: String::new(),
+            secret: String::new(),
+            bearer_token: None,
+            oauth2_user: None,
+        });
+    credentials.username = screen_name.clone();
+    if credentials.consumer_key.trim().is_empty() {
+        credentials.consumer_key = storage_key.clone();
+    }
+    credentials.oauth2_user = Some(oauth2_user);
+
+    rcfile.upsert_profile_credentials(&screen_name, &storage_key, credentials);
+    let _ = rcfile.set_active(&screen_name, Some(&storage_key))?;
+    rcfile.save(profile_path)?;
+
+    writeln!(out, "OAuth2 authorization successful.")?;
+    Ok(())
+}
+
+fn env_first(names: &[&str]) -> Option<String> {
+    names.iter().find_map(|name| {
+        std::env::var(name)
+            .ok()
+            .map(|value| value.trim().to_string())
+            .filter(|value| !value.is_empty())
+    })
+}
+
+fn prompt_with_default(
+    out: &mut dyn Write,
+    label: &str,
+    default: &str,
+) -> Result<String, io::Error> {
+    let value = prompt(out, &format!("{label} [{default}]"))?;
+    if value.trim().is_empty() {
+        Ok(default.to_string())
+    } else {
+        Ok(value)
+    }
+}
+
+fn oauth2_scopes() -> Vec<String> {
+    let mut scopes = env_first(&["X_AUTHORIZE_OAUTH2_SCOPES", "T_AUTHORIZE_OAUTH2_SCOPES"])
+        .map(|value| {
+            value
+                .split(|ch: char| ch.is_whitespace() || ch == ',')
+                .filter(|scope| !scope.is_empty())
+                .map(ToString::to_string)
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_else(|| {
+            OAUTH2_DEFAULT_SCOPES
+                .iter()
+                .map(|scope| (*scope).to_string())
+                .collect()
+        });
+
+    for required in [
+        "tweet.read",
+        "users.read",
+        "bookmark.read",
+        "bookmark.write",
+    ] {
+        ensure_scope(&mut scopes, required);
+    }
+
+    scopes
+}
+
+fn ensure_scope(scopes: &mut Vec<String>, scope: &str) {
+    if !scopes.iter().any(|candidate| candidate == scope) {
+        scopes.push(scope.to_string());
+    }
+}
+
+fn random_urlsafe_token(len: usize) -> Result<String, CommandError> {
+    let rng = SystemRandom::new();
+    let mut bytes = vec![0u8; len];
+    rng.fill(&mut bytes)
+        .map_err(|_| CommandError::Other("Failed to generate secure random bytes".to_string()))?;
+    Ok(base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(bytes))
+}
+
+fn pkce_s256_challenge(code_verifier: &str) -> String {
+    let hash = digest(&SHA256, code_verifier.as_bytes());
+    base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(hash.as_ref())
+}
+
+fn build_oauth2_authorize_uri(
+    client_id: &str,
+    redirect_uri: &str,
+    scopes: &[String],
+    state: &str,
+    code_verifier: &str,
+) -> Result<String, CommandError> {
+    let mut url = Url::parse("https://x.com/i/oauth2/authorize")
+        .map_err(|error| CommandError::Other(error.to_string()))?;
+    let code_challenge = pkce_s256_challenge(code_verifier);
+    url.query_pairs_mut()
+        .append_pair("response_type", "code")
+        .append_pair("client_id", client_id)
+        .append_pair("redirect_uri", redirect_uri)
+        .append_pair("scope", &scopes.join(" "))
+        .append_pair("state", state)
+        .append_pair("code_challenge", &code_challenge)
+        .append_pair("code_challenge_method", "S256");
+    Ok(url.to_string())
+}
+
+fn parse_oauth2_redirect_input(input: &str) -> Result<(String, Option<String>), CommandError> {
+    let trimmed = input.trim();
+    if trimmed.is_empty() {
+        return Err(CommandError::Other(
+            "OAuth2 authorization response was empty".to_string(),
+        ));
+    }
+
+    if let Ok(url) = Url::parse(trimmed) {
+        let query = url.query_pairs().collect::<HashMap<_, _>>();
+        if let Some(error) = query.get("error") {
+            let description = query
+                .get("error_description")
+                .map(|value| format!(": {value}"))
+                .unwrap_or_default();
+            return Err(CommandError::Other(format!(
+                "OAuth2 authorization failed with {error}{description}"
+            )));
+        }
+
+        let code = query
+            .get("code")
+            .map(|value| value.to_string())
+            .filter(|value| !value.trim().is_empty())
+            .ok_or_else(|| {
+                CommandError::Other(
+                    "OAuth2 redirect URL did not contain a code parameter".to_string(),
+                )
+            })?;
+        let state = query.get("state").map(|value| value.to_string());
+        return Ok((code, state));
+    }
+
+    Ok((trimmed.to_string(), None))
+}
+
+fn oauth2_exchange_authorization_code(
+    client_id: &str,
+    client_secret: Option<&str>,
+    redirect_uri: &str,
+    code: &str,
+    code_verifier: &str,
+    requested_scopes: &[String],
+) -> Result<OAuth2UserContext, CommandError> {
+    let client = reqwest::blocking::Client::builder()
+        .user_agent("x-rust/5.0")
+        .build()
+        .map_err(|error| CommandError::Backend(BackendError::Http(error.to_string())))?;
+
+    let mut request = client
+        .post("https://api.x.com/2/oauth2/token")
+        .header("Content-Type", "application/x-www-form-urlencoded");
+    let mut form = vec![
+        ("code".to_string(), code.to_string()),
+        ("grant_type".to_string(), "authorization_code".to_string()),
+        ("redirect_uri".to_string(), redirect_uri.to_string()),
+        ("code_verifier".to_string(), code_verifier.to_string()),
+    ];
+
+    match client_secret.filter(|value| !value.trim().is_empty()) {
+        Some(client_secret) => {
+            let basic = base64::engine::general_purpose::STANDARD
+                .encode(format!("{client_id}:{client_secret}").as_bytes());
+            request = request.header("Authorization", format!("Basic {basic}"));
+        }
+        None => form.push(("client_id".to_string(), client_id.to_string())),
+    }
+
+    let response = request
+        .form(&form)
+        .send()
+        .map_err(|error| CommandError::Backend(BackendError::Http(error.to_string())))?;
+    let status = response.status();
+    let body = response
+        .text()
+        .map_err(|error| CommandError::Backend(BackendError::Http(error.to_string())))?;
+    if !status.is_success() {
+        return Err(CommandError::Backend(BackendError::Http(format_api_error(
+            status, &body,
+        ))));
+    }
+
+    let payload: Value = serde_json::from_str(&body).map_err(BackendError::from)?;
+    let access_token = payload
+        .get("access_token")
+        .and_then(Value::as_str)
+        .filter(|value| !value.trim().is_empty())
+        .ok_or_else(|| {
+            CommandError::Other("OAuth2 token response did not include access_token".to_string())
+        })?
+        .to_string();
+    let refresh_token = payload
+        .get("refresh_token")
+        .and_then(Value::as_str)
+        .filter(|value| !value.trim().is_empty())
+        .map(ToString::to_string);
+    let expires_at = payload
+        .get("expires_in")
+        .and_then(Value::as_i64)
+        .map(|seconds| {
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .map(|duration| duration.as_secs() as i64 + seconds)
+                .unwrap_or(seconds)
+        });
+    let scopes = payload
+        .get("scope")
+        .and_then(Value::as_str)
+        .map(|value| {
+            value
+                .split_whitespace()
+                .filter(|scope| !scope.is_empty())
+                .map(ToString::to_string)
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_else(|| requested_scopes.to_vec());
+
+    Ok(OAuth2UserContext {
+        client_id: client_id.to_string(),
+        client_secret: client_secret.map(ToString::to_string),
+        access_token,
+        refresh_token,
+        expires_at,
+        scopes,
+    })
+}
+
+fn oauth2_fetch_screen_name(access_token: &str) -> Result<String, CommandError> {
+    let client = reqwest::blocking::Client::builder()
+        .user_agent("x-rust/5.0")
+        .build()
+        .map_err(|error| CommandError::Backend(BackendError::Http(error.to_string())))?;
+    let response = client
+        .get("https://api.x.com/2/users/me?user.fields=username")
+        .bearer_auth(access_token)
+        .send()
+        .map_err(|error| CommandError::Backend(BackendError::Http(error.to_string())))?;
+    let status = response.status();
+    let body = response
+        .text()
+        .map_err(|error| CommandError::Backend(BackendError::Http(error.to_string())))?;
+    if !status.is_success() {
+        return Err(CommandError::Backend(BackendError::Http(format_api_error(
+            status, &body,
+        ))));
+    }
+
+    let payload: Value = serde_json::from_str(&body).map_err(BackendError::from)?;
+    payload
+        .get("data")
+        .and_then(|data| data.get("username"))
+        .and_then(Value::as_str)
+        .map(ToString::to_string)
+        .ok_or_else(|| {
+            CommandError::Other("OAuth2 /2/users/me response did not include username".to_string())
+        })
 }
 
 fn prompt(out: &mut dyn Write, label: &str) -> Result<String, io::Error> {
@@ -3392,6 +3884,9 @@ fn collect_tweets_paginated(
         let response = match auth {
             AuthScheme::OAuth1User => get_json_with_retry(backend, path, params.clone())?,
             AuthScheme::OAuth2Bearer => get_json_oauth2_with_retry(backend, path, params.clone())?,
+            AuthScheme::OAuth2User => {
+                get_json_oauth2_user_with_retry(backend, path, params.clone())?
+            }
         };
         tweets.extend(extract_tweets(&response));
         if tweets.len() >= limit {
@@ -3756,6 +4251,33 @@ fn fetch_user(backend: &mut dyn Backend, user: &str, by_id: bool) -> Result<Valu
 }
 
 fn fetch_current_user(backend: &mut dyn Backend) -> Result<Value, CommandError> {
+    fetch_current_user_with_credentials(backend, None)
+}
+
+fn fetch_current_user_with_credentials(
+    backend: &mut dyn Backend,
+    credentials: Option<&Credentials>,
+) -> Result<Value, CommandError> {
+    if credentials
+        .and_then(|credentials| credentials.oauth2_user.as_ref())
+        .is_some()
+    {
+        let response = get_json_oauth2_user_with_retry(
+            backend,
+            "/2/users/me",
+            vec![
+                ("user.fields".to_string(), V2_USER_FIELDS.to_string()),
+                ("expansions".to_string(), V2_USER_EXPANSIONS.to_string()),
+                ("tweet.fields".to_string(), V2_TWEET_FIELDS.to_string()),
+            ],
+        )?;
+
+        return Ok(extract_users(&response)
+            .into_iter()
+            .next()
+            .unwrap_or(Value::Null));
+    }
+
     let v2_result = get_json_with_retry(
         backend,
         "/2/users/me",
@@ -3782,6 +4304,19 @@ fn fetch_current_user(backend: &mut dyn Backend) -> Result<Value, CommandError> 
 
 fn authenticated_user_id(backend: &mut dyn Backend) -> Result<String, CommandError> {
     Ok(value_id(&fetch_current_user(backend)?).unwrap_or_default())
+}
+
+fn authenticated_user_id_for_bookmarks(backend: &mut dyn Backend) -> Result<String, CommandError> {
+    let response = get_json_oauth2_user_with_retry(
+        backend,
+        "/2/users/me",
+        vec![("user.fields".to_string(), "id,username".to_string())],
+    )?;
+    Ok(response
+        .get("data")
+        .and_then(|data| data.get("id"))
+        .and_then(value_to_string)
+        .unwrap_or_default())
 }
 
 fn resolve_user_id(

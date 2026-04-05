@@ -608,6 +608,8 @@ fn descriptions() -> HashMap<&'static str, HashMap<&'static str, &'static str>> 
     let top = map.entry("").or_default();
     top.insert("accounts", "List accounts.");
     top.insert("authorize", "Authorize an application via OAuth.");
+    top.insert("bookmark", "Bookmark posts.");
+    top.insert("bookmarks", "Returns the most recent bookmarked posts.");
     top.insert("block", "Block users.");
     top.insert("blocks", "Returns a list of blocked users.");
     top.insert(
@@ -689,6 +691,7 @@ fn descriptions() -> HashMap<&'static str, HashMap<&'static str, &'static str>> 
         "trend_locations",
         "Returns the locations for which X has trending topic information.",
     );
+    top.insert("unbookmark", "Remove bookmarked posts.");
     top.insert("unfollow", "Unfollow users.");
     top.insert("update", "Post to your timeline.");
     top.insert("users", "Returns a list of users you specify.");

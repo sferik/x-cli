@@ -117,6 +117,77 @@ fn search_all_prefers_oauth2_backend() {
 }
 
 #[test]
+fn bookmarks_use_oauth2_user_context() {
+    let mut backend = MockBackend::new();
+    backend.enqueue_json_response("GET_OAUTH2_USER", "/2/users/me", me_fixture());
+    backend.enqueue_json_response(
+        "GET_OAUTH2_USER",
+        "/2/users/7505382/bookmarks",
+        serde_json::json!({
+            "data": [{
+                "id": "1",
+                "text": "saved post",
+                "created_at": "2011-04-06T19:13:37.000Z",
+                "author_id": "42"
+            }],
+            "includes": {
+                "users": [{
+                    "id": "42",
+                    "username": "alice"
+                }]
+            }
+        }),
+    );
+
+    let (code, out, err) = run_cmd_with_profile(&["bookmarks", "--csv"], &mut backend);
+
+    assert_success(code, &err);
+    assert!(out.contains("ID,Posted at,Screen name,Text"));
+    assert!(out.contains(",alice,saved post"));
+    assert!(backend.calls().iter().any(|call| {
+        call.method == "GET_OAUTH2_USER" && call.path == "/2/users/7505382/bookmarks"
+    }));
+}
+
+#[test]
+fn bookmark_uses_oauth2_user_context() {
+    let mut backend = MockBackend::new();
+    backend.enqueue_json_response("GET_OAUTH2_USER", "/2/users/me", me_fixture());
+    backend.enqueue_json_response(
+        "POST_JSON_OAUTH2_USER",
+        "/2/users/7505382/bookmarks",
+        serde_json::json!({ "data": { "bookmarked": true } }),
+    );
+
+    let (code, out, err) = run_cmd_with_profile(&["bookmark", "123"], &mut backend);
+
+    assert_success(code, &err);
+    assert!(out.contains("bookmarked 1 post"));
+    assert!(backend.calls().iter().any(|call| {
+        call.method == "POST_JSON_OAUTH2_USER" && call.path == "/2/users/7505382/bookmarks"
+    }));
+}
+
+#[test]
+fn unbookmark_uses_oauth2_user_context() {
+    let mut backend = MockBackend::new();
+    backend.enqueue_json_response("GET_OAUTH2_USER", "/2/users/me", me_fixture());
+    backend.enqueue_json_response(
+        "DELETE_OAUTH2_USER",
+        "/2/users/7505382/bookmarks/123",
+        serde_json::json!({ "data": { "bookmarked": false } }),
+    );
+
+    let (code, out, err) = run_cmd_with_profile(&["unbookmark", "123"], &mut backend);
+
+    assert_success(code, &err);
+    assert!(out.contains("removed 1 bookmark"));
+    assert!(backend.calls().iter().any(|call| {
+        call.method == "DELETE_OAUTH2_USER" && call.path == "/2/users/7505382/bookmarks/123"
+    }));
+}
+
+#[test]
 fn users_csv_matches_legacy_rows() {
     let mut backend = MockBackend::new();
     backend.enqueue_json_response("GET_OAUTH2", "/2/users/by", fixture_json("users.json"));
