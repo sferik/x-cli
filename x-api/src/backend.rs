@@ -1488,4 +1488,94 @@ mod tests {
             other => panic!("expected MissingMockResponse, got: {other:?}"),
         }
     }
+
+    fn make_oauth2_credentials(
+        access_token: &str,
+        refresh_token: Option<&str>,
+        expires_at: Option<i64>,
+    ) -> Credentials {
+        Credentials {
+            oauth2_user: Some(OAuth2UserContext {
+                client_id: "test_client".to_string(),
+                client_secret: None,
+                access_token: access_token.to_string(),
+                refresh_token: refresh_token.map(ToString::to_string),
+                expires_at,
+                scopes: vec!["tweet.read".to_string(), "offline.access".to_string()],
+            }),
+            ..Default::default()
+        }
+    }
+
+    #[test]
+    fn ensure_oauth2_user_token_returns_valid_token() {
+        let future = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs() as i64
+            + 7200;
+        let creds = make_oauth2_credentials("valid_token", Some("rt"), Some(future));
+        let mut backend = TwitterBackend::from_credentials(creds).unwrap();
+
+        let token = backend.ensure_oauth2_user_token().unwrap();
+        assert_eq!(token, "valid_token");
+    }
+
+    #[test]
+    fn ensure_oauth2_user_token_returns_token_without_expiry() {
+        let creds = make_oauth2_credentials("no_expiry_token", Some("rt"), None);
+        let mut backend = TwitterBackend::from_credentials(creds).unwrap();
+
+        let token = backend.ensure_oauth2_user_token().unwrap();
+        assert_eq!(token, "no_expiry_token");
+    }
+
+    #[test]
+    fn ensure_oauth2_user_token_rejects_missing_context() {
+        let creds = Credentials::default();
+        let mut backend = TwitterBackend::from_credentials(creds).unwrap();
+
+        let err = backend.ensure_oauth2_user_token().unwrap_err();
+        assert!(matches!(err, BackendError::MissingOAuth2UserContext));
+    }
+
+    #[test]
+    fn ensure_oauth2_user_token_expired_without_refresh_token_errors() {
+        let past = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs() as i64
+            - 100;
+        let creds = make_oauth2_credentials("expired", None, Some(past));
+        let mut backend = TwitterBackend::from_credentials(creds).unwrap();
+
+        let err = backend.ensure_oauth2_user_token().unwrap_err();
+        match err {
+            BackendError::Http(msg) => assert!(
+                msg.contains("offline.access"),
+                "should hint about offline.access scope, got: {msg}"
+            ),
+            other => panic!("expected Http error, got: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn ensure_oauth2_user_token_within_buffer_triggers_refresh_path() {
+        // Token expires in 30 seconds (within the 60-second buffer)
+        let soon = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs() as i64
+            + 30;
+        let creds = make_oauth2_credentials("almost_expired", Some("rt"), Some(soon));
+        let mut backend = TwitterBackend::from_credentials(creds).unwrap();
+
+        // This will try to refresh (and fail because there's no real server),
+        // proving the expiry buffer works correctly.
+        let err = backend.ensure_oauth2_user_token().unwrap_err();
+        assert!(
+            matches!(err, BackendError::Http(_)),
+            "should attempt refresh and fail on network, got: {err:?}"
+        );
+    }
 }

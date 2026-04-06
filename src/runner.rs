@@ -208,12 +208,18 @@ fn execute_remote_with_profile_backend(
     let mut backend = TwitterBackend::from_credentials(credentials)?;
     let result = execute_remote_command(path, leaf, args, context, &mut backend, out, err);
 
-    if let Ok(_) = result
-        && backend.credentials() != &original_credentials
+    // Always persist refreshed credentials, even when the command itself fails.
+    // X/Twitter uses refresh-token rotation: once a refresh token is exchanged,
+    // the previous one is permanently invalidated. Saving only on success meant
+    // that any post-refresh failure (API error, broken pipe, etc.) would discard
+    // the new tokens, leaving the now-invalid old refresh token on disk and
+    // causing `invalid_request` on the next run.
+    if backend.credentials() != &original_credentials
         && let Some((username, key)) = active_profile
     {
         rcfile.upsert_profile_credentials(&username, &key, backend.credentials().clone());
-        rcfile.save(&context.profile_path)?;
+        // Best-effort: don't let a save failure mask the original command result.
+        let _ = rcfile.save(&context.profile_path);
     }
 
     result
