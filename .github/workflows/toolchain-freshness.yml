@@ -23,18 +23,22 @@ jobs:
         run: |
           set -euo pipefail
 
-          pinned="$(python3 - <<'PY'
-          import tomllib
+          tmp="$(mktemp)"
+          curl -fsSL -o "$tmp" https://static.rust-lang.org/dist/channel-rust-stable.toml
+
+          read -r pinned latest <<<"$(python3 - "$tmp" <<'PY'
+          import sys, tomllib
           from pathlib import Path
 
           toolchain = tomllib.loads(Path("rust-toolchain.toml").read_text())
-          print(toolchain["toolchain"]["channel"])
+          pinned = toolchain["toolchain"]["channel"]
+
+          manifest = tomllib.loads(Path(sys.argv[1]).read_text())
+          latest = manifest["pkg"]["rust"]["version"].split()[0]
+
+          print(pinned, latest)
           PY
           )"
-
-          tmp="$(mktemp)"
-          curl -fsSL -o "$tmp" https://static.rust-lang.org/dist/channel-rust-stable.toml
-          latest="$(awk -F'"' '/^version = / { print $2; exit }' "$tmp" | sed 's/ .*//')"
           rm -f "$tmp"
 
           echo "Pinned rust-toolchain.toml channel: $pinned"
