@@ -53,6 +53,7 @@ module T
 
     desc "authorize", "Allows an application to request user authorization"
     method_option "display-uri", aliases: "-d", type: :boolean, desc: "Display the authorization URL instead of attempting to open it."
+    method_option "oauth2", type: :boolean, desc: "Authorize an OAuth 2.0 user-context token via PKCE."
     def authorize
       @rcfile.path = options["profile"] if options["profile"]
       if @rcfile.empty?
@@ -110,6 +111,20 @@ module T
       @rcfile.active_profile = {"username" => screen_name, "consumer_key" => key}
       say "Authorization successful."
     end
+
+    desc "bookmark TWEET_ID [TWEET_ID...]", "Bookmark posts."
+    def bookmark(status_id, *status_ids); end
+
+    desc "bookmarks", "Returns the most recent bookmarked posts."
+    method_option "csv", aliases: "-c", type: :boolean, desc: "Output in CSV format."
+    method_option "decode_uris", aliases: "-d", type: :boolean, desc: "Decodes t.co URLs into their original form."
+    method_option "long", aliases: "-l", type: :boolean, desc: "Output in long format."
+    method_option "number", aliases: "-n", type: :numeric, default: DEFAULT_NUM_RESULTS, desc: "Limit the number of results."
+    method_option "relative_dates", aliases: "-a", type: :boolean, desc: "Show relative dates."
+    method_option "reverse", aliases: "-r", type: :boolean, desc: "Reverse the order of the sort."
+    method_option "max_id", aliases: "-m", type: :numeric, desc: "Returns only the results with an ID less than the specified ID."
+    method_option "since_id", aliases: "-s", type: :numeric, desc: "Returns only the results with an ID greater than the specified ID."
+    def bookmarks; end
 
     desc "block USER [USER...]", "Block users."
     method_option "id", aliases: "-i", type: :boolean, desc: "Specify input as Twitter user IDs instead of screen names."
@@ -798,6 +813,9 @@ module T
       say
       say "Run `#{File.basename($PROGRAM_NAME)} follow #{unfollowed_users.collect { |unfollowed_user| "@#{unfollowed_user['screen_name']}" }.join(' ')}` to follow again."
     end
+
+    desc "unbookmark TWEET_ID [TWEET_ID...]", "Remove bookmarked posts."
+    def unbookmark(status_id, *status_ids); end
 
     desc "update [MESSAGE]", "Post a Tweet."
     method_option "location", aliases: "-l", type: :string, default: nil, desc: "Add location information. If the optional 'latitude,longitude' parameter is not supplied, looks up location by IP address."

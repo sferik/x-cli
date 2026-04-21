@@ -18,11 +18,38 @@ A command-line interface for the X API.
 
 - Command families: `cli`, `delete`, `list`, `search`, `set`, `stream`
 - Local account/profile commands: `accounts`, `set active`, `delete account`, `version`, `ruler`
+- Bookmark commands: `bookmarks`, `bookmark <id>`, `unbookmark <id>`
 - Stream commands use persistent HTTP streaming:
   - `stream all` and `stream matrix` use OAuth2 sample stream
   - `stream search`, `stream users`, `stream list`, and `stream timeline` use v2 filtered stream rules + stream
 - `X_STREAM_MAX_EVENTS` can be set to limit emitted events (useful for tests/automation)
 - Default profile config is `~/.xrc`. If `~/.xrc` is missing, `~/.trc` is used as a read fallback and migrated on write.
+
+## Bookmark Auth
+
+X bookmarks require OAuth 2.0 user context with PKCE. The CLI now supports:
+
+```bash
+x authorize --oauth2
+```
+
+The OAuth 2.0 flow expects an app with OAuth 2.0 enabled, an exact callback URL match, and bookmark-capable scopes. By default the CLI requests:
+
+```text
+tweet.read users.read bookmark.read bookmark.write offline.access
+```
+
+Environment variables can prefill the OAuth 2.0 prompts:
+
+```text
+X_AUTHORIZE_OAUTH2_CLIENT_ID
+X_AUTHORIZE_OAUTH2_CLIENT_SECRET
+X_AUTHORIZE_OAUTH2_REDIRECT_URI
+X_AUTHORIZE_OAUTH2_SCOPES
+X_AUTHORIZE_OAUTH2_REDIRECTED_URL
+```
+
+`T_AUTHORIZE_OAUTH2_*` aliases are also accepted for compatibility with the existing authorize flow.
 
 ## Development
 

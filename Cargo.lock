@@ -2413,6 +2413,7 @@ dependencies = [
  "predicates",
  "regex",
  "reqwest",
+ "ring",
  "serde",
  "serde_json",
  "serde_urlencoded",

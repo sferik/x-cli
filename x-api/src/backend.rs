@@ -74,6 +74,8 @@ pub enum AuthScheme {
     OAuth1User,
     /// OAuth 2 bearer token authentication.
     OAuth2Bearer,
+    /// OAuth 2.0 user-context bearer authentication.
+    OAuth2User,
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -82,6 +84,9 @@ pub enum BackendError {
     /// No active credentials were available in profile configuration.
     #[error("No active credentials found in profile")]
     MissingCredentials,
+    /// No OAuth 2.0 user-context credentials were available.
+    #[error("No OAuth2 user-context credentials found in profile")]
+    MissingOAuth2UserContext,
     /// Network, OAuth, or HTTP status failure.
     ///
     /// For API errors, the message is formatted as `"NNN: human-readable message"` where NNN
@@ -102,7 +107,30 @@ pub enum BackendError {
     },
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq)]
+/// OAuth 2.0 user-context credentials loaded from rc profile data.
+pub struct OAuth2UserContext {
+    /// OAuth 2.0 client identifier from the X developer console.
+    #[serde(default)]
+    pub client_id: String,
+    /// Optional OAuth 2.0 client secret for confidential clients.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub client_secret: Option<String>,
+    /// OAuth 2.0 user access token.
+    #[serde(default)]
+    pub access_token: String,
+    /// Optional OAuth 2.0 refresh token.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub refresh_token: Option<String>,
+    /// Absolute UNIX timestamp at which the access token expires.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub expires_at: Option<i64>,
+    /// Granted OAuth 2.0 scopes.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub scopes: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq)]
 /// API credentials loaded from rc profile data.
 pub struct Credentials {
     /// Account username or screen name.
@@ -123,6 +151,9 @@ pub struct Credentials {
     /// Optional OAuth2 bearer token override.
     #[serde(default)]
     pub bearer_token: Option<String>,
+    /// Optional OAuth 2.0 user-context credentials.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub oauth2_user: Option<OAuth2UserContext>,
 }
 
 /// Default number of attempts used by retry helper functions.
@@ -195,6 +226,17 @@ pub fn get_json_oauth2_with_retry(
     })
 }
 
+/// Calls [`Backend::get_json_oauth2_user`] with [`DEFAULT_RETRY_TRIES`] attempts.
+pub fn get_json_oauth2_user_with_retry(
+    backend: &mut dyn Backend,
+    path: &str,
+    params: Vec<(String, String)>,
+) -> Result<Value, BackendError> {
+    retry_with(DEFAULT_RETRY_TRIES, || {
+        backend.get_json_oauth2_user(path, params.clone())
+    })
+}
+
 /// Calls [`Backend::post_json_body_oauth2`] with [`DEFAULT_RETRY_TRIES`] attempts.
 pub fn post_json_body_oauth2_with_retry(
     backend: &mut dyn Backend,
@@ -203,6 +245,28 @@ pub fn post_json_body_oauth2_with_retry(
 ) -> Result<Value, BackendError> {
     retry_with(DEFAULT_RETRY_TRIES, || {
         backend.post_json_body_oauth2(path, body.clone())
+    })
+}
+
+/// Calls [`Backend::post_json_body_oauth2_user`] with [`DEFAULT_RETRY_TRIES`] attempts.
+pub fn post_json_body_oauth2_user_with_retry(
+    backend: &mut dyn Backend,
+    path: &str,
+    body: Value,
+) -> Result<Value, BackendError> {
+    retry_with(DEFAULT_RETRY_TRIES, || {
+        backend.post_json_body_oauth2_user(path, body.clone())
+    })
+}
+
+/// Calls [`Backend::delete_json_oauth2_user`] with [`DEFAULT_RETRY_TRIES`] attempts.
+pub fn delete_json_oauth2_user_with_retry(
+    backend: &mut dyn Backend,
+    path: &str,
+    params: Vec<(String, String)>,
+) -> Result<Value, BackendError> {
+    retry_with(DEFAULT_RETRY_TRIES, || {
+        backend.delete_json_oauth2_user(path, params.clone())
     })
 }
 
@@ -228,6 +292,15 @@ pub trait Backend {
     /// Executes an OAuth2 POST request with a JSON body and returns parsed JSON.
     fn post_json_body_oauth2(&mut self, path: &str, body: Value) -> Result<Value, BackendError>;
 
+    /// Executes an OAuth2 user-context POST request with a JSON body and returns parsed JSON.
+    fn post_json_body_oauth2_user(
+        &mut self,
+        _path: &str,
+        _body: Value,
+    ) -> Result<Value, BackendError> {
+        Err(BackendError::MissingOAuth2UserContext)
+    }
+
     /// Executes an OAuth1 DELETE request and returns parsed JSON.
     fn delete_json(
         &mut self,
@@ -235,12 +308,30 @@ pub trait Backend {
         params: Vec<(String, String)>,
     ) -> Result<Value, BackendError>;
 
+    /// Executes an OAuth2 user-context DELETE request and returns parsed JSON.
+    fn delete_json_oauth2_user(
+        &mut self,
+        _path: &str,
+        _params: Vec<(String, String)>,
+    ) -> Result<Value, BackendError> {
+        Err(BackendError::MissingOAuth2UserContext)
+    }
+
     /// Executes an OAuth2 GET request and returns parsed JSON.
     fn get_json_oauth2(
         &mut self,
         path: &str,
         params: Vec<(String, String)>,
     ) -> Result<Value, BackendError>;
+
+    /// Executes an OAuth2 user-context GET request and returns parsed JSON.
+    fn get_json_oauth2_user(
+        &mut self,
+        _path: &str,
+        _params: Vec<(String, String)>,
+    ) -> Result<Value, BackendError> {
+        Err(BackendError::MissingOAuth2UserContext)
+    }
 
     /// Opens a streaming endpoint and emits each decoded JSON line to `on_event`.
     ///
@@ -298,6 +389,11 @@ impl TwitterBackend {
             client,
             calls: Vec::new(),
         })
+    }
+
+    /// Returns the current credentials, including any refreshed OAuth2 user token state.
+    pub fn credentials(&self) -> &Credentials {
+        &self.credentials
     }
 
     fn request_oauth1_signed(
@@ -384,6 +480,27 @@ impl TwitterBackend {
         params: Vec<(String, String)>,
     ) -> Result<Value, BackendError> {
         let token = self.ensure_bearer_token()?.to_string();
+        self.request_bearer(method, "OAUTH2", path, params, &token)
+    }
+
+    fn request_oauth2_user(
+        &mut self,
+        method: &str,
+        path: &str,
+        params: Vec<(String, String)>,
+    ) -> Result<Value, BackendError> {
+        let token = self.ensure_oauth2_user_token()?.to_string();
+        self.request_bearer(method, "OAUTH2_USER", path, params, &token)
+    }
+
+    fn request_bearer(
+        &mut self,
+        method: &str,
+        label: &str,
+        path: &str,
+        params: Vec<(String, String)>,
+        token: &str,
+    ) -> Result<Value, BackendError> {
         let url = self.absolute_url(path);
 
         let response = match method {
@@ -401,17 +518,35 @@ impl TwitterBackend {
                 };
                 self.client
                     .get(request_url)
-                    .bearer_auth(&token)
+                    .bearer_auth(token)
                     .send()
                     .map_err(|error| BackendError::Http(error.to_string()))?
             }
             "POST" => self
                 .client
                 .post(url)
-                .bearer_auth(&token)
+                .bearer_auth(token)
                 .form(&params)
                 .send()
                 .map_err(|error| BackendError::Http(error.to_string()))?,
+            "DELETE" => {
+                let query = if params.is_empty() {
+                    String::new()
+                } else {
+                    serde_urlencoded::to_string(&params)
+                        .map_err(|error| BackendError::Http(error.to_string()))?
+                };
+                let request_url = if query.is_empty() {
+                    url
+                } else {
+                    format!("{url}?{query}")
+                };
+                self.client
+                    .delete(request_url)
+                    .bearer_auth(token)
+                    .send()
+                    .map_err(|error| BackendError::Http(error.to_string()))?
+            }
             _ => {
                 return Err(BackendError::Http(format!(
                     "Unsupported HTTP method: {method}"
@@ -420,7 +555,7 @@ impl TwitterBackend {
         };
 
         self.calls.push(CallRecord {
-            method: format!("{method}_OAUTH2"),
+            method: format!("{method}_{label}"),
             path: path.to_string(),
             params,
         });
@@ -430,19 +565,38 @@ impl TwitterBackend {
 
     fn request_oauth2_json(&mut self, path: &str, body: Value) -> Result<Value, BackendError> {
         let token = self.ensure_bearer_token()?.to_string();
+        self.request_oauth2_json_with_token(path, body, &token, "POST_JSON_OAUTH2")
+    }
+
+    fn request_oauth2_user_json(
+        &mut self,
+        path: &str,
+        body: Value,
+    ) -> Result<Value, BackendError> {
+        let token = self.ensure_oauth2_user_token()?.to_string();
+        self.request_oauth2_json_with_token(path, body, &token, "POST_JSON_OAUTH2_USER")
+    }
+
+    fn request_oauth2_json_with_token(
+        &mut self,
+        path: &str,
+        body: Value,
+        token: &str,
+        method_label: &str,
+    ) -> Result<Value, BackendError> {
         let url = self.absolute_url(path);
 
         let response = self
             .client
             .post(url)
-            .bearer_auth(&token)
+            .bearer_auth(token)
             .header("Accept", "application/json")
             .json(&body)
             .send()
             .map_err(|error| BackendError::Http(error.to_string()))?;
 
         self.calls.push(CallRecord {
-            method: "POST_JSON_OAUTH2".to_string(),
+            method: method_label.to_string(),
             path: path.to_string(),
             params: vec![("json".to_string(), body.to_string())],
         });
@@ -490,6 +644,132 @@ impl TwitterBackend {
 
         self.bearer_token = Some(token.clone());
         Ok(token)
+    }
+
+    fn ensure_oauth2_user_token(&mut self) -> Result<String, BackendError> {
+        let Some(context) = self.credentials.oauth2_user.as_ref() else {
+            return Err(BackendError::MissingOAuth2UserContext);
+        };
+
+        let access_token = context.access_token.trim();
+        let expires_at = context.expires_at.unwrap_or(i64::MAX);
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|duration| duration.as_secs() as i64)
+            .unwrap_or_default();
+
+        if !access_token.is_empty() && expires_at > now + 60 {
+            return Ok(access_token.to_string());
+        }
+
+        if !access_token.is_empty() && context.expires_at.is_none() {
+            return Ok(access_token.to_string());
+        }
+
+        self.refresh_oauth2_user_token()
+    }
+
+    fn refresh_oauth2_user_token(&mut self) -> Result<String, BackendError> {
+        let Some(context) = self.credentials.oauth2_user.clone() else {
+            return Err(BackendError::MissingOAuth2UserContext);
+        };
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|duration| duration.as_secs() as i64)
+            .unwrap_or_default();
+
+        let refresh_token = context
+            .refresh_token
+            .as_deref()
+            .filter(|value| !value.trim().is_empty())
+            .ok_or_else(|| {
+                BackendError::Http(
+                    "OAuth2 user access token expired and no refresh token is configured. Re-run `x authorize --oauth2` with `offline.access`.".to_string(),
+                )
+            })?;
+
+        let client_id = context.client_id.trim();
+        if client_id.is_empty() {
+            return Err(BackendError::Http(
+                "OAuth2 user credentials are missing client_id".to_string(),
+            ));
+        }
+
+        let mut request = self
+            .client
+            .post("https://api.x.com/2/oauth2/token")
+            .header("Content-Type", "application/x-www-form-urlencoded");
+
+        let mut form = vec![
+            ("refresh_token".to_string(), refresh_token.to_string()),
+            ("grant_type".to_string(), "refresh_token".to_string()),
+        ];
+
+        match context
+            .client_secret
+            .as_deref()
+            .filter(|value| !value.trim().is_empty())
+        {
+            Some(client_secret) => {
+                let basic = base64::engine::general_purpose::STANDARD
+                    .encode(format!("{client_id}:{client_secret}").as_bytes());
+                request = request.header("Authorization", format!("Basic {basic}"));
+            }
+            None => form.push(("client_id".to_string(), client_id.to_string())),
+        }
+
+        let response = request
+            .form(&form)
+            .send()
+            .map_err(|error| BackendError::Http(error.to_string()))?;
+
+        let payload_text = Self::check_response(response)?;
+        let payload: Value = serde_json::from_str(&payload_text)?;
+
+        let access_token = payload
+            .get("access_token")
+            .and_then(Value::as_str)
+            .filter(|value| !value.trim().is_empty())
+            .ok_or_else(|| {
+                BackendError::Http(
+                    "OAuth2 refresh response did not include access_token".to_string(),
+                )
+            })?
+            .to_string();
+
+        let refresh_token = payload
+            .get("refresh_token")
+            .and_then(Value::as_str)
+            .filter(|value| !value.trim().is_empty())
+            .map(ToString::to_string)
+            .or(context.refresh_token);
+
+        let expires_at = payload
+            .get("expires_in")
+            .and_then(Value::as_i64)
+            .map(|seconds| now + seconds);
+
+        let scopes = payload
+            .get("scope")
+            .and_then(Value::as_str)
+            .map(|value| {
+                value.split_whitespace()
+                    .filter(|scope| !scope.is_empty())
+                    .map(ToString::to_string)
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or(context.scopes);
+
+        self.credentials.oauth2_user = Some(OAuth2UserContext {
+            client_id: context.client_id,
+            client_secret: context.client_secret,
+            access_token: access_token.clone(),
+            refresh_token,
+            expires_at,
+            scopes,
+        });
+
+        Ok(access_token)
     }
 
     fn absolute_url(&self, path: &str) -> String {
@@ -548,6 +828,14 @@ impl Backend for TwitterBackend {
         self.request_oauth2_json(path, body)
     }
 
+    fn post_json_body_oauth2_user(
+        &mut self,
+        path: &str,
+        body: Value,
+    ) -> Result<Value, BackendError> {
+        self.request_oauth2_user_json(path, body)
+    }
+
     fn delete_json(
         &mut self,
         path: &str,
@@ -556,12 +844,28 @@ impl Backend for TwitterBackend {
         self.request_oauth1_signed("DELETE", path, params, None)
     }
 
+    fn delete_json_oauth2_user(
+        &mut self,
+        path: &str,
+        params: Vec<(String, String)>,
+    ) -> Result<Value, BackendError> {
+        self.request_oauth2_user("DELETE", path, params)
+    }
+
     fn get_json_oauth2(
         &mut self,
         path: &str,
         params: Vec<(String, String)>,
     ) -> Result<Value, BackendError> {
         self.request_oauth2("GET", path, params)
+    }
+
+    fn get_json_oauth2_user(
+        &mut self,
+        path: &str,
+        params: Vec<(String, String)>,
+    ) -> Result<Value, BackendError> {
+        self.request_oauth2_user("GET", path, params)
     }
 
     fn stream_json_lines(
@@ -615,6 +919,10 @@ impl Backend for TwitterBackend {
             }
             AuthScheme::OAuth2Bearer => {
                 let token = self.ensure_bearer_token()?.to_string();
+                request = request.bearer_auth(token);
+            }
+            AuthScheme::OAuth2User => {
+                let token = self.ensure_oauth2_user_token()?.to_string();
                 request = request.bearer_auth(token);
             }
         }
@@ -773,6 +1081,40 @@ impl Backend for MockBackend {
             })
     }
 
+    fn post_json_body_oauth2_user(
+        &mut self,
+        path: &str,
+        body: Value,
+    ) -> Result<Value, BackendError> {
+        self.calls.push(CallRecord {
+            method: "POST_JSON_OAUTH2_USER".to_string(),
+            path: path.to_string(),
+            params: vec![("json".to_string(), body.to_string())],
+        });
+        self.responses
+            .get_mut(&("POST_JSON_OAUTH2_USER".to_string(), path.to_string()))
+            .and_then(VecDeque::pop_front)
+            .or_else(|| {
+                self.responses
+                    .get_mut(&("POST_JSON_OAUTH2".to_string(), path.to_string()))
+                    .and_then(VecDeque::pop_front)
+            })
+            .or_else(|| {
+                self.responses
+                    .get_mut(&("POST_JSON".to_string(), path.to_string()))
+                    .and_then(VecDeque::pop_front)
+            })
+            .or_else(|| {
+                self.responses
+                    .get_mut(&("POST".to_string(), path.to_string()))
+                    .and_then(VecDeque::pop_front)
+            })
+            .ok_or_else(|| BackendError::MissingMockResponse {
+                method: "POST_JSON_OAUTH2_USER".to_string(),
+                path: path.to_string(),
+            })
+    }
+
     fn delete_json(
         &mut self,
         path: &str,
@@ -788,6 +1130,30 @@ impl Backend for MockBackend {
             .and_then(VecDeque::pop_front)
             .ok_or_else(|| BackendError::MissingMockResponse {
                 method: "DELETE".to_string(),
+                path: path.to_string(),
+            })
+    }
+
+    fn delete_json_oauth2_user(
+        &mut self,
+        path: &str,
+        params: Vec<(String, String)>,
+    ) -> Result<Value, BackendError> {
+        self.calls.push(CallRecord {
+            method: "DELETE_OAUTH2_USER".to_string(),
+            path: path.to_string(),
+            params,
+        });
+        self.responses
+            .get_mut(&("DELETE_OAUTH2_USER".to_string(), path.to_string()))
+            .and_then(VecDeque::pop_front)
+            .or_else(|| {
+                self.responses
+                    .get_mut(&("DELETE".to_string(), path.to_string()))
+                    .and_then(VecDeque::pop_front)
+            })
+            .ok_or_else(|| BackendError::MissingMockResponse {
+                method: "DELETE_OAUTH2_USER".to_string(),
                 path: path.to_string(),
             })
     }
@@ -812,6 +1178,35 @@ impl Backend for MockBackend {
             })
             .ok_or_else(|| BackendError::MissingMockResponse {
                 method: "GET_OAUTH2".to_string(),
+                path: path.to_string(),
+            })
+    }
+
+    fn get_json_oauth2_user(
+        &mut self,
+        path: &str,
+        params: Vec<(String, String)>,
+    ) -> Result<Value, BackendError> {
+        self.calls.push(CallRecord {
+            method: "GET_OAUTH2_USER".to_string(),
+            path: path.to_string(),
+            params,
+        });
+        self.responses
+            .get_mut(&("GET_OAUTH2_USER".to_string(), path.to_string()))
+            .and_then(VecDeque::pop_front)
+            .or_else(|| {
+                self.responses
+                    .get_mut(&("GET_OAUTH2".to_string(), path.to_string()))
+                    .and_then(VecDeque::pop_front)
+            })
+            .or_else(|| {
+                self.responses
+                    .get_mut(&("GET".to_string(), path.to_string()))
+                    .and_then(VecDeque::pop_front)
+            })
+            .ok_or_else(|| BackendError::MissingMockResponse {
+                method: "GET_OAUTH2_USER".to_string(),
                 path: path.to_string(),
             })
     }
@@ -1092,5 +1487,95 @@ mod tests {
             }
             other => panic!("expected MissingMockResponse, got: {other:?}"),
         }
+    }
+
+    fn make_oauth2_credentials(
+        access_token: &str,
+        refresh_token: Option<&str>,
+        expires_at: Option<i64>,
+    ) -> Credentials {
+        Credentials {
+            oauth2_user: Some(OAuth2UserContext {
+                client_id: "test_client".to_string(),
+                client_secret: None,
+                access_token: access_token.to_string(),
+                refresh_token: refresh_token.map(ToString::to_string),
+                expires_at,
+                scopes: vec!["tweet.read".to_string(), "offline.access".to_string()],
+            }),
+            ..Default::default()
+        }
+    }
+
+    #[test]
+    fn ensure_oauth2_user_token_returns_valid_token() {
+        let future = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs() as i64
+            + 7200;
+        let creds = make_oauth2_credentials("valid_token", Some("rt"), Some(future));
+        let mut backend = TwitterBackend::from_credentials(creds).unwrap();
+
+        let token = backend.ensure_oauth2_user_token().unwrap();
+        assert_eq!(token, "valid_token");
+    }
+
+    #[test]
+    fn ensure_oauth2_user_token_returns_token_without_expiry() {
+        let creds = make_oauth2_credentials("no_expiry_token", Some("rt"), None);
+        let mut backend = TwitterBackend::from_credentials(creds).unwrap();
+
+        let token = backend.ensure_oauth2_user_token().unwrap();
+        assert_eq!(token, "no_expiry_token");
+    }
+
+    #[test]
+    fn ensure_oauth2_user_token_rejects_missing_context() {
+        let creds = Credentials::default();
+        let mut backend = TwitterBackend::from_credentials(creds).unwrap();
+
+        let err = backend.ensure_oauth2_user_token().unwrap_err();
+        assert!(matches!(err, BackendError::MissingOAuth2UserContext));
+    }
+
+    #[test]
+    fn ensure_oauth2_user_token_expired_without_refresh_token_errors() {
+        let past = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs() as i64
+            - 100;
+        let creds = make_oauth2_credentials("expired", None, Some(past));
+        let mut backend = TwitterBackend::from_credentials(creds).unwrap();
+
+        let err = backend.ensure_oauth2_user_token().unwrap_err();
+        match err {
+            BackendError::Http(msg) => assert!(
+                msg.contains("offline.access"),
+                "should hint about offline.access scope, got: {msg}"
+            ),
+            other => panic!("expected Http error, got: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn ensure_oauth2_user_token_within_buffer_triggers_refresh_path() {
+        // Token expires in 30 seconds (within the 60-second buffer)
+        let soon = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs() as i64
+            + 30;
+        let creds = make_oauth2_credentials("almost_expired", Some("rt"), Some(soon));
+        let mut backend = TwitterBackend::from_credentials(creds).unwrap();
+
+        // This will try to refresh (and fail because there's no real server),
+        // proving the expiry buffer works correctly.
+        let err = backend.ensure_oauth2_user_token().unwrap_err();
+        assert!(
+            matches!(err, BackendError::Http(_)),
+            "should attempt refresh and fail on network, got: {err:?}"
+        );
     }
 }

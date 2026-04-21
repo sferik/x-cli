@@ -407,6 +407,52 @@ mod tests {
     }
 
     #[test]
+    fn save_and_load_round_trip_oauth2_user_context() {
+        let tmp = tempfile::tempdir().expect("tempdir works");
+        let path = tmp.path().join(".xrc");
+        let mut rcfile = RcFile::default();
+
+        rcfile.upsert_profile_credentials(
+            "erik",
+            "client-id",
+            Credentials {
+                username: "erik".to_string(),
+                consumer_key: "client-id".to_string(),
+                oauth2_user: Some(x_api::backend::OAuth2UserContext {
+                    client_id: "client-id".to_string(),
+                    client_secret: Some("secret".to_string()),
+                    access_token: "access-token".to_string(),
+                    refresh_token: Some("refresh-token".to_string()),
+                    expires_at: Some(1_700_000_000),
+                    scopes: vec![
+                        "tweet.read".to_string(),
+                        "users.read".to_string(),
+                        "bookmark.read".to_string(),
+                        "bookmark.write".to_string(),
+                    ],
+                }),
+                ..Credentials::default()
+            },
+        );
+        rcfile
+            .set_active("erik", Some("client-id"))
+            .expect("set active works");
+
+        rcfile.save(&path).expect("save should work");
+        let loaded = RcFile::load(&path).expect("load should work");
+        let loaded_credentials = loaded.active_credentials().expect("active credentials");
+
+        let oauth2 = loaded_credentials
+            .oauth2_user
+            .as_ref()
+            .expect("oauth2 context should round-trip");
+        assert_eq!(oauth2.client_id, "client-id");
+        assert_eq!(oauth2.refresh_token.as_deref(), Some("refresh-token"));
+        assert_eq!(oauth2.expires_at, Some(1_700_000_000));
+        assert!(oauth2.scopes.iter().any(|scope| scope == "bookmark.write"));
+    }
+
+    #[test]
     fn default_profile_path_is_xrc() {
         let path = default_profile_path();
         assert_eq!(path.file_name(), Some(OsStr::new(".xrc")));
