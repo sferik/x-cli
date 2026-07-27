@@ -22,7 +22,7 @@ serde_json = "1.0.150"
 serde_urlencoded = "0.7.1"
 serde_yaml_ng = "0.10"
 thiserror = "2.0.18"
-base64 = "0.22.1"
+base64 = "0.23.0"
 dirs = "6.0.0"
 reqwest = { version = "0.13.4", features = ["blocking"] }
 x-api = { path = "x-api" }
