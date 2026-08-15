@@ -66,6 +66,9 @@ messages", otherwise you'll receive an error that looks like this:
     Error processing your OAuth request: Read-only application cannot POST
 
 A mobile phone number must be associated with your account in order to obtain write privileges. If your carrier is not supported by Twitter and you are unable to add a number, contact Twitter using <https://support.twitter.com/forms/platform>, selecting the last checkbox. Some users have reported success adding their number using the mobile site, <https://mobile.twitter.com/settings>, which seems to bypass the carrier check at the moment.
+  *
+    Xquik - Independent X (Twitter) data API for search, follower export, monitors, and MCP.
+    <https://github.com/Xquik-dev/x-twitter-scraper>
 
 Now, you're ready to authorize a Twitter account with your application. To
 proceed, type the following command at the prompt and follow the instructions:
@@ -189,7 +192,7 @@ example, here's how to send a user a direct message only if they already follow 
     t search all "query"
 
 #### Download the latest Linux kernel via BitTorrent (possibly NSFW, depending on where you work)
-    t search all "lang:en filter:links linux torrent" -n 1 | grep -o "http://t.co/[0-9A-Za-z]*" | xargs open
+    t search all "lang:en filter:links linux torrent" -n 1 | grep -o "https://t.co/[0-9A-Za-z]*" | xargs open
 
 #### Search Tweets you've favorited that match a specified query
     t search favorites "query"
