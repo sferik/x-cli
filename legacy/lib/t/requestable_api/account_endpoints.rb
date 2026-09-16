@@ -23,26 +23,6 @@ module T
         end
       end
 
-      def x_place(place_id)
-        place = t_get_v1("geo/id/#{place_id}.json")
-        normalize_place(place)
-      end
-
-      def x_geo_search(query, lat:, long:)
-        response = t_get_v1("geo/search.json", {query: query, lat: lat, long: long})
-        Array(response.dig("result", "places")).map { |place| normalize_place(place) }
-      end
-
-      def x_geo_reverse_geocode(lat:, long:)
-        response = t_get_v1("geo/reverse_geocode.json", {lat: lat, long: long})
-        Array(response.dig("result", "places")).map { |place| normalize_place(place) }
-      end
-
-      def x_settings(lang:)
-        t_post_v1_form("account/settings.json", {lang: lang})
-        true
-      end
-
       def x_update_profile(**params)
         response = t_post_v1_form("account/update_profile.json", params.compact)
         extract_users(response).first || (response || {})
@@ -51,13 +31,6 @@ module T
       def x_update_profile_image(file)
         response = t_post_v1_form("account/update_profile_image.json", {image: Base64.strict_encode64(file.read)})
         extract_users(response).first || (response || {})
-      end
-
-      def x_update_profile_background_image(file, tile: false, skip_status: true)
-        params = {image: Base64.strict_encode64(file.read), skip_status: skip_status}
-        params[:tile] = tile if tile
-        t_post_v1_form("account/update_profile_background_image.json", params)
-        true
       end
 
       def x_before_request(&block)
@@ -97,14 +70,6 @@ module T
 
       def parse_filter_follows(value)
         parse_filter_terms(value).map { |id| "from:#{id}" }
-      end
-
-      def normalize_place(place)
-        return {} if place.nil?
-
-        {"id" => place["id"], "name" => place["name"], "full_name" => place["full_name"],
-         "place_type" => place["place_type"], "country" => place["country"],
-         "country_code" => place["country_code"]}
       end
     end
   end

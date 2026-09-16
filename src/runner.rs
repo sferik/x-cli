@@ -43,7 +43,6 @@ const LIST_HEADINGS: [&str; 8] = [
     "Description",
 ];
 const COLLECTION_HEADINGS: [&str; 4] = ["ID", "Name", "Description", "URL"];
-const PLACE_HEADINGS: [&str; 4] = ["ID", "Type", "Name", "Country"];
 const TREND_HEADINGS: [&str; 5] = ["WOEID", "Parent ID", "Type", "Name", "Country"];
 const USER_HEADINGS: [&str; 16] = [
     "ID",
@@ -1136,101 +1135,6 @@ fn execute_remote_command(
             writeln!(out, "{}", parts.join(", ")).ok();
             Ok(0)
         }
-        [single] if single == "nearby_places" => {
-            let (lat, lng) = resolve_geo_coordinates(args)?;
-            let response = backend.get_json(
-                "/1.1/geo/reverse_geocode.json",
-                vec![
-                    ("lat".to_string(), lat.to_string()),
-                    ("long".to_string(), lng.to_string()),
-                ],
-            )?;
-            let mut places = extract_geo_places(&response);
-            sort_geo_places(&mut places, leaf);
-            format_geo_places(&places, leaf, out);
-            Ok(0)
-        }
-        [single] if single == "place" => {
-            ensure_min_args(path, args, 1)?;
-            let response =
-                backend.get_json(&format!("/1.1/geo/id/{}.json", args[0]), Vec::new())?;
-            if opt_bool(leaf, "csv") {
-                writeln!(out, "{}", csv_row(PLACE_HEADINGS)).ok();
-                writeln!(
-                    out,
-                    "{}",
-                    csv_row([
-                        response
-                            .get("id")
-                            .and_then(value_to_string)
-                            .unwrap_or_default(),
-                        response
-                            .get("place_type")
-                            .and_then(value_to_string)
-                            .unwrap_or_default(),
-                        response
-                            .get("full_name")
-                            .and_then(value_to_string)
-                            .unwrap_or_default(),
-                        response
-                            .get("country")
-                            .and_then(value_to_string)
-                            .unwrap_or_default(),
-                    ])
-                )
-                .ok();
-            } else {
-                let rows = vec![
-                    (
-                        "ID",
-                        response
-                            .get("id")
-                            .and_then(value_to_string)
-                            .unwrap_or_default(),
-                    ),
-                    (
-                        "Type",
-                        response
-                            .get("place_type")
-                            .and_then(value_to_string)
-                            .unwrap_or_default(),
-                    ),
-                    (
-                        "Name",
-                        response
-                            .get("full_name")
-                            .and_then(value_to_string)
-                            .unwrap_or_default(),
-                    ),
-                    (
-                        "Country",
-                        response
-                            .get("country")
-                            .and_then(value_to_string)
-                            .unwrap_or_default(),
-                    ),
-                ];
-                print_key_value_table(&rows, out);
-            }
-            Ok(0)
-        }
-        [single] if single == "places" => {
-            ensure_min_args(path, args, 1)?;
-            let query = &args[0];
-            let (lat, lng) = resolve_geo_coordinates(&args[1..])?;
-            let response = backend.get_json(
-                "/1.1/geo/search.json",
-                vec![
-                    ("query".to_string(), query.to_string()),
-                    ("lat".to_string(), lat.to_string()),
-                    ("long".to_string(), lng.to_string()),
-                ],
-            )?;
-            let mut places = extract_geo_places(&response);
-            sort_geo_places(&mut places, leaf);
-            format_geo_places(&places, leaf, out);
-            Ok(0)
-        }
         [single] if single == "trend_locations" => {
             let response = backend.get_json_oauth2("/1.1/trends/available.json", Vec::new())?;
             let mut places = extract_places(&response);
@@ -1776,15 +1680,6 @@ fn execute_remote_command(
             writeln!(out, "@{}'s bio has been updated.", active_name).ok();
             Ok(0)
         }
-        [first, second] if first == "set" && second == "language" => {
-            ensure_min_args(path, args, 1)?;
-            let _ = backend.post_json(
-                "/1.1/account/settings.json",
-                vec![("lang".to_string(), args[0].clone())],
-            )?;
-            writeln!(out, "@{}'s language has been updated.", active_name).ok();
-            Ok(0)
-        }
         [first, second] if first == "set" && second == "location" => {
             ensure_min_args(path, args, 1)?;
             let _ = backend.post_json(
@@ -1834,21 +1729,6 @@ fn execute_remote_command(
                 vec![("image".to_string(), image_data)],
             )?;
             writeln!(out, "@{}'s image has been updated.", active_name).ok();
-            Ok(0)
-        }
-        [first, second] if first == "set" && second == "profile_background_image" => {
-            ensure_min_args(path, args, 1)?;
-            let image_data = load_file_as_base64(&args[0])?;
-            let mut params = vec![
-                ("image".to_string(), image_data),
-                ("skip_status".to_string(), "true".to_string()),
-            ];
-            if opt_bool(leaf, "tile") {
-                params.push(("tile".to_string(), "true".to_string()));
-            }
-            let _ =
-                backend.post_json("/1.1/account/update_profile_background_image.json", params)?;
-            writeln!(out, "@{}'s background image has been updated.", active_name).ok();
             Ok(0)
         }
         [first, second] if first == "stream" && second == "timeline" => {
@@ -4721,108 +4601,6 @@ fn extract_places(value: &Value) -> Vec<Value> {
     value.as_array().cloned().unwrap_or_default()
 }
 
-fn extract_geo_places(value: &Value) -> Vec<Value> {
-    value
-        .get("result")
-        .and_then(|r| r.get("places"))
-        .and_then(Value::as_array)
-        .cloned()
-        .unwrap_or_default()
-}
-
-fn sort_geo_places(places: &mut [Value], leaf: &ArgMatches) {
-    if !opt_bool(leaf, "unsorted") {
-        let sort = opt_string(leaf, "sort").unwrap_or("name");
-        match sort {
-            "country" => places.sort_by_key(|place| {
-                place
-                    .get("country")
-                    .and_then(Value::as_str)
-                    .unwrap_or_default()
-                    .to_ascii_lowercase()
-            }),
-            "type" => places.sort_by_key(|place| {
-                place
-                    .get("place_type")
-                    .and_then(Value::as_str)
-                    .unwrap_or_default()
-                    .to_ascii_lowercase()
-            }),
-            _ => places.sort_by_key(|place| {
-                place
-                    .get("name")
-                    .and_then(Value::as_str)
-                    .unwrap_or_default()
-                    .to_ascii_lowercase()
-            }),
-        }
-    }
-
-    if opt_bool(leaf, "reverse") {
-        places.reverse();
-    }
-}
-
-fn format_geo_places(places: &[Value], leaf: &ArgMatches, out: &mut dyn Write) {
-    if opt_bool(leaf, "csv") {
-        writeln!(out, "{}", csv_row(PLACE_HEADINGS)).ok();
-        for place in places {
-            writeln!(
-                out,
-                "{}",
-                csv_row([
-                    place
-                        .get("id")
-                        .and_then(value_to_string)
-                        .unwrap_or_default(),
-                    place
-                        .get("place_type")
-                        .and_then(value_to_string)
-                        .unwrap_or_default(),
-                    place
-                        .get("full_name")
-                        .and_then(value_to_string)
-                        .unwrap_or_default(),
-                    place
-                        .get("country")
-                        .and_then(value_to_string)
-                        .unwrap_or_default(),
-                ])
-            )
-            .ok();
-        }
-    } else if opt_bool(leaf, "long") {
-        let mut rows = Vec::new();
-        for place in places {
-            rows.push(vec![
-                place
-                    .get("id")
-                    .and_then(value_to_string)
-                    .unwrap_or_default(),
-                place
-                    .get("place_type")
-                    .and_then(value_to_string)
-                    .unwrap_or_default(),
-                place
-                    .get("full_name")
-                    .and_then(value_to_string)
-                    .unwrap_or_default(),
-                place
-                    .get("country")
-                    .and_then(value_to_string)
-                    .unwrap_or_default(),
-            ]);
-        }
-        print_table(&PLACE_HEADINGS, &rows, out);
-    } else {
-        for place in places {
-            if let Some(name) = place.get("full_name").and_then(Value::as_str) {
-                writeln!(out, "{}", name).ok();
-            }
-        }
-    }
-}
-
 fn ip_geolocation() -> Result<(f64, f64, String, String, String), CommandError> {
     let checkip_body = reqwest::blocking::get("http://checkip.dyndns.org/")
         .map_err(|e| CommandError::Other(format!("Failed to look up IP address: {e}")))?
@@ -4897,22 +4675,6 @@ fn geocode_address(address: &str) -> Result<(f64, f64), CommandError> {
         .unwrap_or(0.0);
 
     Ok((lat, lng))
-}
-
-fn resolve_geo_coordinates(args: &[String]) -> Result<(f64, f64), CommandError> {
-    if args.is_empty() {
-        let (lat, lng, _, _, _) = ip_geolocation()?;
-        Ok((lat, lng))
-    } else {
-        let address = args.join(" ");
-        if let Some((lat_str, lng_str)) = address.split_once(',')
-            && let (Ok(lat), Ok(lng)) =
-                (lat_str.trim().parse::<f64>(), lng_str.trim().parse::<f64>())
-        {
-            return Ok((lat, lng));
-        }
-        geocode_address(&address)
-    }
 }
 
 fn sort_places(places: &mut [Value], leaf: &ArgMatches) {
@@ -6051,68 +5813,6 @@ mod tests {
         let error = CommandError::Backend(BackendError::Http("connection refused".to_string()));
         let displayed = format_error_for_display(&error);
         assert_eq!(displayed, "connection refused");
-    }
-
-    #[test]
-    fn extract_geo_places_from_result() {
-        let response = json!({
-            "result": {
-                "places": [
-                    {"id": "abc", "name": "Place A", "full_name": "Place A, US", "place_type": "city", "country": "United States"},
-                    {"id": "def", "name": "Place B", "full_name": "Place B, US", "place_type": "neighborhood", "country": "United States"}
-                ]
-            }
-        });
-        let places = extract_geo_places(&response);
-        assert_eq!(places.len(), 2);
-        assert_eq!(places[0]["id"], "abc");
-        assert_eq!(places[1]["id"], "def");
-    }
-
-    #[test]
-    fn extract_geo_places_handles_missing_result() {
-        let response = json!({});
-        let places = extract_geo_places(&response);
-        assert!(places.is_empty());
-    }
-
-    #[test]
-    fn resolve_geo_coordinates_parses_lat_lng() {
-        let args = vec!["37.7697,-122.3933".to_string()];
-        let (lat, lng) = resolve_geo_coordinates(&args).unwrap();
-        assert!((lat - 37.7697).abs() < 0.001);
-        assert!((lng - (-122.3933)).abs() < 0.001);
-    }
-
-    #[test]
-    fn place_command_wired_to_backend() {
-        let mut backend = MockBackend::new();
-        backend.enqueue_json_response(
-            "GET",
-            "/1.1/geo/id/test123.json",
-            json!({
-                "id": "test123",
-                "place_type": "city",
-                "name": "Test City",
-                "full_name": "Test City, TS",
-                "country": "Test Country",
-                "country_code": "TC"
-            }),
-        );
-
-        let mut stdout = Vec::new();
-        let mut stderr = Vec::new();
-        let code = run_with_backend(
-            ["x", "place", "test123", "--profile", &profile_path()],
-            &mut stdout,
-            &mut stderr,
-            &mut backend,
-        );
-
-        assert_eq!(code, 0);
-        let output = String::from_utf8(stdout).expect("utf8");
-        assert!(output.contains("test123"));
-        assert!(output.contains("Test City, TS"));
     }
 
     #[test]

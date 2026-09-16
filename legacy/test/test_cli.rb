@@ -2359,30 +2359,6 @@ class TestCLI < TTestCase
     assert_requested(:post, v2_pattern("tweets"))
   end
 
-  def test_reply_with_location_looks_up_ip
-    reply_stubs
-    @cli.options = @cli.options.merge("location" => "location")
-    @cli.reply("263813522369159169", "Testing")
-
-    assert_requested(:get, "http://checkip.dyndns.org/")
-  end
-
-  def test_reply_with_location_looks_up_ipinfo
-    reply_stubs
-    @cli.options = @cli.options.merge("location" => "location")
-    @cli.reply("263813522369159169", "Testing")
-
-    assert_requested(:get, "http://ipinfo.io/50.131.22.169/geo")
-  end
-
-  def test_reply_with_location_coordinates_does_not_look_up_ip
-    reply_stubs
-    @cli.options = @cli.options.merge("location" => "41.03132,28.9869")
-    @cli.reply("263813522369159169", "Testing")
-
-    assert_not_requested(:get, "http://checkip.dyndns.org/")
-  end
-
   def test_reply_with_no_status_opens_editor
     reply_stubs
     T::Editor.stub(:gets, "Testing") do
@@ -3091,86 +3067,10 @@ class TestCLI < TTestCase
     stub_get("/1.1/geo/reverse_geocode.json").with(query: hash_including("lat", "long")).to_return(body: fixture("geo_reverse_geocode.json"), headers: {content_type: "application/json; charset=utf-8"})
   end
 
-  def test_nearby_places_requests_correct_resource
-    nearby_places_stubs
-    @cli.nearby_places
-
-    assert_requested(:get, "https://api.twitter.com/1.1/geo/reverse_geocode.json?lat=37.7697&long=-122.3933")
-  end
-
-  def test_nearby_places_has_the_correct_output
-    nearby_places_stubs
-    @cli.nearby_places
-
-    assert_includes($stdout.string, "San Francisco, CA")
-    assert_includes($stdout.string, "SoMa, San Francisco")
-  end
-
-  def test_nearby_places_with_csv
-    nearby_places_stubs
-    @cli.options = @cli.options.merge("csv" => true)
-    @cli.nearby_places
-
-    assert_includes($stdout.string, "ID,Type,Name,Country")
-    assert_includes($stdout.string, "5a110d312052166f")
-  end
-
-  def test_nearby_places_with_long
-    nearby_places_stubs
-    @cli.options = @cli.options.merge("long" => true)
-    @cli.nearby_places
-
-    assert_includes($stdout.string, "5a110d312052166f")
-    assert_includes($stdout.string, "San Francisco, CA")
-  end
-
-  def test_nearby_places_with_address
-    nearby_places_with_address_stubs
-    @cli.nearby_places("San Francisco, CA")
-
-    assert_includes($stdout.string, "SoMa, San Francisco")
-  end
-
-  def test_nearby_places_with_reverse
-    nearby_places_stubs
-    @cli.options = @cli.options.merge("reverse" => true)
-    @cli.nearby_places
-
-    lines = $stdout.string.split(/\s{2,}/).map(&:strip).reject(&:empty?)
-
-    assert_equal("SoMa, San Francisco", lines.first)
-  end
-
   # place
 
   def place_stubs
     stub_get("/1.1/geo/id/5a110d312052166f.json").to_return(body: fixture("place.json"), headers: {content_type: "application/json; charset=utf-8"})
-  end
-
-  def test_place_requests_correct_resource
-    place_stubs
-    @cli.place("5a110d312052166f")
-
-    assert_requested(:get, "https://api.twitter.com/1.1/geo/id/5a110d312052166f.json")
-  end
-
-  def test_place_has_the_correct_output
-    place_stubs
-    @cli.place("5a110d312052166f")
-
-    assert_includes($stdout.string, "5a110d312052166f")
-    assert_includes($stdout.string, "city")
-    assert_includes($stdout.string, "San Francisco, CA")
-    assert_includes($stdout.string, "United States")
-  end
-
-  def test_place_with_csv
-    place_stubs
-    @cli.options = @cli.options.merge("csv" => true)
-    @cli.place("5a110d312052166f")
-
-    assert_includes($stdout.string, "ID,Type,Name,Country")
-    assert_includes($stdout.string, "5a110d312052166f,city,\"San Francisco, CA\",United States")
   end
 
   # places
@@ -3184,72 +3084,6 @@ class TestCLI < TTestCase
   def places_with_address_stubs
     stub_request(:get, "https://nominatim.openstreetmap.org/search").with(query: hash_including("q" => "San Francisco, CA")).to_return(body: "[#{File.read("#{fixture_path}/nominatim.json")}]", headers: {content_type: "application/json"})
     stub_get("/1.1/geo/search.json").with(query: hash_including("query" => "San Francisco")).to_return(body: fixture("geo_search.json"), headers: {content_type: "application/json; charset=utf-8"})
-  end
-
-  def test_places_requests_correct_resource
-    places_stubs
-    @cli.places("San Francisco")
-
-    assert_requested(:get, "https://api.twitter.com/1.1/geo/search.json?query=San+Francisco&lat=37.7697&long=-122.3933")
-  end
-
-  def test_places_has_the_correct_output
-    places_stubs
-    @cli.places("San Francisco")
-
-    assert_includes($stdout.string, "San Francisco, CA")
-    assert_includes($stdout.string, "SoMa, San Francisco")
-  end
-
-  def test_places_with_csv
-    places_stubs
-    @cli.options = @cli.options.merge("csv" => true)
-    @cli.places("San Francisco")
-
-    assert_includes($stdout.string, "ID,Type,Name,Country")
-    assert_includes($stdout.string, "5a110d312052166f")
-  end
-
-  def test_places_with_long
-    places_stubs
-    @cli.options = @cli.options.merge("long" => true)
-    @cli.places("San Francisco")
-
-    assert_includes($stdout.string, "5a110d312052166f")
-    assert_includes($stdout.string, "San Francisco, CA")
-  end
-
-  def test_places_with_address
-    places_with_address_stubs
-    @cli.places("San Francisco", "San Francisco, CA")
-
-    assert_includes($stdout.string, "San Francisco, CA")
-  end
-
-  def test_places_with_reverse
-    places_stubs
-    @cli.options = @cli.options.merge("reverse" => true)
-    @cli.places("San Francisco")
-
-    lines = $stdout.string.split(/\s{2,}/).map(&:strip).reject(&:empty?)
-
-    assert_equal("SoMa, San Francisco", lines.first)
-  end
-
-  def test_places_with_sort_country
-    places_stubs
-    @cli.options = @cli.options.merge("sort" => "country")
-    @cli.places("San Francisco")
-
-    assert_includes($stdout.string, "San Francisco, CA")
-  end
-
-  def test_places_with_unsorted
-    places_stubs
-    @cli.options = @cli.options.merge("unsorted" => true)
-    @cli.places("San Francisco")
-
-    assert_includes($stdout.string, "San Francisco, CA")
   end
 
   # trend_locations
@@ -3445,46 +3279,6 @@ class TestCLI < TTestCase
     @cli.update("Testing")
 
     assert_requested(:post, v2_pattern("tweets"))
-  end
-
-  def test_update_with_location_looks_up_ip
-    update_stubs
-    @cli.options = @cli.options.merge("location" => "location")
-    @cli.update("Testing")
-
-    assert_requested(:get, "http://checkip.dyndns.org/")
-  end
-
-  def test_update_with_location_looks_up_ipinfo
-    update_stubs
-    @cli.options = @cli.options.merge("location" => "location")
-    @cli.update("Testing")
-
-    assert_requested(:get, "http://ipinfo.io/50.131.22.169/geo")
-  end
-
-  def test_update_with_location_has_correct_output
-    update_stubs
-    @cli.options = @cli.options.merge("location" => "location")
-    @cli.update("Testing")
-
-    assert_equal("Tweet posted by @testcli.", $stdout.string.split("\n").first)
-  end
-
-  def test_update_with_location_coordinates_posts_tweet
-    update_stubs
-    @cli.options = @cli.options.merge("location" => "41.03132,28.9869")
-    @cli.update("Testing")
-
-    assert_requested(:post, v2_pattern("tweets"))
-  end
-
-  def test_update_with_location_coordinates_does_not_look_up_ip
-    update_stubs
-    @cli.options = @cli.options.merge("location" => "41.03132,28.9869")
-    @cli.update("Testing")
-
-    assert_not_requested(:get, "http://checkip.dyndns.org/")
   end
 
   def test_update_with_no_status_opens_editor
@@ -4005,38 +3799,7 @@ class TestCLI < TTestCase
 
   # nearby_places (branch coverage)
 
-  def test_nearby_places_empty_with_csv
-    stub_request(:get, "http://checkip.dyndns.org/").to_return(body: fixture("checkip.html"), headers: {content_type: "text/html"})
-    stub_request(:get, "http://ipinfo.io/50.131.22.169/geo").to_return(body: fixture("ipinfo.json"), headers: {content_type: "application/json"})
-    stub_get("/1.1/geo/reverse_geocode.json").with(query: hash_including("lat" => "37.7697", "long" => "-122.3933")).to_return(body: '{"result":{"places":[]}}', headers: {content_type: "application/json; charset=utf-8"})
-    @cli.options = @cli.options.merge("csv" => true)
-    @cli.nearby_places
-
-    assert_equal("", $stdout.string)
-  end
-
   # places (branch coverage)
 
-  def test_places_with_sort_type
-    places_stubs
-    @cli.options = @cli.options.merge("sort" => "type")
-    @cli.places("San Francisco")
-
-    assert_includes($stdout.string, "San Francisco, CA")
-  end
-
-  def test_places_with_failed_geocode
-    stub_request(:get, "https://nominatim.openstreetmap.org/search").with(query: hash_including("q" => "Nonexistent")).to_return(body: "[]", headers: {content_type: "application/json"})
-
-    assert_raises(Thor::Error) { @cli.places("test", "Nonexistent") }
-  end
-
   # place (branch coverage)
-
-  def test_place_with_nil_response
-    stub_get("/1.1/geo/id/nonexistent.json").to_return(body: "null", headers: {content_type: "application/json; charset=utf-8"})
-    @cli.place("nonexistent")
-
-    assert_includes($stdout.string, "ID")
-  end
 end

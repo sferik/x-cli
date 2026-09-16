@@ -391,13 +391,6 @@ class TestRequestableAPI < TTestCase
 
   # ---------- x_update_profile_background_image ----------
 
-  def test_x_update_profile_background_image_with_tile_true
-    v1 = with_v1_client
-    v1.on_post { |_url, _body| {} }
-
-    assert @probe.x_update_profile_background_image(StringIO.new("imagedata"), tile: true)
-  end
-
   # ---------- x_sample ----------
 
   def test_x_sample_calls_search_and_yields
@@ -1862,13 +1855,6 @@ class TestRequestableAPI < TTestCase
 
   # ---------- x_settings ----------
 
-  def test_x_settings
-    v1 = with_v1_client
-    v1.on_post { |_url, _body| {} }
-
-    assert @probe.x_settings(lang: "en")
-  end
-
   # ---------- x_update_profile ----------
 
   def test_x_update_profile
@@ -2335,13 +2321,6 @@ class TestRequestableAPI < TTestCase
     v1.on_post { |_url, _body| {} }
 
     assert_kind_of Hash, @probe.x_update_profile
-  end
-
-  def test_x_update_profile_background_image_with_tile_false
-    v1 = with_v1_client
-    v1.on_post { |_url, _body| {} }
-
-    assert @probe.x_update_profile_background_image(StringIO.new("imagedata"))
   end
 
   def test_dm_received_with_user_lookup_returning_nil_id

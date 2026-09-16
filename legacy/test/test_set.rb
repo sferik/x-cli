@@ -82,22 +82,6 @@ class TestSet < TTestCase
 
   # language
 
-  def test_language_requests_correct_resource
-    @set_cmd.options = @set_cmd.options.merge("profile" => "#{fixture_path}/.trc")
-    stub_post("/1.1/account/settings.json").with(body: {lang: "en"}).to_return(body: fixture("settings.json"), headers: {content_type: "application/json; charset=utf-8"})
-    @set_cmd.language("en")
-
-    assert_requested(:post, "https://api.twitter.com/1.1/account/settings.json", body: {lang: "en"})
-  end
-
-  def test_language_has_correct_output
-    @set_cmd.options = @set_cmd.options.merge("profile" => "#{fixture_path}/.trc")
-    stub_post("/1.1/account/settings.json").with(body: {lang: "en"}).to_return(body: fixture("settings.json"), headers: {content_type: "application/json; charset=utf-8"})
-    @set_cmd.language("en")
-
-    assert_equal("@testcli's language has been updated.", $stdout.string.chomp)
-  end
-
   # location
 
   def test_location_requests_correct_resource
@@ -135,22 +119,6 @@ class TestSet < TTestCase
   end
 
   # profile_background_image
-
-  def test_profile_background_image_requests_correct_resource
-    @set_cmd.options = @set_cmd.options.merge("profile" => "#{fixture_path}/.trc")
-    stub_post("/1.1/account/update_profile_background_image.json").to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
-    @set_cmd.profile_background_image("#{fixture_path}/we_concept_bg2.png")
-
-    assert_requested(:post, "https://api.twitter.com/1.1/account/update_profile_background_image.json")
-  end
-
-  def test_profile_background_image_has_correct_output
-    @set_cmd.options = @set_cmd.options.merge("profile" => "#{fixture_path}/.trc")
-    stub_post("/1.1/account/update_profile_background_image.json").to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
-    @set_cmd.profile_background_image("#{fixture_path}/we_concept_bg2.png")
-
-    assert_equal("@testcli's background image has been updated.", $stdout.string.chomp)
-  end
 
   # profile_image
 

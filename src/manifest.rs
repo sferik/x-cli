@@ -677,15 +677,6 @@ fn descriptions() -> HashMap<&'static str, HashMap<&'static str, &'static str>> 
         "Retrieves place information based on your IP address.",
     );
     top.insert(
-        "nearby_places",
-        "Retrieves nearby places using an address or your IP geolocation.",
-    );
-    top.insert("place", "Retrieves detailed information about a place.");
-    top.insert(
-        "places",
-        "Retrieves places with similar names near an address or your IP geolocation.",
-    );
-    top.insert(
         "trend_locations",
         "Returns the locations for which X has trending topic information.",
     );
@@ -765,16 +756,8 @@ fn descriptions() -> HashMap<&'static str, HashMap<&'static str, &'static str>> 
     let set = map.entry("set").or_default();
     set.insert("active", "Set your active account.");
     set.insert("bio", "Edits your Bio information on your profile.");
-    set.insert(
-        "language",
-        "Selects the language you'd like to receive notifications in.",
-    );
     set.insert("location", "Updates the location field in your profile.");
     set.insert("name", "Sets the name field on your profile.");
-    set.insert(
-        "profile_background_image",
-        "Sets the background image on your profile.",
-    );
     set.insert("profile_image", "Sets the image on your profile.");
     set.insert(
         "profile_link_color",

@@ -27,7 +27,6 @@ module T
     DEFAULT_NUM_RESULTS = 20
     DIRECT_MESSAGE_HEADINGS = ["ID", "Posted at", "Screen name", "Text"].freeze
     MAX_SEARCH_RESULTS = 100
-    PLACE_HEADINGS = %w[ID Type Name Country].freeze
     TREND_HEADINGS = ["WOEID", "Parent ID", "Type", "Name", "Country"].freeze
 
     check_unknown_options!
@@ -557,7 +556,6 @@ module T
 
     desc "reply TWEET_ID [MESSAGE]", "Post your Tweet as a reply directed at another person."
     method_option "all", aliases: "-a", type: :boolean, desc: "Reply to all users mentioned in the Tweet."
-    method_option "location", aliases: "-l", type: :string, default: nil, desc: "Add location information. If the optional 'latitude,longitude' parameter is not supplied, looks up location by IP address."
     method_option "file", aliases: "-f", type: :string, desc: "The path to an image to attach to your tweet."
     def reply(status_id, message = nil)
       message = T::Editor.gets if message.to_s.empty?
@@ -570,7 +568,6 @@ module T
       users.delete(@rcfile.active_profile[0])
       users.collect! { |u| "@#{u}" }
       opts = {in_reply_to_status_id: status["id"]}
-      add_location!(options, opts)
       reply = if options["file"]
         x_update_with_media("#{users.join(' ')} #{message}", File.new(File.expand_path(options["file"])), opts)
       else
@@ -733,47 +730,6 @@ module T
     end
     map %w[ip_location mylocation] => :my_location
 
-    desc "nearby_places [ADDRESS]", "Retrieves nearby places using an address or your IP geolocation."
-    method_option "csv", aliases: "-c", type: :boolean, desc: "Output in CSV format."
-    method_option "long", aliases: "-l", type: :boolean, desc: "Output in long format."
-    method_option "reverse", aliases: "-r", type: :boolean, desc: "Reverse the order of the sort."
-    method_option "sort", aliases: "-s", type: :string, enum: %w[country name type], default: "name", desc: "Specify the order of the results.", banner: "ORDER"
-    method_option "unsorted", aliases: "-u", type: :boolean, desc: "Output is not sorted."
-    def nearby_places(*address)
-      lat, lng = geocode_address(address.join(" "))
-      places = x_geo_reverse_geocode(lat: lat, long: lng)
-      places = sort_collection(places, PLACE_SORT_MAP, ->(place) { place["name"].to_s.downcase })
-      format_places(places)
-    end
-    map %w[nearbyplaces nearby] => :nearby_places
-
-    desc "place PLACE_ID", "Retrieves detailed information about a place."
-    method_option "csv", aliases: "-c", type: :boolean, desc: "Output in CSV format."
-    def place(place_id)
-      place = x_place(place_id)
-      if options["csv"]
-        require "csv"
-        say PLACE_HEADINGS.to_csv
-        say [place["id"], place["place_type"], place["full_name"], place["country"]].to_csv
-      else
-        rows = [["ID", place["id"]], ["Type", place["place_type"]], ["Name", place["full_name"]], ["Country", place["country"]]]
-        print_table(rows)
-      end
-    end
-
-    desc "places NAME [ADDRESS]", "Retrieves places with similar names near an address or your IP geolocation."
-    method_option "csv", aliases: "-c", type: :boolean, desc: "Output in CSV format."
-    method_option "long", aliases: "-l", type: :boolean, desc: "Output in long format."
-    method_option "reverse", aliases: "-r", type: :boolean, desc: "Reverse the order of the sort."
-    method_option "sort", aliases: "-s", type: :string, enum: %w[country name type], default: "name", desc: "Specify the order of the results.", banner: "ORDER"
-    method_option "unsorted", aliases: "-u", type: :boolean, desc: "Output is not sorted."
-    def places(name, *address)
-      lat, lng = geocode_address(address.join(" "))
-      places = x_geo_search(name, lat: lat, long: lng)
-      places = sort_collection(places, PLACE_SORT_MAP, ->(place) { place["name"].to_s.downcase })
-      format_places(places)
-    end
-
     desc "trend_locations", "Returns the locations for which Twitter has trending topic information."
     method_option "csv", aliases: "-c", type: :boolean, desc: "Output in CSV format."
     method_option "long", aliases: "-l", type: :boolean, desc: "Output in long format."
@@ -800,12 +756,10 @@ module T
     end
 
     desc "update [MESSAGE]", "Post a Tweet."
-    method_option "location", aliases: "-l", type: :string, default: nil, desc: "Add location information. If the optional 'latitude,longitude' parameter is not supplied, looks up location by IP address."
     method_option "file", aliases: "-f", type: :string, desc: "The path to an image to attach to your tweet."
     def update(message = nil)
       message = T::Editor.gets if message.to_s.empty?
       opts = {}
-      add_location!(options, opts)
       status = if options["file"]
         x_update_with_media(message, File.new(File.expand_path(options["file"])), opts)
       else
@@ -896,11 +850,6 @@ module T
 
     desc "stream SUBCOMMAND ...ARGS", "Commands for streaming Tweets."
     subcommand "stream", T::Stream
-
-    PLACE_SORT_MAP = {
-      "country" => ->(place) { place["country"].to_s.downcase },
-      "type" => ->(place) { place["place_type"].to_s.downcase },
-    }.freeze
 
     TREND_SORT_MAP = {
       "country" => ->(place) { place["country"].to_s.downcase },
@@ -1065,33 +1014,6 @@ module T
       end
     end
 
-    def format_places(places)
-      if options["csv"]
-        require "csv"
-        say PLACE_HEADINGS.to_csv unless places.empty?
-        places.each { |place| say [place["id"], place["place_type"], place["full_name"], place["country"]].to_csv }
-      elsif options["long"]
-        array = places.collect { |place| [place["id"], place["place_type"], place["full_name"], place["country"]] }
-        format = options["format"] || Array.new(PLACE_HEADINGS.size) { "%s" }
-        print_table_with_headings(array, PLACE_HEADINGS, format)
-      else
-        print_attribute(places, "full_name")
-      end
-    end
-
-    def geocode_address(address)
-      if address.nil? || address.strip.empty?
-        loc = location
-        [loc.latitude, loc.longitude]
-      else
-        require "geocoder"
-        result = Geocoder.search(address).first
-        raise Thor::Error.new("Could not geocode address: #{address}") unless result
-
-        [result.latitude, result.longitude]
-      end
-    end
-
     def format_trend_locations(places)
       if options["csv"]
         require "csv"
@@ -1136,16 +1058,7 @@ module T
       {oauth_callback: "oob"}
     end
 
-    def add_location!(options, opts)
-      return nil unless options["location"]
-
-      lat, lng = options["location"] == "location" ? [location.latitude, location.longitude] : options["location"].split(",").collect(&:to_f)
-      opts.merge!(lat:, long: lng)
-    end
-
     def location
-      return @location if @location
-
       require "geocoder"
       require "open-uri"
       ip_address = URI.open("http://checkip.dyndns.org/") do |body|
