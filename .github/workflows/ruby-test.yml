@@ -25,7 +25,7 @@ jobs:
 
     strategy:
       matrix:
-        ruby-version: ['3.2', '3.3', '3.4', '4.0']
+        ruby-version: ['3.3', '3.4', '4.0']
 
     steps:
       - name: Checkout

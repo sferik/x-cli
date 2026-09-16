@@ -154,11 +154,12 @@ class TestCLI < TTestCase
     stub_v2_post("users/7505382/blocking").to_return(v2_return("v2/post_response.json"))
   end
 
-  def test_block_looks_up_current_user
+  def test_block_reads_the_current_user_from_the_access_token
     block_stubs
     @cli.block("sferik")
 
-    assert_requested(:get, v2_pattern("users/me"))
+    assert_not_requested(:get, v2_pattern("users/me"))
+    assert_requested(:post, v2_pattern("users/7505382/blocking"))
   end
 
   def test_block_looks_up_target_user
@@ -240,7 +241,7 @@ class TestCLI < TTestCase
 
   def dm_stubs
     stub_v2_current_user
-    stub_v2_get("dm_events").to_return(body: fixture("direct_message_events.json"), headers: V2_JSON_HEADERS)
+    stub_v2_get("dm_events").to_return(body: fixture("v2/direct_message_events.json"), headers: V2_JSON_HEADERS)
     stub_v2_users_lookup.to_return(body: fixture("v2/dm_users.json"), headers: V2_JSON_HEADERS)
   end
 
@@ -353,7 +354,7 @@ class TestCLI < TTestCase
 
   def dm_sent_stubs
     stub_v2_current_user
-    stub_v2_get("dm_events").to_return(body: fixture("direct_message_events.json"), headers: V2_JSON_HEADERS)
+    stub_v2_get("dm_events").to_return(body: fixture("v2/direct_message_events.json"), headers: V2_JSON_HEADERS)
     stub_v2_users_lookup.to_return(body: fixture("v2/users_list.json"), headers: V2_JSON_HEADERS)
   end
 
@@ -425,7 +426,7 @@ class TestCLI < TTestCase
   def test_dm_requests_user_lookup
     @cli.options = @cli.options.merge("profile" => "#{fixture_path}/.trc")
     stub_v2_user_by_name("sferik")
-    stub_v2_post("dm_conversations/with/7505382/messages").to_return(v2_return("v2/dm_event.json"))
+    stub_v2_post("dm_conversations/with/7505382/messages").to_return(v2_return("v2/dm_sent.json"))
     stub_v2_user_by_id("7505382")
     @cli.dm("sferik", "Creating a fixture for the Twitter gem")
 
@@ -435,7 +436,7 @@ class TestCLI < TTestCase
   def test_dm_sends_message
     @cli.options = @cli.options.merge("profile" => "#{fixture_path}/.trc")
     stub_v2_user_by_name("sferik")
-    stub_v2_post("dm_conversations/with/7505382/messages").to_return(v2_return("v2/dm_event.json"))
+    stub_v2_post("dm_conversations/with/7505382/messages").to_return(v2_return("v2/dm_sent.json"))
     stub_v2_user_by_id("7505382")
     @cli.dm("sferik", "Creating a fixture for the Twitter gem")
 
@@ -445,7 +446,7 @@ class TestCLI < TTestCase
   def test_dm_has_the_correct_output
     @cli.options = @cli.options.merge("profile" => "#{fixture_path}/.trc")
     stub_v2_user_by_name("sferik")
-    stub_v2_post("dm_conversations/with/7505382/messages").to_return(v2_return("v2/dm_event.json"))
+    stub_v2_post("dm_conversations/with/7505382/messages").to_return(v2_return("v2/dm_sent.json"))
     stub_v2_user_by_id("7505382")
     @cli.dm("sferik", "Creating a fixture for the Twitter gem")
 
@@ -454,7 +455,7 @@ class TestCLI < TTestCase
 
   def test_dm_with_id_sends_message
     @cli.options = @cli.options.merge("profile" => "#{fixture_path}/.trc", "id" => true)
-    stub_v2_post("dm_conversations/with/7505382/messages").to_return(v2_return("v2/dm_event.json"))
+    stub_v2_post("dm_conversations/with/7505382/messages").to_return(v2_return("v2/dm_sent.json"))
     stub_v2_user_by_id("7505382")
     @cli.dm("7505382", "Creating a fixture for the Twitter gem")
 
@@ -463,7 +464,7 @@ class TestCLI < TTestCase
 
   def test_dm_with_id_has_the_correct_output
     @cli.options = @cli.options.merge("profile" => "#{fixture_path}/.trc", "id" => true)
-    stub_v2_post("dm_conversations/with/7505382/messages").to_return(v2_return("v2/dm_event.json"))
+    stub_v2_post("dm_conversations/with/7505382/messages").to_return(v2_return("v2/dm_sent.json"))
     stub_v2_user_by_id("7505382")
     @cli.dm("7505382", "Creating a fixture for the Twitter gem")
 
@@ -476,8 +477,8 @@ class TestCLI < TTestCase
     @cli.options = @cli.options.merge("profile" => "#{fixture_path}/.trc")
     stub_v2_current_user
     stub_v2_user_by_name("testcli")
-    stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/lists.json"))
-    stub_v2_get("lists/presidents/members").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
+    stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list.json"))
+    stub_v2_get("lists/8863586/members").to_return(v2_return("v2/following_ids.json"))
   end
 
   def test_does_contain_requests_correct_resource
@@ -516,8 +517,8 @@ class TestCLI < TTestCase
     @cli.options = @cli.options.merge("id" => true)
     stub_v2_user_by_id("7505382")
     stub_v2_user_by_name("sferik")
-    stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/lists.json"))
-    stub_v2_get("lists/presidents/members").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
+    stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list.json"))
+    stub_v2_get("lists/8863586/members").to_return(v2_return("v2/following_ids.json"))
     @cli.does_contain("7505382/presidents", "7505382")
 
     assert_requested(:get, v2_pattern("users/7505382"), at_least_times: 1)
@@ -532,30 +533,36 @@ class TestCLI < TTestCase
 
   def test_does_contain_false_exits
     does_contain_stubs
-    stub_v2_get("lists/presidents/members").to_return(v2_return("v2/empty.json"))
+    stub_v2_get("lists/8863586/members").to_return(v2_return("v2/empty.json"))
     assert_raises(SystemExit) { @cli.does_contain("presidents") }
   end
 
   # does_follow
 
+  # Every user in these fixtures is the authenticated user, so follows? reads the connection_status of one
+  CONNECTION_STATUS = %r{api\.twitter\.com/2/users/7505382\?user\.fields=connection_status}
+
+  def stub_connection_status(*statuses)
+    stub_request(:get, CONNECTION_STATUS).to_return(body: {data: {id: "7505382", connection_status: statuses}}.to_json, headers: V2_JSON_HEADERS)
+  end
+
   def does_follow_stubs
     @cli.options = @cli.options.merge("profile" => "#{fixture_path}/.trc")
     stub_v2_current_user
+    stub_connection_status("following")
     stub_v2_user_by_name("testcli")
     stub_v2_user_by_name("ev", "v2/sferik.json")
   end
 
   def test_does_follow_requests_correct_resource
     does_follow_stubs
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.does_follow("ev")
 
-    assert_requested(:get, v2_pattern("users/7505382/following"))
+    assert_requested(:get, CONNECTION_STATUS)
   end
 
   def test_does_follow_has_the_correct_output
     does_follow_stubs
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.does_follow("ev")
 
     assert_equal("Yes, @ev follows @testcli.", $stdout.string.chomp)
@@ -566,21 +573,19 @@ class TestCLI < TTestCase
     @cli.options = @cli.options.merge("id" => true)
     stub_v2_user_by_id("20")
     stub_v2_user_by_name("sferik")
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.does_follow("20")
 
     assert_requested(:get, v2_pattern("users/20"), at_least_times: 1)
   end
 
-  def test_does_follow_with_id_requests_following_list
+  def test_does_follow_with_id_looks_up_the_connection_status
     does_follow_stubs
     @cli.options = @cli.options.merge("id" => true)
     stub_v2_user_by_id("20")
     stub_v2_user_by_name("sferik")
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.does_follow("20")
 
-    assert_requested(:get, v2_pattern("users/7505382/following"))
+    assert_requested(:get, CONNECTION_STATUS)
   end
 
   def test_does_follow_with_id_has_the_correct_output
@@ -588,25 +593,22 @@ class TestCLI < TTestCase
     @cli.options = @cli.options.merge("id" => true)
     stub_v2_user_by_id("20")
     stub_v2_user_by_name("sferik")
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.does_follow("20")
 
     assert_equal("Yes, @sferik follows @testcli.", $stdout.string.chomp)
   end
 
-  def test_does_follow_with_user_passed_requests_following
+  def test_does_follow_with_user_passed_looks_up_the_connection_status
     does_follow_stubs
     stub_v2_user_by_name("sferik")
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.does_follow("ev", "sferik")
 
-    assert_requested(:get, v2_pattern("users/7505382/following"))
+    assert_requested(:get, CONNECTION_STATUS)
   end
 
   def test_does_follow_with_user_passed_has_the_correct_output
     does_follow_stubs
     stub_v2_user_by_name("sferik")
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.does_follow("ev", "sferik")
 
     assert_equal("Yes, @ev follows @sferik.", $stdout.string.chomp)
@@ -615,7 +617,6 @@ class TestCLI < TTestCase
   def test_does_follow_with_user_and_id_requests_users
     does_follow_stubs
     stub_v2_user_by_name("sferik")
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.options = @cli.options.merge("id" => true)
     stub_v2_user_by_id("20")
     stub_v2_user_by_id("428004849")
@@ -627,7 +628,6 @@ class TestCLI < TTestCase
   def test_does_follow_with_user_and_id_requests_second_user
     does_follow_stubs
     stub_v2_user_by_name("sferik")
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.options = @cli.options.merge("id" => true)
     stub_v2_user_by_id("20")
     stub_v2_user_by_id("428004849")
@@ -639,7 +639,6 @@ class TestCLI < TTestCase
   def test_does_follow_with_user_and_id_has_correct_output
     does_follow_stubs
     stub_v2_user_by_name("sferik")
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.options = @cli.options.merge("id" => true)
     stub_v2_user_by_id("20")
     stub_v2_user_by_id("428004849")
@@ -651,7 +650,6 @@ class TestCLI < TTestCase
   def test_does_follow_yourself_raises_error
     does_follow_stubs
     stub_v2_user_by_name("sferik")
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.options = @cli.options.merge("id" => true)
     stub_v2_user_by_id("20")
     stub_v2_user_by_id("428004849")
@@ -661,7 +659,6 @@ class TestCLI < TTestCase
   def test_does_follow_yourself_output_message
     does_follow_stubs
     stub_v2_user_by_name("sferik")
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.options = @cli.options.merge("id" => true)
     stub_v2_user_by_id("20")
     stub_v2_user_by_id("428004849")
@@ -673,7 +670,6 @@ class TestCLI < TTestCase
   def test_does_follow_same_account_raises_error
     does_follow_stubs
     stub_v2_user_by_name("sferik")
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.options = @cli.options.merge("id" => true)
     stub_v2_user_by_id("20")
     stub_v2_user_by_id("428004849")
@@ -683,7 +679,6 @@ class TestCLI < TTestCase
   def test_does_follow_same_account_output_message
     does_follow_stubs
     stub_v2_user_by_name("sferik")
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/following_ids.json")).then.to_return(v2_return("v2/empty.json"))
     @cli.options = @cli.options.merge("id" => true)
     stub_v2_user_by_id("20")
     stub_v2_user_by_id("428004849")
@@ -694,16 +689,16 @@ class TestCLI < TTestCase
 
   def test_does_follow_false_raises_error
     does_follow_stubs
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/empty.json"))
+    stub_connection_status
     assert_raises(SystemExit) { @cli.does_follow("ev") }
   end
 
-  def test_does_follow_false_requests_following
+  def test_does_follow_false_looks_up_the_connection_status
     does_follow_stubs
-    stub_v2_get("users/7505382/following").to_return(v2_return("v2/empty.json"))
+    stub_connection_status
     @cli.does_follow("ev")
   rescue SystemExit
-    assert_requested(:get, v2_pattern("users/7505382/following"))
+    assert_requested(:get, CONNECTION_STATUS)
   end
 
   # favorite
@@ -886,11 +881,11 @@ class TestCLI < TTestCase
     stub_v2_post("users/7505382/following").to_return(v2_return("v2/post_response.json"))
   end
 
-  def test_follow_requests_current_user
+  def test_follow_reads_the_current_user_from_the_access_token
     follow_stubs
     @cli.follow("sferik", "pengwynn")
 
-    assert_requested(:get, v2_pattern("users/me"))
+    assert_not_requested(:get, v2_pattern("users/me"))
   end
 
   def test_follow_requests_following
@@ -1994,9 +1989,9 @@ class TestCLI < TTestCase
   def test_matrix_streams_from_filtered_stream
     received_endpoint = nil
     fake_client = Object.new
-    fake_client.define_singleton_method(:stream) { |endpoint, &_block| received_endpoint = endpoint }
+    fake_client.define_singleton_method(:stream) { |endpoint, **_options, &_block| received_endpoint = endpoint }
     @cli.stub(:install_matrix_stream_rules, []) do
-      @cli.stub(:bearer_client, fake_client) do
+      @cli.stub(:streaming_client, fake_client) do
         @cli.matrix
       end
     end
@@ -2007,12 +2002,12 @@ class TestCLI < TTestCase
   def test_matrix_sets_up_stream_rules
     rules_set_up = false
     fake_client = Object.new
-    fake_client.define_singleton_method(:stream) { |_endpoint, &_block| nil }
+    fake_client.define_singleton_method(:stream) { |_endpoint, **_options, &_block| nil }
     @cli.stub(:install_matrix_stream_rules, -> { 
       rules_set_up = true
       []
     }) do
-      @cli.stub(:bearer_client, fake_client) do
+      @cli.stub(:streaming_client, fake_client) do
         @cli.matrix
       end
     end
@@ -2023,10 +2018,10 @@ class TestCLI < TTestCase
   def test_matrix_has_output
     tweet = {"data" => {"text" => "テストあいう", "id" => "1"}}
     fake_client = Object.new
-    fake_client.define_singleton_method(:stream) { |_endpoint, &block| block.call(tweet) }
+    fake_client.define_singleton_method(:stream) { |_endpoint, **_options, &block| block.call(X::Post.from_response(tweet, client: nil)) }
     @cli.shell = Thor::Shell::Basic.new
     @cli.stub(:install_matrix_stream_rules, []) do
-      @cli.stub(:bearer_client, fake_client) do
+      @cli.stub(:streaming_client, fake_client) do
         @cli.matrix
       end
     end
@@ -2036,10 +2031,10 @@ class TestCLI < TTestCase
 
   def test_matrix_skips_nil_tweets
     fake_client = Object.new
-    fake_client.define_singleton_method(:stream) { |_endpoint, &block| block.call({}) }
+    fake_client.define_singleton_method(:stream) { |_endpoint, **_options, &block| block.call(nil) }
     @cli.shell = Thor::Shell::Basic.new
     @cli.stub(:install_matrix_stream_rules, []) do
-      @cli.stub(:bearer_client, fake_client) do
+      @cli.stub(:streaming_client, fake_client) do
         @cli.matrix
       end
     end
@@ -2050,10 +2045,10 @@ class TestCLI < TTestCase
   def test_matrix_skips_tweets_without_hiragana
     tweet = {"data" => {"text" => "Hello world", "id" => "1"}}
     fake_client = Object.new
-    fake_client.define_singleton_method(:stream) { |_endpoint, &block| block.call(tweet) }
+    fake_client.define_singleton_method(:stream) { |_endpoint, **_options, &block| block.call(X::Post.from_response(tweet, client: nil)) }
     @cli.shell = Thor::Shell::Basic.new
     @cli.stub(:install_matrix_stream_rules, []) do
-      @cli.stub(:bearer_client, fake_client) do
+      @cli.stub(:streaming_client, fake_client) do
         @cli.matrix
       end
     end
@@ -2068,19 +2063,17 @@ class TestCLI < TTestCase
     stub_v2_post("tweets/search/stream/rules").to_return(
       body: '{"data":[{"id":"42","value":"の lang:ja"}]}', headers: V2_JSON_HEADERS
     )
-    fake_bearer = build_matrix_bearer_client
-    @cli.stub(:bearer_client, fake_bearer) do
-      @cli.matrix
+    @cli.stub(:client, X::Client.new(bearer_token: "test-token")) do
+      @cli.stub(:streaming_client, build_matrix_streaming_client) { @cli.matrix }
     end
 
     assert_requested(:get, v2_pattern("tweets/search/stream/rules"), times: 1)
     assert_requested(:post, v2_pattern("tweets/search/stream/rules"), times: 3)
   end
 
-  def build_matrix_bearer_client
-    bearer = X::Client.new(bearer_token: "test-token")
-    bearer.define_singleton_method(:stream) { |_endpoint, &_block| nil }
-    bearer
+  # A streaming client whose stream ends at once
+  def build_matrix_streaming_client
+    Object.new.tap { |streaming| streaming.define_singleton_method(:stream) { |_endpoint, **_options, &_block| nil } }
   end
 
   # mentions
@@ -2284,7 +2277,7 @@ class TestCLI < TTestCase
     reach_stubs
     @cli.reach("55709764298092545")
 
-    assert_equal("2", $stdout.string.split("\n").first)
+    assert_equal("1", $stdout.string.split("\n").first)
   end
 
   # reply
@@ -2344,16 +2337,16 @@ class TestCLI < TTestCase
   def test_reply_with_file_uploads_media
     reply_stubs
     @cli.options = @cli.options.merge("file" => "#{fixture_path}/long.png")
-    stub_request(:post, "https://upload.twitter.com/1.1/media/upload.json").to_return(body: fixture("upload.json"), headers: {content_type: "application/json; charset=utf-8"})
+    stub_v2_post("media/upload").to_return(v2_return("v2/media_upload.json"))
     @cli.reply("263813522369159169", "Testing")
 
-    assert_requested(:post, "https://upload.twitter.com/1.1/media/upload.json")
+    assert_requested(:post, v2_pattern("media/upload"))
   end
 
   def test_reply_with_file_posts_tweet
     reply_stubs
     @cli.options = @cli.options.merge("file" => "#{fixture_path}/long.png")
-    stub_request(:post, "https://upload.twitter.com/1.1/media/upload.json").to_return(body: fixture("upload.json"), headers: {content_type: "application/json; charset=utf-8"})
+    stub_v2_post("media/upload").to_return(v2_return("v2/media_upload.json"))
     @cli.reply("263813522369159169", "Testing")
 
     assert_requested(:post, v2_pattern("tweets"))
@@ -2506,6 +2499,7 @@ class TestCLI < TTestCase
   # retweets_of_me
 
   def retweets_of_me_stubs
+    stub_v2_current_user
     stub_v2_get("users/reposts_of_me").to_return(v2_return("v2/statuses.json"))
   end
 
@@ -3054,38 +3048,6 @@ class TestCLI < TTestCase
     assert_equal("San Francisco, California, US", $stdout.string.chomp)
   end
 
-  # nearby_places
-
-  def nearby_places_stubs
-    stub_request(:get, "http://checkip.dyndns.org/").to_return(body: fixture("checkip.html"), headers: {content_type: "text/html"})
-    stub_request(:get, "http://ipinfo.io/50.131.22.169/geo").to_return(body: fixture("ipinfo.json"), headers: {content_type: "application/json"})
-    stub_get("/1.1/geo/reverse_geocode.json").with(query: hash_including("lat" => "37.7697", "long" => "-122.3933")).to_return(body: fixture("geo_reverse_geocode.json"), headers: {content_type: "application/json; charset=utf-8"})
-  end
-
-  def nearby_places_with_address_stubs
-    stub_request(:get, "https://nominatim.openstreetmap.org/search").with(query: hash_including("q" => "San Francisco, CA")).to_return(body: "[#{File.read("#{fixture_path}/nominatim.json")}]", headers: {content_type: "application/json"})
-    stub_get("/1.1/geo/reverse_geocode.json").with(query: hash_including("lat", "long")).to_return(body: fixture("geo_reverse_geocode.json"), headers: {content_type: "application/json; charset=utf-8"})
-  end
-
-  # place
-
-  def place_stubs
-    stub_get("/1.1/geo/id/5a110d312052166f.json").to_return(body: fixture("place.json"), headers: {content_type: "application/json; charset=utf-8"})
-  end
-
-  # places
-
-  def places_stubs
-    stub_request(:get, "http://checkip.dyndns.org/").to_return(body: fixture("checkip.html"), headers: {content_type: "text/html"})
-    stub_request(:get, "http://ipinfo.io/50.131.22.169/geo").to_return(body: fixture("ipinfo.json"), headers: {content_type: "application/json"})
-    stub_get("/1.1/geo/search.json").with(query: hash_including("query" => "San Francisco", "lat" => "37.7697", "long" => "-122.3933")).to_return(body: fixture("geo_search.json"), headers: {content_type: "application/json; charset=utf-8"})
-  end
-
-  def places_with_address_stubs
-    stub_request(:get, "https://nominatim.openstreetmap.org/search").with(query: hash_including("q" => "San Francisco, CA")).to_return(body: "[#{File.read("#{fixture_path}/nominatim.json")}]", headers: {content_type: "application/json"})
-    stub_get("/1.1/geo/search.json").with(query: hash_including("query" => "San Francisco")).to_return(body: fixture("geo_search.json"), headers: {content_type: "application/json; charset=utf-8"})
-  end
-
   # trend_locations
 
   def trend_locations_stubs
@@ -3266,16 +3228,16 @@ class TestCLI < TTestCase
   def test_update_with_file_uploads_media
     update_stubs
     @cli.options = @cli.options.merge("file" => "#{fixture_path}/long.png")
-    stub_request(:post, "https://upload.twitter.com/1.1/media/upload.json").to_return(body: fixture("upload.json"), headers: {content_type: "application/json; charset=utf-8"})
+    stub_v2_post("media/upload").to_return(v2_return("v2/media_upload.json"))
     @cli.update("Testing")
 
-    assert_requested(:post, "https://upload.twitter.com/1.1/media/upload.json")
+    assert_requested(:post, v2_pattern("media/upload"))
   end
 
   def test_update_with_file_posts_tweet
     update_stubs
     @cli.options = @cli.options.merge("file" => "#{fixture_path}/long.png")
-    stub_request(:post, "https://upload.twitter.com/1.1/media/upload.json").to_return(body: fixture("upload.json"), headers: {content_type: "application/json; charset=utf-8"})
+    stub_v2_post("media/upload").to_return(v2_return("v2/media_upload.json"))
     @cli.update("Testing")
 
     assert_requested(:post, v2_pattern("tweets"))
@@ -3403,7 +3365,7 @@ class TestCLI < TTestCase
     @cli.options = @cli.options.merge("unsorted" => true)
     @cli.users("sferik", "pengwynn")
 
-    assert_equal("pengwynn  sferik", $stdout.string.chomp)
+    assert_equal("sferik    pengwynn", $stdout.string.chomp)
   end
 
   # version

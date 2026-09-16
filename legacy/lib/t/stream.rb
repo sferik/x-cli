@@ -17,7 +17,11 @@ module T
       "%s",     # Last element does not need special formatting
     ].freeze
 
-    STREAM_FIELDS = "tweet.fields=author_id,created_at,entities,referenced_tweets,text&expansions=author_id,referenced_tweets.id&user.fields=username,name".freeze
+    STREAM_PARAMS = {
+      "tweet.fields": %w[author_id created_at entities referenced_tweets text],
+      expansions: %w[author_id referenced_tweets.id],
+      "user.fields": %w[username name],
+    }.freeze
 
     check_unknown_options!
 
@@ -49,8 +53,7 @@ module T
       list_obj.options = list_obj.options.merge(reverse: true)
       list_obj.options = list_obj.options.merge(format: TWEET_HEADINGS_FORMATTING)
       list_obj.timeline(user_list)
-      members = fetch_list_members_v1(owner, list_name)
-      user_ids = members.collect { |member| member["id"] }
+      user_ids = x_list_members(owner, list_name).collect { |member| member["id"] }
       rule_ids = setup_stream_rules([{value: user_ids.map { |id| "from:#{id}" }.join(" OR ")}])
       stream_tweets("tweets/search/stream") { |tweet| print_stream_tweet(tweet) }
     ensure
@@ -122,8 +125,8 @@ module T
   private
 
     def stream_tweets(endpoint)
-      bearer_client.stream("#{endpoint}?#{STREAM_FIELDS}") do |json|
-        tweet = extract_tweets(json).first
+      streaming_client.stream(endpoint, params: STREAM_PARAMS, object_class: X::Post) do |post|
+        tweet = tweet_hash(post)
         next unless tweet
 
         yield tweet
@@ -132,21 +135,21 @@ module T
     end
 
     def clear_stream_rules
-      response = bearer_client.get(t_normalize_path("tweets/search/stream/rules"))
+      response = client.app_only.get("tweets/search/stream/rules")
       existing_ids = (response["data"] || []).filter_map { |rule| rule["id"] }
       remove_stream_rules(existing_ids)
     end
 
     def setup_stream_rules(rules)
       clear_stream_rules
-      response = t_post_bearer_json("tweets/search/stream/rules", add: rules)
+      response = client.app_only.post("tweets/search/stream/rules", {add: rules})
       (response["data"] || []).filter_map { |rule| rule["id"] }
     end
 
     def remove_stream_rules(rule_ids)
       return if rule_ids.empty?
 
-      t_post_bearer_json("tweets/search/stream/rules", delete: {ids: rule_ids})
+      client.app_only.post("tweets/search/stream/rules", {delete: {ids: rule_ids}})
     end
 
     def print_stream_headings
@@ -172,13 +175,6 @@ module T
       else
         print_message(tweet["user"]["screen_name"], tweet["text"])
       end
-    end
-
-    def fetch_list_members_v1(owner, slug)
-      client # ensure v1_client is initialized
-      params = URI.encode_www_form(cursor: -1, owner_screen_name: owner, slug: slug)
-      response = v1_client.get("lists/members.json?#{params}")
-      response["users"] || []
     end
   end
 end

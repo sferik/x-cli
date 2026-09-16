@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "oauth", "~> 1.1"
   spec.add_dependency "retriable", "~> 3.1"
   spec.add_dependency "thor", "~> 1.3"
-  spec.add_dependency "x", "~> 0.19"
+  spec.add_dependency "x", "~> 1.0"
   spec.author = "Erik Berlin"
   spec.description = "A command-line power tool for Twitter."
   spec.email = "sferik@gmail.com"
@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
 
   spec.name = "t"
   spec.require_paths = %w[lib]
-  spec.required_ruby_version = ">= 3.2"
+  spec.required_ruby_version = ">= 3.3"
   spec.summary = "CLI for Twitter"
   spec.version = T::Version
 end

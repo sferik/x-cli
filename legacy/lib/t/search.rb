@@ -31,7 +31,7 @@ module T
     method_option "relative_dates", aliases: "-a", type: :boolean, desc: "Show relative dates."
     def all(query)
       count = options["number"] || DEFAULT_NUM_RESULTS
-      opts = {count: MAX_SEARCH_RESULTS, include_entities: !!options["decode_uris"]}
+      opts = {count: MAX_SEARCH_RESULTS}
       tweets = x_search(query, opts).take(count)
       tweets.reverse! if options["reverse"]
       print_search_results(tweets)
@@ -47,16 +47,15 @@ module T
       query = args.pop
       user = args.pop
       opts = {count: MAX_NUM_RESULTS}
-      opts[:include_entities] = !!options["decode_uris"]
       if user
         user = options["id"] ? user.to_i : user.tr("@", "")
-        tweets = collect_with_max_id do |max_id|
-          opts[:max_id] = max_id unless max_id.nil?
+        tweets = collect_with_until_id do |until_id|
+          opts[:until_id] = until_id unless until_id.nil?
           x_favorites(user, opts)
         end
       else
-        tweets = collect_with_max_id do |max_id|
-          opts[:max_id] = max_id unless max_id.nil?
+        tweets = collect_with_until_id do |until_id|
+          opts[:until_id] = until_id unless until_id.nil?
           x_favorites(opts)
         end
       end
@@ -76,9 +75,8 @@ module T
     def list(user_list, query)
       owner, list_name = extract_owner(user_list, options)
       opts = {count: MAX_NUM_RESULTS}
-      opts[:include_entities] = !!options["decode_uris"]
-      tweets = collect_with_max_id do |max_id|
-        opts[:max_id] = max_id unless max_id.nil?
+      tweets = collect_with_until_id do |until_id|
+        opts[:until_id] = until_id unless until_id.nil?
         x_list_timeline(owner, list_name, opts)
       end
       tweets = tweets.select do |tweet|
@@ -94,9 +92,8 @@ module T
     method_option "relative_dates", aliases: "-a", type: :boolean, desc: "Show relative dates."
     def mentions(query)
       opts = {count: MAX_NUM_RESULTS}
-      opts[:include_entities] = !!options["decode_uris"]
-      tweets = collect_with_max_id do |max_id|
-        opts[:max_id] = max_id unless max_id.nil?
+      tweets = collect_with_until_id do |until_id|
+        opts[:until_id] = until_id unless until_id.nil?
         x_mentions(opts)
       end
       tweets = tweets.select do |tweet|
@@ -116,16 +113,15 @@ module T
       query = args.pop
       user = args.pop
       opts = {count: MAX_NUM_RESULTS}
-      opts[:include_entities] = !!options["decode_uris"]
       if user
         user = options["id"] ? user.to_i : user.tr("@", "")
-        tweets = collect_with_max_id do |max_id|
-          opts[:max_id] = max_id unless max_id.nil?
+        tweets = collect_with_until_id do |until_id|
+          opts[:until_id] = until_id unless until_id.nil?
           x_retweeted_by_user(user, opts)
         end
       else
-        tweets = collect_with_max_id do |max_id|
-          opts[:max_id] = max_id unless max_id.nil?
+        tweets = collect_with_until_id do |until_id|
+          opts[:until_id] = until_id unless until_id.nil?
           x_retweeted_by_me(opts)
         end
       end
@@ -150,8 +146,8 @@ module T
       user = args.pop
       opts = build_timeline_opts.merge(count: MAX_NUM_RESULTS)
       user = resolve_user_input(user) if user
-      tweets = collect_with_max_id do |max_id|
-        opts[:max_id] = max_id unless max_id.nil?
+      tweets = collect_with_until_id do |until_id|
+        opts[:until_id] = until_id unless until_id.nil?
         user ? x_user_timeline(user, opts) : x_home_timeline(opts)
       end
       tweets = tweets.select { |tweet| /#{query}/i.match(tweet["full_text"]) }
@@ -191,7 +187,7 @@ module T
 
     def print_search_messages(tweets)
       say unless tweets.empty?
-      tweets.each { |tweet| print_message(tweet["user"]["screen_name"], decode_full_text(tweet, decode_full_uris: options["decode_uris"])) }
+      tweets.each { |tweet| print_message(tweet["user"]["screen_name"], decode_full_text(tweet)) }
     end
   end
 end

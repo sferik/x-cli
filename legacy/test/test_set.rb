@@ -80,8 +80,6 @@ class TestSet < TTestCase
     assert_equal("@testcli's bio has been updated.", $stdout.string.chomp)
   end
 
-  # language
-
   # location
 
   def test_location_requests_correct_resource
@@ -118,21 +116,19 @@ class TestSet < TTestCase
     assert_equal("@testcli's name has been updated.", $stdout.string.chomp)
   end
 
-  # profile_background_image
-
   # profile_image
 
   def test_profile_image_requests_correct_resource
     @set_cmd.options = @set_cmd.options.merge("profile" => "#{fixture_path}/.trc")
-    stub_post("/1.1/account/update_profile_image.json").to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
+    stub_request(:post, "https://api.x.com/1.1/account/update_profile_image.json").to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
     @set_cmd.profile_image("#{fixture_path}/me.jpg")
 
-    assert_requested(:post, "https://api.twitter.com/1.1/account/update_profile_image.json")
+    assert_requested(:post, "https://api.x.com/1.1/account/update_profile_image.json")
   end
 
   def test_profile_image_has_correct_output
     @set_cmd.options = @set_cmd.options.merge("profile" => "#{fixture_path}/.trc")
-    stub_post("/1.1/account/update_profile_image.json").to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
+    stub_request(:post, "https://api.x.com/1.1/account/update_profile_image.json").to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
     @set_cmd.profile_image("#{fixture_path}/me.jpg")
 
     assert_equal("@testcli's image has been updated.", $stdout.string.chomp)

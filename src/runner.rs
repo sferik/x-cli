@@ -3140,7 +3140,7 @@ fn tweet_from_stream_event(event: Value) -> Option<Value> {
         })
         && let Some(rt_tweet) = event
             .get("includes")
-            .and_then(|includes| includes.get("tweets"))
+            .and_then(included_posts)
             .and_then(Value::as_array)
             .and_then(|tweets| {
                 tweets
@@ -3844,6 +3844,18 @@ fn resolve_collection_id(
 }
 
 /// Extracts ordered tweets from the v1.1 collections/entries response format.
+/// The posts a response includes, under either the post-named or the tweet-named key
+fn included_posts(includes: &Value) -> Option<&Value> {
+    includes.get("posts").or_else(|| includes.get("tweets"))
+}
+
+/// The identifier of a user's pinned post, under either name
+fn pinned_post_id(user: &Value) -> Option<&str> {
+    user.get("pinned_post_id")
+        .or_else(|| user.get("pinned_tweet_id"))
+        .and_then(Value::as_str)
+}
+
 fn extract_collection_entries(value: &Value) -> Vec<Value> {
     let tweets_map = value
         .get("objects")
@@ -4380,8 +4392,11 @@ fn normalize_v2_user(user: &Value) -> Value {
     }
 
     if let Some(metrics) = user.get("public_metrics") {
-        if let Some(tweet_count) = metrics.get("tweet_count") {
-            object.insert("statuses_count".to_string(), tweet_count.clone());
+        if let Some(post_count) = metrics
+            .get("post_count")
+            .or_else(|| metrics.get("tweet_count"))
+        {
+            object.insert("statuses_count".to_string(), post_count.clone());
         }
         if let Some(like_count) = metrics.get("like_count") {
             object.insert("favourites_count".to_string(), like_count.clone());
@@ -4516,7 +4531,7 @@ fn extract_users(value: &Value) -> Vec<Value> {
     let includes_tweets = index_items_by_id(
         value
             .get("includes")
-            .and_then(|includes| includes.get("tweets"))
+            .and_then(included_posts)
             .and_then(Value::as_array)
             .map(Vec::as_slice),
     );
@@ -4527,7 +4542,7 @@ fn extract_users(value: &Value) -> Vec<Value> {
             .iter()
             .map(|user| {
                 let mut normalized = normalize_v2_user(user);
-                if let Some(pinned_id) = user.get("pinned_tweet_id").and_then(Value::as_str)
+                if let Some(pinned_id) = pinned_post_id(user)
                     && let Some(tweet) = includes_tweets.get(pinned_id)
                     && let Some(obj) = normalized.as_object_mut()
                 {
@@ -4542,7 +4557,7 @@ fn extract_users(value: &Value) -> Vec<Value> {
     }
     if let Some(user) = users {
         let mut normalized = normalize_v2_user(user);
-        if let Some(pinned_id) = user.get("pinned_tweet_id").and_then(Value::as_str)
+        if let Some(pinned_id) = pinned_post_id(user)
             && let Some(tweet) = includes_tweets.get(pinned_id)
             && let Some(obj) = normalized.as_object_mut()
         {
@@ -4643,38 +4658,6 @@ fn ip_geolocation() -> Result<(f64, f64, String, String, String), CommandError> 
         .to_string();
 
     Ok((lat, lng, city, region, country))
-}
-
-fn geocode_address(address: &str) -> Result<(f64, f64), CommandError> {
-    let encoded = serde_urlencoded::to_string([("q", address), ("format", "json"), ("limit", "1")])
-        .unwrap_or_default();
-    let url = format!("https://nominatim.openstreetmap.org/search?{encoded}");
-    let body = reqwest::blocking::get(&url)
-        .map_err(|e| CommandError::Other(format!("Failed to geocode address: {e}")))?
-        .text()
-        .map_err(|e| CommandError::Other(format!("Failed to read geocode response: {e}")))?;
-    let response: Value = serde_json::from_str(&body)
-        .map_err(|e| CommandError::Other(format!("Failed to parse geocode response: {e}")))?;
-
-    let first = response
-        .as_array()
-        .and_then(|arr: &Vec<Value>| arr.first())
-        .ok_or_else(|| CommandError::Other(format!("Could not geocode address: {address}")))?;
-
-    let lat: f64 = first
-        .get("lat")
-        .and_then(Value::as_str)
-        .unwrap_or("0")
-        .parse()
-        .unwrap_or(0.0);
-    let lng: f64 = first
-        .get("lon")
-        .and_then(Value::as_str)
-        .unwrap_or("0")
-        .parse()
-        .unwrap_or(0.0);
-
-    Ok((lat, lng))
 }
 
 fn sort_places(places: &mut [Value], leaf: &ArgMatches) {

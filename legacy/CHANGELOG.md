@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Update the x gem dependency to ~> 1.0 and build on its object layer (`X::User`, `X::Post`, `X::List`, `X::DirectMessage`, and `X::Cursor`) instead of normalizing raw JSON
+- Use the client's `params:`, `form:`, and JSON-encoded Hash bodies instead of building query strings and request bodies by hand
+- Authenticate streaming with an app-only client, which fetches its bearer token itself, instead of requesting the token by hand
+- Use the gem's `search_users`, `home_timeline`, `reposts_of_me`, `blocking`, `muting`, `block`, `mute`, `create_list`, `delete_list`, `add_member`, `remove_member`, `delete_direct_message`, `peer`, `from_id`, `stub?`, and cursor `ids` instead of raw requests and hand-built stubs
+- Derive the v1.1 and app-only clients with `X::Client#copy`, raise the gem's `X::ResourceNotFound` through `find_user!` and `find_list!`, expand direct message peers with `X::User.hydrate_all`, and read `coordinates`, `url`, and `from?` from the gem instead of computing them
+- Upload profile images with `X::Uploader::Account`
+- Pass the gem's parameter names between commands and the request layer (`until_id`, `since_id`, `exclude`, and `reply_to`) instead of translating v1 names, and drop the `include_entities` option the v2 API ignores; links are expanded at print time from the gem's `expanded_text`
+- Check relationships with `follows?`, which takes one lookup when you are one of the two users, and `member?`, which stops at the first match, refer to users and posts without a request with `from_id`, and rely on `require "x"` to load media uploads
+
+### Removed
+
+- Remove the `nearby_places`, `place`, `places`, `set language`, and `set profile_background_image` commands, and the `--location` option of `update` and `reply`, which used v1.1 endpoints that X no longer serves
+- Upload media through the v2 `media/upload` endpoint with `X::Uploader::Media`, which infers the media category and uploads video in chunks, instead of the v1.1 upload endpoint
+- Look up a numeric argument as a username unless `--id` is given, as the x gem does, so an account whose username is all digits is found by name
+- Return integer IDs from follower, following, blocked, muted, and retweeter lookups
+- Read list members and list details from the list endpoints directly instead of fetching member IDs and then looking up the users
+- Page through followers, following, and list members until the last page instead of stopping after 51 pages
+- Fetch the app-only bearer token for streaming through `X::Client`
+
+### Removed
+
+- Remove the v1.1 fallbacks for `account/verify_credentials`, `users/show`, and direct message listing
+- Remove the unused `x_sample`, `x_filter`, and `x_before_request` streaming shims
+
+### Fixed
+
+- Exclude the author of a Tweet from the count reported by `t reach`, which compared an integer ID against string IDs
+
 ## [5.0.0] - 2026-03-02
 
 ### Changed

@@ -8,11 +8,11 @@ module T
       end
 
       def build_long_tweet(tweet)
-        [tweet["id"], ls_formatted_time(tweet), "@#{tweet['user']['screen_name']}", decode_full_text(tweet, decode_full_uris: options["decode_uris"]).gsub(/\n+/, " ")]
+        [tweet["id"], ls_formatted_time(tweet), "@#{tweet['user']['screen_name']}", decode_full_text(tweet).gsub(/\n+/, " ")]
       end
 
       def build_long_user(user)
-        [user["id"], ls_formatted_time(user), ls_formatted_time(user["status"]), user["statuses_count"], user["favorites_count"], user["listed_count"], user["friends_count"], user["followers_count"], "@#{user['screen_name']}", user["name"], user["verified"] ? "Yes" : "No", user["protected"] ? "Yes" : "No", user["description"].to_s.gsub(/\n+/, " "), user["status"] ? decode_full_text(user["status"], decode_full_uris: options["decode_uris"]).gsub(/\n+/, " ") : nil, user["location"], user["url"].to_s]
+        [user["id"], ls_formatted_time(user), ls_formatted_time(user["status"]), user["statuses_count"], user["favorites_count"], user["listed_count"], user["friends_count"], user["followers_count"], "@#{user['screen_name']}", user["name"], user["verified"] ? "Yes" : "No", user["protected"] ? "Yes" : "No", user["description"].to_s.gsub(/\n+/, " "), user["status"] ? decode_full_text(user["status"]).gsub(/\n+/, " ") : nil, user["location"], user["url"].to_s]
       end
 
       def csv_formatted_time(object, key = "created_at")
@@ -42,7 +42,7 @@ module T
 
       def print_csv_tweet(tweet)
         require "csv"
-        say [tweet["id"], csv_formatted_time(tweet), tweet["user"]["screen_name"], decode_full_text(tweet, decode_full_uris: options["decode_uris"])].to_csv
+        say [tweet["id"], csv_formatted_time(tweet), tweet["user"]["screen_name"], decode_full_text(tweet)].to_csv
       end
 
       def print_csv_user(user)

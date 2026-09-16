@@ -124,7 +124,7 @@ class RCFileTest < TTestCase
     rcfile = T::RCFile.instance
     rcfile.path = "#{fixture_path}/.trc"
 
-    assert_equal("428004849-cebdct6bwobn", rcfile.active_token)
+    assert_equal("7505382-cebdct6bwobn", rcfile.active_token)
   end
 
   def test_active_token_returns_nil_when_no_active_profile

@@ -59,6 +59,7 @@ class TestDelete < TTestCase
     stub_v2_current_user
     stub_v2_get("dm_events/1773478249").to_return(v2_return("v2/dm_event.json"))
     stub_v2_user_by_id("14100886", "v2/pengwynn.json")
+    stub_v2_users_lookup.to_return(v2_return("v2/users_pengwynn.json"))
     stub_v2_delete("dm_events/1773478249").to_return(v2_return("v2/post_response.json"))
   end
 
@@ -198,7 +199,7 @@ class TestDelete < TTestCase
     @delete_cmd.options = @delete_cmd.options.merge("profile" => "#{fixture_path}/.trc")
     stub_v2_current_user
     stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list.json"))
-    stub_v2_get("lists/8863586").to_return(v2_return("v2/list.json"))
+    stub_v2_get("lists/8863586").to_return(v2_return("v2/list_detail.json"))
     stub_v2_delete("lists/8863586").to_return(v2_return("v2/post_response.json"))
   end
 

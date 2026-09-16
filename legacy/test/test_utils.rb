@@ -120,30 +120,27 @@ class TestUtils < TTestCase
     assert_equal ["Open: https://example.com"], say_calls
   end
 
-  # decode_uris
+  # message_text
 
-  def test_decode_uris_uses_expanded_url_string_key
-    entity_obj = Object.new
-    def entity_obj.[](key)
-      {"url" => "http://t.co/abc", "expanded_url" => "http://example.com/full"}[key]
-    end
+  def test_message_text_expands_links_when_decode_uris_is_set
+    message = {"full_text" => "Check http://t.co/abc &amp; more", "expanded_text" => "Check http://example.com/full &amp; more"}
+    @test_obj.define_singleton_method(:options) { {"decode_uris" => true} }
 
-    result = @test_obj.send(:decode_uris, "Check http://t.co/abc", [entity_obj])
-
-    assert_equal "Check http://example.com/full", result
+    assert_equal "Check http://example.com/full &amp; more", @test_obj.send(:message_text, message)
+    assert_equal "Check http://example.com/full & more", @test_obj.send(:decode_full_text, message)
   end
 
-  # decode_full_text
+  def test_message_text_keeps_links_short_by_default
+    message = {"full_text" => "Check http://t.co/abc", "expanded_text" => "Check http://example.com/full"}
+    @test_obj.define_singleton_method(:options) { {} }
 
-  def test_decode_full_text_decodes_uris_when_decode_full_uris_is_true
-    message = {
-      "full_text" => "Check http://t.co/abc",
-      "uris" => [{"url" => "http://t.co/abc", "expanded_url" => "http://example.com/full"}],
-    }
+    assert_equal "Check http://t.co/abc", @test_obj.send(:message_text, message)
+  end
 
-    result = @test_obj.send(:decode_full_text, message, decode_full_uris: true)
+  def test_message_text_of_a_message_without_expanded_text
+    @test_obj.define_singleton_method(:options) { {"decode_uris" => true} }
 
-    assert_equal "Check http://example.com/full", result
+    assert_equal "hi", @test_obj.send(:message_text, {"full_text" => "hi"})
   end
 
   # distance_of_time_in_words case else branch

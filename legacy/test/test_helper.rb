@@ -23,7 +23,7 @@ V2_JSON_HEADERS = {content_type: "application/json; charset=utf-8"}.freeze
 
 class TTestCase < Minitest::Test
   def setup
-    stub_post("/oauth2/token").with(body: "grant_type=client_credentials").to_return(body: fixture("bearer_token.json"), headers: {content_type: "application/json; charset=utf-8"})
+    stub_request(:post, X::AppOnlyAuthenticator::TOKEN_URL).with(body: "grant_type=client_credentials").to_return(body: fixture("bearer_token.json"), headers: {content_type: "application/json; charset=utf-8"})
   end
 end
 
@@ -113,7 +113,7 @@ end
 
 # Stub a user lookup by ID
 def stub_v2_user_by_id(id, fixture_file = "v2/sferik.json")
-  stub_v2_get("users/#{id}").to_return(v2_return(fixture_file))
+  stub_request(:get, %r{api\.twitter\.com/2/users/#{id}\?}).to_return(v2_return(fixture_file))
 end
 
 def project_path

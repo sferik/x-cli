@@ -114,7 +114,9 @@ class TestStream < TTestCase
   # list
 
   def setup_list
-    stub_get("/1.1/lists/members.json").with(query: {cursor: "-1", owner_screen_name: "testcli", slug: "presidents"}).to_return(body: fixture("users_list.json"), headers: {content_type: "application/json; charset=utf-8"})
+    stub_v2_user_by_name("testcli")
+    stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list.json"))
+    stub_v2_get("lists/8863586/members").to_return(v2_return("v2/users_list.json"))
   end
 
   def test_list_prints_the_tweet
@@ -147,7 +149,7 @@ class TestStream < TTestCase
       end
     end
 
-    assert_requested(:get, "https://api.twitter.com/1.1/lists/members.json", query: {cursor: "-1", owner_screen_name: "testcli", slug: "presidents"})
+    assert_requested(:get, v2_pattern("lists/8863586/members"))
   end
 
   def test_list_csv_outputs_in_csv_format
@@ -182,7 +184,7 @@ class TestStream < TTestCase
       end
     end
 
-    assert_requested(:get, "https://api.twitter.com/1.1/lists/members.json", query: {cursor: "-1", owner_screen_name: "testcli", slug: "presidents"})
+    assert_requested(:get, v2_pattern("lists/8863586/members"))
   end
 
   def test_list_long_outputs_in_long_text_format
@@ -217,7 +219,7 @@ class TestStream < TTestCase
       end
     end
 
-    assert_requested(:get, "https://api.twitter.com/1.1/lists/members.json", query: {cursor: "-1", owner_screen_name: "testcli", slug: "presidents"})
+    assert_requested(:get, v2_pattern("lists/8863586/members"))
   end
 
   def test_list_performs_the_initial_rest_timeline
@@ -650,15 +652,26 @@ class TestStream < TTestCase
     end
   end
 
-  # bearer_client
+  # app_only
 
-  def test_bearer_client_obtains_token_via_client_credentials_grant
-    # Trigger client initialization so @requestable_api_credentials is set
-    @stream_cmd.send(:client)
-    bearer = @stream_cmd.send(:bearer_client)
+  def test_stream_rules_authenticate_as_the_app
+    assert_kind_of(X::BearerTokenAuthenticator, @stream_cmd.send(:client).app_only.authenticator)
+  end
 
-    assert_kind_of(X::Client, bearer)
-    assert_requested(:post, "https://api.twitter.com/oauth2/token")
+  def test_a_stream_reads_and_reconnects_as_a_stream_needs
+    streaming_client = @stream_cmd.send(:streaming_client)
+
+    assert_kind_of(X::StreamingClient, streaming_client)
+    assert_equal([20, Float::INFINITY], [streaming_client.read_timeout, streaming_client.max_reconnects])
+    assert_same(streaming_client, @stream_cmd.send(:streaming_client))
+  end
+
+  def test_the_app_only_client_fetches_its_token_with_the_client_credentials_grant
+    stub_v2_get("tweets/search/stream/rules").to_return(body: '{"data":[]}', headers: V2_JSON_HEADERS)
+    @stream_cmd.send(:client).app_only.get("tweets/search/stream/rules")
+
+    assert_requested(:post, X::AppOnlyAuthenticator::TOKEN_URL, body: "grant_type=client_credentials")
+    assert_requested(:get, v2_pattern("tweets/search/stream/rules"), headers: {"Authorization" => "Bearer AAAA%2FAAA%3DAAAAAAAA"})
   end
 
   # stream_tweets
@@ -666,9 +679,9 @@ class TestStream < TTestCase
   def test_stream_tweets_yields_exactly_one_tweet
     v2_stream_response = build_v2_stream_response
     x_client = Object.new
-    x_client.define_singleton_method(:stream) { |_url, &block| block.call(v2_stream_response) }
+    x_client.define_singleton_method(:stream) { |_url, **_options, &block| block.call(X::Post.from_response(v2_stream_response, client: nil)) }
     collected = []
-    @stream_cmd.stub(:bearer_client, x_client) do
+    @stream_cmd.stub(:streaming_client, x_client) do
       @stream_cmd.send(:stream_tweets, "tweets/sample/stream") { |t| collected << t }
     end
 
@@ -678,9 +691,9 @@ class TestStream < TTestCase
   def test_stream_tweets_normalizes_the_screen_name
     v2_stream_response = build_v2_stream_response
     x_client = Object.new
-    x_client.define_singleton_method(:stream) { |_url, &block| block.call(v2_stream_response) }
+    x_client.define_singleton_method(:stream) { |_url, **_options, &block| block.call(X::Post.from_response(v2_stream_response, client: nil)) }
     collected = []
-    @stream_cmd.stub(:bearer_client, x_client) do
+    @stream_cmd.stub(:streaming_client, x_client) do
       @stream_cmd.send(:stream_tweets, "tweets/sample/stream") { |t| collected << t }
     end
 
@@ -690,9 +703,9 @@ class TestStream < TTestCase
   def test_stream_tweets_preserves_the_tweet_text
     v2_stream_response = build_v2_stream_response
     x_client = Object.new
-    x_client.define_singleton_method(:stream) { |_url, &block| block.call(v2_stream_response) }
+    x_client.define_singleton_method(:stream) { |_url, **_options, &block| block.call(X::Post.from_response(v2_stream_response, client: nil)) }
     collected = []
-    @stream_cmd.stub(:bearer_client, x_client) do
+    @stream_cmd.stub(:streaming_client, x_client) do
       @stream_cmd.send(:stream_tweets, "tweets/sample/stream") { |t| collected << t }
     end
 
@@ -701,24 +714,24 @@ class TestStream < TTestCase
 
   def test_stream_tweets_skips_nil_tweets_from_malformed_stream_data
     x_client = Object.new
-    x_client.define_singleton_method(:stream) { |_url, &block| block.call({"data" => nil}) }
+    x_client.define_singleton_method(:stream) { |_url, **_options, &block| block.call(nil) }
     tweets = []
-    @stream_cmd.stub(:bearer_client, x_client) do
+    @stream_cmd.stub(:streaming_client, x_client) do
       @stream_cmd.send(:stream_tweets, "tweets/sample/stream") { |t| tweets << t }
     end
 
     assert_empty(tweets)
   end
 
-  def test_stream_tweets_appends_stream_field_parameters_to_the_endpoint
+  def test_stream_tweets_requests_the_stream_fields_as_posts
     x_client = Object.new
-    received_url = nil
-    x_client.define_singleton_method(:stream) { |url, &_block| received_url = url }
-    @stream_cmd.stub(:bearer_client, x_client) do
+    received = nil
+    x_client.define_singleton_method(:stream) { |url, **options, &_block| received = [url, options] }
+    @stream_cmd.stub(:streaming_client, x_client) do
       @stream_cmd.send(:stream_tweets, "tweets/sample/stream") { |_t| nil }
     end
 
-    assert_match(/tweet\.fields=.*referenced_tweets.*&expansions=author_id,referenced_tweets\.id&user\.fields=/, received_url)
+    assert_equal(["tweets/sample/stream", {params: T::Stream::STREAM_PARAMS, object_class: X::Post}], received)
   end
 
   # setup_stream_rules / remove_stream_rules
@@ -733,7 +746,7 @@ class TestStream < TTestCase
     )
     bearer = X::Client.new(bearer_token: "test-token")
     rule_ids = nil
-    @stream_cmd.stub(:bearer_client, bearer) do
+    @stream_cmd.stub(:client, bearer) do
       rule_ids = @stream_cmd.send(:setup_stream_rules, [{value: "ruby OR rails"}])
     end
 
@@ -751,7 +764,7 @@ class TestStream < TTestCase
     )
     bearer = X::Client.new(bearer_token: "test-token")
     rule_ids = nil
-    @stream_cmd.stub(:bearer_client, bearer) do
+    @stream_cmd.stub(:client, bearer) do
       rule_ids = @stream_cmd.send(:setup_stream_rules, [{value: "ruby"}])
     end
 
@@ -770,7 +783,7 @@ class TestStream < TTestCase
     )
     bearer = X::Client.new(bearer_token: "test-token")
     rule_ids = nil
-    @stream_cmd.stub(:bearer_client, bearer) do
+    @stream_cmd.stub(:client, bearer) do
       rule_ids = @stream_cmd.send(:setup_stream_rules, [{value: "ruby"}])
     end
 
@@ -780,7 +793,7 @@ class TestStream < TTestCase
   def test_remove_stream_rules_posts_delete_request
     stub_v2_post("tweets/search/stream/rules").to_return(body: "{}", headers: V2_JSON_HEADERS)
     bearer = X::Client.new(bearer_token: "test-token")
-    @stream_cmd.stub(:bearer_client, bearer) do
+    @stream_cmd.stub(:client, bearer) do
       @stream_cmd.send(:remove_stream_rules, %w[42 43])
     end
 
@@ -789,7 +802,7 @@ class TestStream < TTestCase
 
   def test_remove_stream_rules_skips_when_empty
     bearer = X::Client.new(bearer_token: "test-token")
-    @stream_cmd.stub(:bearer_client, bearer) do
+    @stream_cmd.stub(:client, bearer) do
       @stream_cmd.send(:remove_stream_rules, [])
     end
 

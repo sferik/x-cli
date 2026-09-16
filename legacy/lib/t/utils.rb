@@ -71,34 +71,20 @@ module T
       "#{count || 0} " + (count == 1 || count.to_s =~ /^1(\.0+)?$/ ? singular : (plural || "#{singular}s"))
     end
 
-    def decode_full_text(message, decode_full_uris: false)
+    # The text of a message, with its links expanded when the decode_uris option is set
+    def message_text(message)
+      options["decode_uris"] ? message.fetch("expanded_text", message["full_text"]) : message["full_text"]
+    end
+
+    def decode_full_text(message)
       require "htmlentities"
-      text = HTMLEntities.new.decode(message["full_text"])
-      decode_full_uris ? decode_uris(text, message["uris"]) : text
-    end
-
-    def decode_uris(full_text, uri_entities)
-      return full_text if uri_entities.nil?
-
-      uri_entities.each do |uri_entity|
-        uri, expanded_uri = extract_uri_pair(uri_entity)
-        full_text = full_text.gsub(uri.to_s, expanded_uri.to_s)
-      end
-
-      full_text
-    end
-
-    def extract_uri_pair(uri_entity)
-      uri = uri_entity["url"] || uri_entity[:url]
-      expanded = uri_entity["expanded_url"] || uri_entity[:expanded_url] || uri
-      [uri, expanded]
+      HTMLEntities.new.decode(message_text(message))
     end
 
     def build_timeline_opts
-      {include_entities: !!options["decode_uris"]}.tap do |opts|
-        opts[:exclude_replies] = true if options["exclude"] == "replies"
-        opts[:include_rts] = false if options["exclude"] == "retweets"
-        opts[:max_id] = options["max_id"] if options["max_id"]
+      {}.tap do |opts|
+        opts[:exclude] = options["exclude"] if options["exclude"]
+        opts[:until_id] = options["max_id"] if options["max_id"]
         opts[:since_id] = options["since_id"] if options["since_id"]
       end
     end

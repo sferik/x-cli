@@ -6,21 +6,21 @@ module T
     MAX_NUM_RESULTS = 200
     MAX_PAGE = 51
 
-    def collect_with_max_id(collection = [], max_id = nil, &)
+    def collect_with_until_id(collection = [], until_id = nil, &)
       tweets = Retriable.retriable(tries: 3, on: X::Error, base_interval: 0) do
-        yield(max_id)
+        yield(until_id)
       end
       return collection if tweets.nil?
 
       collection += tweets
-      tweets.empty? ? collection.flatten : collect_with_max_id(collection, tweets.last["id"] - 1, &)
+      tweets.empty? ? collection.flatten : collect_with_until_id(collection, tweets.last["id"] - 1, &)
     end
 
     def collect_with_count(count)
       opts = {}
       opts[:count] = MAX_NUM_RESULTS
-      collect_with_max_id do |max_id|
-        opts[:max_id] = max_id unless max_id.nil?
+      collect_with_until_id do |until_id|
+        opts[:until_id] = until_id unless until_id.nil?
         opts[:count] = count unless count >= MAX_NUM_RESULTS
         if count.positive?
           tweets = yield opts

@@ -25,7 +25,9 @@ rescue OAuth::Unauthorized
   pute "Authorization failed"
 rescue X::TooManyRequests => e
   reset_in = e.reset_in
-  pute e.message, "The rate limit for this request will reset in #{reset_in} #{reset_in == 1 ? 'second' : 'seconds'}."
+  # A refusal without a reset time says nothing about when to try again
+  reset = "The rate limit for this request will reset in #{reset_in} #{reset_in == 1 ? 'second' : 'seconds'}." if e.rate_limit
+  pute(*[e.message, reset].compact)
 rescue X::BadRequest => e
   pute e.message, "Run `t authorize` to authorize."
 rescue X::Error => e

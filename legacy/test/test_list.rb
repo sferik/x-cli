@@ -107,7 +107,7 @@ class TestList < TTestCase
 
   def setup_create
     @list_cmd.options = @list_cmd.options.merge("profile" => "#{fixture_path}/.trc")
-    stub_v2_post("lists").to_return(v2_return("v2/list.json"))
+    stub_v2_post("lists").to_return(v2_return("v2/list_created.json"))
   end
 
   def test_create_requests_the_correct_resource
@@ -160,7 +160,6 @@ class TestList < TTestCase
     @list_cmd.options = @list_cmd.options.merge("profile" => "#{fixture_path}/.trc")
     stub_v2_user_by_name("testcli")
     stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list.json"))
-    stub_v2_get("lists/8863586").to_return(v2_return("v2/list.json"))
   end
 
   def expected_info_output
@@ -192,13 +191,6 @@ class TestList < TTestCase
     assert_requested(:get, v2_pattern("users/7505382/owned_lists"))
   end
 
-  def test_information_requests_the_list_detail_resource
-    setup_information
-    @list_cmd.information("presidents")
-
-    assert_requested(:get, v2_pattern("lists/8863586"))
-  end
-
   def test_information_has_the_correct_output
     setup_information
     @list_cmd.information("presidents")
@@ -228,31 +220,12 @@ class TestList < TTestCase
     assert_requested(:get, v2_pattern("users/7505382/owned_lists"))
   end
 
-  def test_information_with_user_passed_requests_the_list_detail_resource
-    setup_information
-    @list_cmd.information("testcli/presidents")
-
-    assert_requested(:get, v2_pattern("lists/8863586"))
-  end
-
   def test_information_with_user_passed_and_id_requests_the_owned_lists_resource
     setup_information
     @list_cmd.options = @list_cmd.options.merge("id" => true)
-    stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list.json"))
-    stub_v2_get("lists/8863586").to_return(v2_return("v2/list.json"))
     @list_cmd.information("7505382/presidents")
 
     assert_requested(:get, v2_pattern("users/7505382/owned_lists"))
-  end
-
-  def test_information_with_user_passed_and_id_requests_the_list_detail_resource
-    setup_information
-    @list_cmd.options = @list_cmd.options.merge("id" => true)
-    stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list.json"))
-    stub_v2_get("lists/8863586").to_return(v2_return("v2/list.json"))
-    @list_cmd.information("7505382/presidents")
-
-    assert_requested(:get, v2_pattern("lists/8863586"))
   end
 
   def test_information_with_csv_has_the_correct_output
@@ -269,19 +242,19 @@ class TestList < TTestCase
   def test_information_when_list_has_no_description_omits_description_row
     setup_information
     stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list_following_no_desc.json"))
-    stub_v2_get("lists/8863586").to_return(v2_return("v2/list_following_no_desc.json"))
     @list_cmd.information("presidents")
 
     refute_includes($stdout.string, "Description")
   end
 
   def test_information_when_list_is_followed_shows_following_status
-    setup_information
-    stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list_following_no_desc.json"))
-    stub_v2_get("lists/8863586").to_return(v2_return("v2/list_following_no_desc.json"))
-    @list_cmd.information("presidents")
+    @list_cmd.options = @list_cmd.options.merge("profile" => "#{fixture_path}/.trc")
+    list = {"id" => 8_863_586, "slug" => "presidents", "user" => {"screen_name" => "sferik"}, "created_at" => Time.utc(2010, 3, 15), "following" => true}
+    @list_cmd.stub(:x_list, list) do
+      @list_cmd.information("presidents")
+    end
 
-    assert_includes($stdout.string, "Following")
+    assert_includes($stdout.string, "Status       Following")
   end
 
   # members
@@ -290,7 +263,6 @@ class TestList < TTestCase
     stub_v2_user_by_name("testcli")
     stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list.json"))
     stub_v2_get("lists/8863586/members").to_return(v2_return("v2/users_list.json"))
-    stub_request(:get, %r{api\.twitter\.com/2/users\?}).to_return(v2_return("v2/users_list.json"))
   end
 
   def test_members_requests_the_user_lookup_resource
@@ -312,13 +284,6 @@ class TestList < TTestCase
     @list_cmd.members("presidents")
 
     assert_requested(:get, v2_pattern("lists/8863586/members"))
-  end
-
-  def test_members_requests_the_user_details_resource
-    setup_members
-    @list_cmd.members("presidents")
-
-    assert_requested(:get, %r{api\.twitter\.com/2/users\?})
   end
 
   def test_members_has_the_correct_output
@@ -453,19 +418,9 @@ class TestList < TTestCase
     assert_requested(:get, v2_pattern("lists/8863586/members"))
   end
 
-  def test_members_with_user_passed_requests_the_user_details_resource
-    setup_members
-    @list_cmd.members("testcli/presidents")
-
-    assert_requested(:get, %r{api\.twitter\.com/2/users\?})
-  end
-
   def test_members_with_user_passed_and_id_requests_the_owned_lists_resource
     setup_members
     @list_cmd.options = @list_cmd.options.merge("id" => true)
-    stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list.json"))
-    stub_v2_get("lists/8863586/members").to_return(v2_return("v2/users_list.json"))
-    stub_request(:get, %r{api\.twitter\.com/2/users\?}).to_return(v2_return("v2/users_list.json"))
     @list_cmd.members("7505382/presidents")
 
     assert_requested(:get, v2_pattern("users/7505382/owned_lists"))
@@ -474,23 +429,9 @@ class TestList < TTestCase
   def test_members_with_user_passed_and_id_requests_the_list_members_resource
     setup_members
     @list_cmd.options = @list_cmd.options.merge("id" => true)
-    stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list.json"))
-    stub_v2_get("lists/8863586/members").to_return(v2_return("v2/users_list.json"))
-    stub_request(:get, %r{api\.twitter\.com/2/users\?}).to_return(v2_return("v2/users_list.json"))
     @list_cmd.members("7505382/presidents")
 
     assert_requested(:get, v2_pattern("lists/8863586/members"))
-  end
-
-  def test_members_with_user_passed_and_id_requests_the_user_details
-    setup_members
-    @list_cmd.options = @list_cmd.options.merge("id" => true)
-    stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list.json"))
-    stub_v2_get("lists/8863586/members").to_return(v2_return("v2/users_list.json"))
-    stub_request(:get, %r{api\.twitter\.com/2/users\?}).to_return(v2_return("v2/users_list.json"))
-    @list_cmd.members("7505382/presidents")
-
-    assert_requested(:get, %r{api\.twitter\.com/2/users\?})
   end
 
   # remove

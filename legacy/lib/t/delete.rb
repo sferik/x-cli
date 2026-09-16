@@ -62,7 +62,7 @@ module T
         end
       else
         status_ids.each do |status_id_to_unfavorite|
-          status = x_status(status_id_to_unfavorite, include_my_retweet: false)
+          status = x_status(status_id_to_unfavorite)
           next unless yes? "Are you sure you want to remove @#{status['user']['screen_name']}'s status: \"#{status['full_text']}\" from your favorites? [y/N]"
 
           x_unfavorite(status_id_to_unfavorite)
@@ -122,7 +122,7 @@ module T
         end
       else
         status_ids.each do |status_id_to_delete|
-          status = x_status(status_id_to_delete, include_my_retweet: false)
+          status = x_status(status_id_to_delete)
           next unless yes? "Are you sure you want to permanently delete @#{status['user']['screen_name']}'s status: \"#{status['full_text']}\"? [y/N]"
 
           x_destroy_status(status_id_to_delete)

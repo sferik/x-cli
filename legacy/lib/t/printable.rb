@@ -13,7 +13,7 @@ module T
 
     LISTS_SORT_MAP = {
       "members" => ->(list) { list["member_count"] },
-      "mode" => ->(list) { list["mode"] },
+      "mode" => ->(list) { list["mode"].to_s },
       "since" => ->(list) { list["created_at"].to_s },
       "subscribers" => ->(list) { list["subscriber_count"] },
     }.freeze
@@ -79,7 +79,7 @@ module T
 
     def print_tweet_messages(tweets)
       tweets.each do |tweet|
-        print_message(tweet["user"]["screen_name"], decode_uris(tweet["full_text"], options["decode_uris"] ? tweet["uris"] : nil))
+        print_message(tweet["user"]["screen_name"], message_text(tweet))
       end
     end
 

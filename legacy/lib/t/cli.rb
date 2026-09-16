@@ -146,7 +146,7 @@ module T
     method_option "reverse", aliases: "-r", type: :boolean, desc: "Reverse the order of the sort."
     def direct_messages
       count = options["number"] || DEFAULT_NUM_RESULTS
-      opts = {include_entities: !!options["decode_uris"]}
+      opts = {}
       messages = collect_with_count(count) { |count_opts| x_direct_messages_received(count_opts.merge(opts)) }
       users_hash = build_dm_users_hash(messages.map { |m| m["sender_id"] })
       messages.reverse! if options["reverse"]
@@ -163,7 +163,7 @@ module T
     method_option "reverse", aliases: "-r", type: :boolean, desc: "Reverse the order of the sort."
     def direct_messages_sent
       count = options["number"] || DEFAULT_NUM_RESULTS
-      opts = {include_entities: !!options["decode_uris"]}
+      opts = {}
       messages = collect_with_count(count) { |count_opts| x_direct_messages_sent(count_opts.merge(opts)) }
       messages.reverse! if options["reverse"]
       format_direct_messages(messages) { |dm| dm["recipient"]["screen_name"] }
@@ -461,12 +461,10 @@ module T
     desc "matrix", "Unfortunately, no one can be told what the Matrix is. You have to see it for yourself."
     def matrix
       rule_ids = install_matrix_stream_rules
-      stream_fields = "tweet.fields=text"
-      bearer_client.stream("tweets/search/stream?#{stream_fields}") do |json|
-        tweet = extract_tweets(json).first
-        next unless tweet
+      streaming_client.stream("tweets/search/stream", params: {"tweet.fields": "text"}, object_class: X::Post) do |post|
+        next unless post
 
-        text = (tweet["text"] || "").gsub(/[^\u3000\u3040-\u309f]/, "").reverse
+        text = post.text.to_s.gsub(/[^\u3000\u3040-\u309f]/, "").reverse
         say(text, %i[bold green on_black], false) unless text.empty?
       end
     ensure
@@ -483,7 +481,6 @@ module T
     def mentions
       count = options["number"] || DEFAULT_NUM_RESULTS
       opts = {}
-      opts[:include_entities] = !!options["decode_uris"]
       tweets = collect_with_count(count) do |count_opts|
         x_mentions(count_opts.merge(opts))
       end
@@ -529,7 +526,7 @@ module T
         user = x_user(user.to_i)
         open_or_print(user["url"], dry_run: options["display-uri"])
       elsif options["status"]
-        status = x_status(user.to_i, include_my_retweet: false)
+        status = x_status(user.to_i)
         open_or_print(status["url"], dry_run: options["display-uri"])
       else
         open_or_print("https://twitter.com/#{user.tr('@', '')}", dry_run: options["display-uri"])
@@ -538,7 +535,7 @@ module T
 
     desc "reach TWEET_ID", "Shows the maximum number of people who may have seen the specified tweet in their timeline."
     def reach(tweet_id)
-      status_thread = Thread.new { x_status(tweet_id.to_i, include_my_retweet: false) }
+      status_thread = Thread.new { x_status(tweet_id.to_i) }
       threads = x_retweeters_ids(tweet_id.to_i).collect do |retweeter_id|
         Thread.new(retweeter_id) do |user_id|
           x_follower_ids(user_id).to_a
@@ -559,7 +556,7 @@ module T
     method_option "file", aliases: "-f", type: :string, desc: "The path to an image to attach to your tweet."
     def reply(status_id, message = nil)
       message = T::Editor.gets if message.to_s.empty?
-      status = x_status(status_id.to_i, include_my_retweet: false)
+      status = x_status(status_id.to_i)
       users = Array(status["user"]["screen_name"])
       if options["all"]
         users += extract_mentioned_screen_names(status["full_text"])
@@ -567,7 +564,7 @@ module T
       end
       users.delete(@rcfile.active_profile[0])
       users.collect! { |u| "@#{u}" }
-      opts = {in_reply_to_status_id: status["id"]}
+      opts = {reply_to: status["id"]}
       reply = if options["file"]
         x_update_with_media("#{users.join(' ')} #{message}", File.new(File.expand_path(options["file"])), opts)
       else
@@ -614,7 +611,6 @@ module T
     def retweets(user = nil)
       count = options["number"] || DEFAULT_NUM_RESULTS
       opts = {}
-      opts[:include_entities] = !!options["decode_uris"]
       tweets = if user
         user = options["id"] ? user.to_i : user.tr("@", "")
         collect_with_count(count) do |count_opts|
@@ -639,7 +635,6 @@ module T
     def retweets_of_me
       count = options["number"] || DEFAULT_NUM_RESULTS
       opts = {}
-      opts[:include_entities] = !!options["decode_uris"]
       tweets = collect_with_count(count) do |count_opts|
         x_retweets_of_me(count_opts.merge(opts))
       end
@@ -678,7 +673,7 @@ module T
     method_option "long", aliases: "-l", type: :boolean, desc: "Output in long format."
     method_option "relative_dates", aliases: "-a", type: :boolean, desc: "Show relative dates."
     def status(status_id)
-      opts = {include_my_retweet: false, include_entities: !!options["decode_uris"]}
+      opts = {}
       status = x_status(status_id.to_i, opts)
       location = extract_status_location(status)
       format_status(status, location)
@@ -805,7 +800,7 @@ module T
     method_option "relative_dates", aliases: "-a", type: :boolean, desc: "Show relative dates."
     def whois(user)
       user = resolve_user_input(user)
-      opts = {include_entities: !!options["decode_uris"]}
+      opts = {}
       user = x_user(user, opts)
       if options["csv"] || options["long"]
         print_users([user])
@@ -862,12 +857,12 @@ module T
 
     def install_matrix_stream_rules
       clear_matrix_stream_rules
-      response = t_post_bearer_json("tweets/search/stream/rules", add: [{value: "の lang:ja"}])
+      response = client.app_only.post("tweets/search/stream/rules", {add: [{value: "の lang:ja"}]})
       (response["data"] || []).filter_map { |rule| rule["id"] }
     end
 
     def clear_matrix_stream_rules
-      response = bearer_client.get(t_normalize_path("tweets/search/stream/rules"))
+      response = client.app_only.get("tweets/search/stream/rules")
       existing_ids = (response["data"] || []).filter_map { |rule| rule["id"] }
       remove_matrix_stream_rules(existing_ids)
     end
@@ -875,7 +870,7 @@ module T
     def remove_matrix_stream_rules(rule_ids)
       return if rule_ids.empty?
 
-      t_post_bearer_json("tweets/search/stream/rules", delete: {ids: rule_ids})
+      client.app_only.post("tweets/search/stream/rules", {delete: {ids: rule_ids}})
     end
 
     def build_dm_users_hash(ids)
@@ -890,9 +885,9 @@ module T
       if options["csv"]
         require "csv"
         say DIRECT_MESSAGE_HEADINGS.to_csv unless messages.empty?
-        messages.each { |dm| say [dm["id"], csv_formatted_time(dm), yield(dm), decode_full_text(dm, decode_full_uris: options["decode_uris"])].to_csv }
+        messages.each { |dm| say [dm["id"], csv_formatted_time(dm), yield(dm), decode_full_text(dm)].to_csv }
       elsif options["long"]
-        array = messages.collect { |dm| [dm["id"], ls_formatted_time(dm), "@#{yield(dm)}", decode_full_text(dm, decode_full_uris: options["decode_uris"]).gsub(/\n+/, " ")] }
+        array = messages.collect { |dm| [dm["id"], ls_formatted_time(dm), "@#{yield(dm)}", decode_full_text(dm).gsub(/\n+/, " ")] }
         format = options["format"] || Array.new(DIRECT_MESSAGE_HEADINGS.size) { "%s" }
         print_table_with_headings(array, DIRECT_MESSAGE_HEADINGS, format)
       else
@@ -939,9 +934,9 @@ module T
       if options["csv"]
         require "csv"
         say status_headings.to_csv
-        say [status["id"], csv_formatted_time(status), status["user"]["screen_name"], decode_full_text(status, decode_full_uris: options["decode_uris"]), status["retweet_count"], status["favorite_count"], strip_tags(status["source"].to_s), location].to_csv
+        say [status["id"], csv_formatted_time(status), status["user"]["screen_name"], decode_full_text(status), status["retweet_count"], status["favorite_count"], strip_tags(status["source"].to_s), location].to_csv
       elsif options["long"]
-        array = [status["id"], ls_formatted_time(status), "@#{status['user']['screen_name']}", decode_full_text(status, decode_full_uris: options["decode_uris"]).gsub(/\n+/, " "), status["retweet_count"], status["favorite_count"], strip_tags(status["source"].to_s), location]
+        array = [status["id"], ls_formatted_time(status), "@#{status['user']['screen_name']}", decode_full_text(status).gsub(/\n+/, " "), status["retweet_count"], status["favorite_count"], strip_tags(status["source"].to_s), location]
         format = options["format"] || Array.new(status_headings.size) { "%s" }
         print_table_with_headings([array], status_headings, format)
       else
@@ -953,7 +948,7 @@ module T
       array = []
       array << ["ID", user["id"].to_s]
       array << ["Since", "#{ls_formatted_time(user, 'created_at', allow_relative: false)} (#{time_ago_in_words(parse_time(user['created_at']))} ago)"]
-      array << ["Last update", "#{decode_full_text(user['status'], decode_full_uris: options['decode_uris']).gsub(/\n+/, ' ')} (#{time_ago_in_words(parse_time(user['status']['created_at']))} ago)"] unless user["status"].nil?
+      array << ["Last update", "#{decode_full_text(user['status']).gsub(/\n+/, ' ')} (#{time_ago_in_words(parse_time(user['status']['created_at']))} ago)"] unless user["status"].nil?
       array << ["Screen name", "@#{user['screen_name']}"]
       array << [user["verified"] ? "Name (Verified)" : "Name", user["name"]] unless user["name"].nil?
       array << ["Tweets", number_with_delimiter(user["statuses_count"])]
@@ -970,7 +965,7 @@ module T
     def format_status_default(status, location)
       array = []
       array << ["ID", status["id"].to_s]
-      array << ["Text", decode_full_text(status, decode_full_uris: options["decode_uris"]).gsub(/\n+/, " ")]
+      array << ["Text", decode_full_text(status).gsub(/\n+/, " ")]
       array << ["Screen name", "@#{status['user']['screen_name']}"]
       array << ["Posted at", "#{ls_formatted_time(status, 'created_at', allow_relative: false)} (#{time_ago_in_words(parse_time(status['created_at']))} ago)"]
       array << ["Retweets", number_with_delimiter(status["retweet_count"])]
@@ -1064,7 +1059,7 @@ module T
       ip_address = URI.open("http://checkip.dyndns.org/") do |body|
         /(?:\d{1,3}\.){3}\d{1,3}/.match(body.read)[0]
       end
-      @location = Geocoder.search(ip_address).first
+      Geocoder.search(ip_address).first
     end
 
     def reverse_geocode(geo)

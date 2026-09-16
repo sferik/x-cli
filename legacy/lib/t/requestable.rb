@@ -18,8 +18,6 @@ module T
         access_token_secret: @rcfile.active_secret,
       }
       @client = X::Client.new(**credentials)
-      setup_requestable_api!(credentials)
-      @client
     end
   end
 end
