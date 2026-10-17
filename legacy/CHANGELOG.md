@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
@@ -17,10 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upload profile images with `X::Uploader::Account`
 - Pass the gem's parameter names between commands and the request layer (`until_id`, `since_id`, `exclude`, and `reply_to`) instead of translating v1 names, and drop the `include_entities` option the v2 API ignores; links are expanded at print time from the gem's `expanded_text`
 - Check relationships with `follows?`, which takes one lookup when you are one of the two users, and `member?`, which stops at the first match, refer to users and posts without a request with `from_id`, and rely on `require "x"` to load media uploads
-
-### Removed
-
-- Remove the `nearby_places`, `place`, `places`, `set language`, and `set profile_background_image` commands, and the `--location` option of `update` and `reply`, which used v1.1 endpoints that X no longer serves
 - Upload media through the v2 `media/upload` endpoint with `X::Uploader::Media`, which infers the media category and uploads video in chunks, instead of the v1.1 upload endpoint
 - Look up a numeric argument as a username unless `--id` is given, as the x gem does, so an account whose username is all digits is found by name
 - Return integer IDs from follower, following, blocked, muted, and retweeter lookups
@@ -30,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Remove the `nearby_places`, `place`, `places`, `set language`, and `set profile_background_image` commands, and the `--location` option of `update` and `reply`, which used v1.1 endpoints that X no longer serves
 - Remove the v1.1 fallbacks for `account/verify_credentials`, `users/show`, and direct message listing
 - Remove the unused `x_sample`, `x_filter`, and `x_before_request` streaming shims
 
@@ -42,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Replace twitter gem dependency with x gem (~> 0.19)
-- Bump required Ruby version to >= 3.2
+- **Breaking:** Bump required Ruby version to >= 3.2
 
 ### Removed
 
@@ -69,6 +66,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.1.0] - 2024-04-30
 
+### Added
+
+- Add rubocop-performance
+
 ### Changed
 
 - Update x gem dependency to ~> 0.14
@@ -81,16 +82,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use `#key?` instead of `#keys.include?`
 - Favor `unless` over `if` for negative conditions
 
-### Added
-
-- Add rubocop-performance
-
 ### Removed
 
 - Drop support for Ruby 3.0
 - Remove coveralls dependency
 
 ## [4.0.0] - 2023-04-30
+
+### Added
+
+- Add rb-readline dependency
 
 ### Changed
 
@@ -100,13 +101,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Twitter::Rest::Client#user` now uses GET instead of POST
 - Extract layout from style
 
-### Added
-
-- Add rb-readline dependency
-
 ### Removed
 
-- Drop support for Ruby < 3.0
+- **Breaking:** Drop support for Ruby < 3.0
 - Remove bundler development dependency
 
 ## [3.1.0] - 2016-12-24
@@ -116,20 +113,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update oauth dependency to ~> 0.5.1
 - Update Bash completion
 
-## [3.0.0] - 2016-12-07
+## [3.0.0] - 2016-12-08
+
+### Added
+
+- Add support for Ruby 2.3.1
 
 ### Changed
 
 - Upgrade twitter dependency to ~> 6.0
 - Update help text for trends
 
-### Added
-
-- Add support for Ruby 2.3.1
-
 ### Removed
 
-- Drop support for Ruby 1.9.3
+- **Breaking:** Drop support for Ruby 1.9.3
 
 ## [2.10.0] - 2016-01-24
 
@@ -158,10 +155,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rename `Twitter::REST::Client::ENDPOINT` to `Twitter::REST::Client::BASE_URL`
 - Rename `Twitter::Status` to `Twitter::Tweet`
 - Moved `remove_account` to subcommand `delete account`
-
-### Removed
-
-- Require Ruby 1.9.3 or higher
+- Require Ruby 1.9.3 or later
 
 ## [2.8.0] - 2014-10-30
 
@@ -273,7 +267,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Update for new search interface
 
-## [2.1.0] - 2013-12-17
+## [2.1.0] - 2013-12-18
 
 ### Added
 
@@ -320,11 +314,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Strip newline characters from bios in long format
 - Move `members` under the `list` subcommand
 - Refactor `T::Editor`
+- **Breaking:** Require Ruby 1.9.2 or later
 
 ### Removed
 
 - Remove fastercsv dependency
-- Require Ruby 1.9.2 or higher
 
 ## [1.7.2] - 2013-05-04
 
@@ -383,7 +377,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update twitter dependency to ~> 4.2
 - Use `count` parameter with all queries
 
-## [1.4.0] - 2012-10-17
+## [1.4.0] - 2012-10-18
 
 ### Added
 
@@ -404,7 +398,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updates for API v1.1
 - Convert specs to new RSpec expectation syntax
 
-## [1.3.0] - 2012-10-07
+## [1.3.0] - 2012-10-08
 
 ### Changed
 
@@ -466,14 +460,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove remaining dependency on activesupport
 - Remove twitter-text dependency
 
-## [0.9.9] - 2012-05-25
+## [0.9.9] - 2012-05-26
 
 ### Changed
 
 - Pass `Twitter::List` object directly to `#list_destroy` method
 - Don't lazy-require oauth or twitter since they are required for error handling
 
-## [0.9.8] - 2012-05-23
+## [0.9.8] - 2012-05-24
 
 ### Changed
 
@@ -506,7 +500,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix bug in undo instructions
 - Fix tests in timezones other than PST
 
-## [0.9.6] - 2012-05-07
+## [0.9.6] - 2012-05-08
 
 ### Added
 
@@ -528,26 +522,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Lazy require geokit and launchy
 
-## [0.9.4] - 2012-05-02
+## [0.9.4] - 2012-05-03
 
 ### Changed
 
 - Lazy require twitter-text
 
-## [0.9.3] - 2012-05-01
+## [0.9.3] - 2012-05-02
 
 ### Fixed
 
 - Fix bug in CSV streaming output
 
-## [0.9.2] - 2012-05-01
+## [0.9.2] - 2012-05-02
 
 ### Added
 
 - Add `--csv` option to stream commands
 - Use tweetstream gem
 
-## [0.9.1] - 2012-05-01
+## [0.9.1] - 2012-05-02
 
 ### Changed
 
@@ -571,13 +565,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove date from status formatting
 
-## [0.8.3] - 2012-04-29
+## [0.8.3] - 2012-04-30
 
 ### Changed
 
 - Replace paging with cursoring
 
-## [0.8.2] - 2012-04-29
+## [0.8.2] - 2012-04-30
 
 ### Changed
 
@@ -590,7 +584,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make no-color output consistent with color output
 - Fix typo
 
-## [0.8.0] - 2012-04-27
+## [0.8.0] - 2012-04-28
 
 ### Added
 
@@ -601,7 +595,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rename default profile to active profile
 - Write `~/.rcfile` with correct permissions
 
-## [0.7.0] - 2012-04-26
+## [0.7.0] - 2012-04-27
 
 ### Added
 
@@ -622,7 +616,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rename `--created` flag to `--posted`
 - Delimit lists from owners with slash
 
-## [0.6.4] - 2012-04-24
+## [0.6.4] - 2012-04-25
 
 ### Added
 
@@ -633,7 +627,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove commas from IDs
 - Clean up output formatting
 
-## [0.6.3] - 2012-04-24
+## [0.6.3] - 2012-04-25
 
 ### Added
 
@@ -779,74 +773,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow switching of accounts with just username
 - Require yajl for faster JSON parsing
 
-## [0.0.1] - 2011-11-22
+## [0.0.1] - 2011-11-23
 
 ### Added
 
 - Initial release
 
-[5.0.0]: https://github.com/sferik/t-ruby/compare/v4.2.0...v5.0.0
-[4.2.0]: https://github.com/sferik/t-ruby/compare/v4.1.1...v4.2.0
-[4.1.1]: https://github.com/sferik/t-ruby/compare/v4.1.0...v4.1.1
-[4.1.0]: https://github.com/sferik/t-ruby/compare/v4.0.0...v4.1.0
-[4.0.0]: https://github.com/sferik/t-ruby/compare/v3.1.0...v4.0.0
-[3.1.0]: https://github.com/sferik/t-ruby/compare/v3.0.0...v3.1.0
-[3.0.0]: https://github.com/sferik/t-ruby/compare/v2.10.0...v3.0.0
-[2.10.0]: https://github.com/sferik/t-ruby/compare/v2.9.0...v2.10.0
-[2.9.0]: https://github.com/sferik/t-ruby/compare/v2.8.0...v2.9.0
-[2.8.0]: https://github.com/sferik/t-ruby/compare/v2.7.0...v2.8.0
-[2.7.0]: https://github.com/sferik/t-ruby/compare/v2.6.0...v2.7.0
-[2.6.0]: https://github.com/sferik/t-ruby/compare/v2.5.0...v2.6.0
-[2.5.0]: https://github.com/sferik/t-ruby/compare/v2.4.0...v2.5.0
-[2.4.0]: https://github.com/sferik/t-ruby/compare/v2.3.0...v2.4.0
-[2.3.0]: https://github.com/sferik/t-ruby/compare/v2.2.1...v2.3.0
-[2.2.1]: https://github.com/sferik/t-ruby/compare/v2.2.0...v2.2.1
-[2.2.0]: https://github.com/sferik/t-ruby/compare/v2.1.0...v2.2.0
-[2.1.0]: https://github.com/sferik/t-ruby/compare/v2.0.2...v2.1.0
-[2.0.2]: https://github.com/sferik/t-ruby/compare/v2.0.1...v2.0.2
-[2.0.1]: https://github.com/sferik/t-ruby/compare/v2.0.0...v2.0.1
-[2.0.0]: https://github.com/sferik/t-ruby/compare/v1.7.2...v2.0.0
-[1.7.2]: https://github.com/sferik/t-ruby/compare/v1.7.1...v1.7.2
-[1.7.1]: https://github.com/sferik/t-ruby/compare/v1.7.0...v1.7.1
-[1.7.0]: https://github.com/sferik/t-ruby/compare/v1.6.0...v1.7.0
-[1.6.0]: https://github.com/sferik/t-ruby/compare/v1.5.1...v1.6.0
-[1.5.1]: https://github.com/sferik/t-ruby/compare/v1.5.0...v1.5.1
-[1.5.0]: https://github.com/sferik/t-ruby/compare/v1.4.0...v1.5.0
-[1.4.0]: https://github.com/sferik/t-ruby/compare/v1.3.1...v1.4.0
-[1.3.1]: https://github.com/sferik/t-ruby/compare/v1.3.0...v1.3.1
-[1.3.0]: https://github.com/sferik/t-ruby/compare/v1.2.0...v1.3.0
-[1.2.0]: https://github.com/sferik/t-ruby/compare/v1.1.1...v1.2.0
-[1.1.1]: https://github.com/sferik/t-ruby/compare/v1.1.0...v1.1.1
-[1.1.0]: https://github.com/sferik/t-ruby/compare/v1.0.1...v1.1.0
-[1.0.1]: https://github.com/sferik/t-ruby/compare/v1.0.0...v1.0.1
-[1.0.0]: https://github.com/sferik/t-ruby/compare/v0.9.9...v1.0.0
-[0.9.9]: https://github.com/sferik/t-ruby/compare/v0.9.8...v0.9.9
-[0.9.8]: https://github.com/sferik/t-ruby/compare/v0.9.7...v0.9.8
-[0.9.7]: https://github.com/sferik/t-ruby/compare/v0.9.6...v0.9.7
-[0.9.6]: https://github.com/sferik/t-ruby/compare/v0.9.5...v0.9.6
-[0.9.5]: https://github.com/sferik/t-ruby/compare/v0.9.4...v0.9.5
-[0.9.4]: https://github.com/sferik/t-ruby/compare/v0.9.3...v0.9.4
-[0.9.3]: https://github.com/sferik/t-ruby/compare/v0.9.2...v0.9.3
-[0.9.2]: https://github.com/sferik/t-ruby/compare/v0.9.1...v0.9.2
-[0.9.1]: https://github.com/sferik/t-ruby/compare/v0.9.0...v0.9.1
-[0.9.0]: https://github.com/sferik/t-ruby/compare/v0.8.3...v0.9.0
-[0.8.3]: https://github.com/sferik/t-ruby/compare/v0.8.2...v0.8.3
-[0.8.2]: https://github.com/sferik/t-ruby/compare/v0.8.1...v0.8.2
-[0.8.1]: https://github.com/sferik/t-ruby/compare/v0.8.0...v0.8.1
-[0.8.0]: https://github.com/sferik/t-ruby/compare/v0.7.0...v0.8.0
-[0.7.0]: https://github.com/sferik/t-ruby/compare/v0.6.4...v0.7.0
-[0.6.4]: https://github.com/sferik/t-ruby/compare/v0.6.3...v0.6.4
-[0.6.3]: https://github.com/sferik/t-ruby/compare/v0.6.2...v0.6.3
-[0.6.2]: https://github.com/sferik/t-ruby/compare/v0.6.1...v0.6.2
-[0.6.1]: https://github.com/sferik/t-ruby/compare/v0.6.0...v0.6.1
-[0.6.0]: https://github.com/sferik/t-ruby/compare/v0.5.1...v0.6.0
-[0.5.1]: https://github.com/sferik/t-ruby/compare/v0.5.0...v0.5.1
-[0.5.0]: https://github.com/sferik/t-ruby/compare/v0.4.0...v0.5.0
-[0.4.0]: https://github.com/sferik/t-ruby/compare/v0.3.1...v0.4.0
-[0.3.1]: https://github.com/sferik/t-ruby/compare/v0.3.0...v0.3.1
-[0.3.0]: https://github.com/sferik/t-ruby/compare/v0.2.1...v0.3.0
-[0.2.1]: https://github.com/sferik/t-ruby/compare/v0.2.0...v0.2.1
-[0.2.0]: https://github.com/sferik/t-ruby/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/sferik/t-ruby/compare/v0.0.2...v0.1.0
-[0.0.2]: https://github.com/sferik/t-ruby/compare/v0.0.1...v0.0.2
-[0.0.1]: https://github.com/sferik/t-ruby/releases/tag/v0.0.1
+[Unreleased]: https://github.com/sferik/x-cli/compare/v5.0.0...HEAD
+[5.0.0]: https://github.com/sferik/x-cli/compare/v4.2.0...v5.0.0
+[4.2.0]: https://github.com/sferik/x-cli/compare/v4.1.1...v4.2.0
+[4.1.1]: https://github.com/sferik/x-cli/compare/v4.1.0...v4.1.1
+[4.1.0]: https://github.com/sferik/x-cli/compare/v4.0.0...v4.1.0
+[4.0.0]: https://github.com/sferik/x-cli/compare/v3.1.0...v4.0.0
+[3.1.0]: https://github.com/sferik/x-cli/compare/v3.0.0...v3.1.0
+[3.0.0]: https://github.com/sferik/x-cli/compare/v2.10.0...v3.0.0
+[2.10.0]: https://github.com/sferik/x-cli/compare/v2.9.0...v2.10.0
+[2.9.0]: https://github.com/sferik/x-cli/compare/v2.8.0...v2.9.0
+[2.8.0]: https://github.com/sferik/x-cli/compare/v2.7.0...v2.8.0
+[2.7.0]: https://github.com/sferik/x-cli/compare/v2.6.0...v2.7.0
+[2.6.0]: https://github.com/sferik/x-cli/compare/v2.5.0...v2.6.0
+[2.5.0]: https://github.com/sferik/x-cli/compare/v2.4.0...v2.5.0
+[2.4.0]: https://github.com/sferik/x-cli/compare/v2.3.0...v2.4.0
+[2.3.0]: https://github.com/sferik/x-cli/compare/v2.2.1...v2.3.0
+[2.2.1]: https://github.com/sferik/x-cli/compare/v2.2.0...v2.2.1
+[2.2.0]: https://github.com/sferik/x-cli/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/sferik/x-cli/compare/v2.0.2...v2.1.0
+[2.0.2]: https://github.com/sferik/x-cli/compare/v2.0.1...v2.0.2
+[2.0.1]: https://github.com/sferik/x-cli/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/sferik/x-cli/compare/v1.7.2...v2.0.0
+[1.7.2]: https://github.com/sferik/x-cli/compare/v1.7.1...v1.7.2
+[1.7.1]: https://github.com/sferik/x-cli/compare/v1.7.0...v1.7.1
+[1.7.0]: https://github.com/sferik/x-cli/compare/v1.6.0...v1.7.0
+[1.6.0]: https://github.com/sferik/x-cli/compare/v1.5.1...v1.6.0
+[1.5.1]: https://github.com/sferik/x-cli/compare/v1.5.0...v1.5.1
+[1.5.0]: https://github.com/sferik/x-cli/compare/v1.4.0...v1.5.0
+[1.4.0]: https://github.com/sferik/x-cli/compare/v1.3.1...v1.4.0
+[1.3.1]: https://github.com/sferik/x-cli/compare/v1.3.0...v1.3.1
+[1.3.0]: https://github.com/sferik/x-cli/compare/v1.2.0...v1.3.0
+[1.2.0]: https://github.com/sferik/x-cli/compare/v1.1.1...v1.2.0
+[1.1.1]: https://github.com/sferik/x-cli/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/sferik/x-cli/compare/v1.0.1...v1.1.0
+[1.0.1]: https://github.com/sferik/x-cli/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/sferik/x-cli/compare/v0.9.9...v1.0.0
+[0.9.9]: https://github.com/sferik/x-cli/compare/v0.9.8...v0.9.9
+[0.9.8]: https://github.com/sferik/x-cli/compare/v0.9.7...v0.9.8
+[0.9.7]: https://github.com/sferik/x-cli/compare/v0.9.6...v0.9.7
+[0.9.6]: https://github.com/sferik/x-cli/compare/v0.9.5...v0.9.6
+[0.9.5]: https://github.com/sferik/x-cli/compare/v0.9.4...v0.9.5
+[0.9.4]: https://github.com/sferik/x-cli/compare/v0.9.3...v0.9.4
+[0.9.3]: https://github.com/sferik/x-cli/compare/v0.9.2...v0.9.3
+[0.9.2]: https://github.com/sferik/x-cli/compare/v0.9.1...v0.9.2
+[0.9.1]: https://github.com/sferik/x-cli/compare/v0.9.0...v0.9.1
+[0.9.0]: https://github.com/sferik/x-cli/compare/v0.8.3...v0.9.0
+[0.8.3]: https://github.com/sferik/x-cli/compare/v0.8.2...v0.8.3
+[0.8.2]: https://github.com/sferik/x-cli/compare/v0.8.1...v0.8.2
+[0.8.1]: https://github.com/sferik/x-cli/compare/v0.8.0...v0.8.1
+[0.8.0]: https://github.com/sferik/x-cli/compare/v0.7.0...v0.8.0
+[0.7.0]: https://github.com/sferik/x-cli/compare/v0.6.4...v0.7.0
+[0.6.4]: https://github.com/sferik/x-cli/compare/v0.6.3...v0.6.4
+[0.6.3]: https://github.com/sferik/x-cli/compare/v0.6.2...v0.6.3
+[0.6.2]: https://github.com/sferik/x-cli/compare/v0.6.1...v0.6.2
+[0.6.1]: https://github.com/sferik/x-cli/compare/v0.6.0...v0.6.1
+[0.6.0]: https://github.com/sferik/x-cli/compare/v0.5.1...v0.6.0
+[0.5.1]: https://github.com/sferik/x-cli/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/sferik/x-cli/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/sferik/x-cli/compare/v0.3.1...v0.4.0
+[0.3.1]: https://github.com/sferik/x-cli/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/sferik/x-cli/compare/v0.2.1...v0.3.0
+[0.2.1]: https://github.com/sferik/x-cli/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/sferik/x-cli/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/sferik/x-cli/compare/v0.0.2...v0.1.0
+[0.0.2]: https://github.com/sferik/x-cli/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/sferik/x-cli/releases/tag/v0.0.1

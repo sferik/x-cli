@@ -2,8 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
 
 ## [6.0.0] - 2026-03-02
 
@@ -19,4 +21,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - YAML configuration file support
 - Bash completion support
 
-[6.0.0]: https://github.com/sferik/x-cli/releases/tag/v6.0.0
+[Unreleased]: https://github.com/sferik/x-cli/compare/6c8505f723000b4313d3d6d4554f6d6beaead4bc...HEAD
+[6.0.0]: https://github.com/sferik/x-cli/tree/6c8505f723000b4313d3d6d4554f6d6beaead4bc
