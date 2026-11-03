@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
 
   spec.name = "t"
   spec.require_paths = %w[lib]
-  spec.required_ruby_version = ">= 3.3"
+  spec.required_ruby_version = ">= 3.4"
   spec.summary = "CLI for Twitter"
   spec.version = T::Version
 end

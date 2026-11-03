@@ -655,14 +655,14 @@ class TestStream < TTestCase
   # app_only
 
   def test_stream_rules_authenticate_as_the_app
-    assert_kind_of(X::BearerTokenAuthenticator, @stream_cmd.send(:client).app_only.authenticator)
+    assert_kind_of(X::AppOnlyAuthenticator, @stream_cmd.send(:client).app_only.authenticator)
   end
 
   def test_a_stream_reads_and_reconnects_as_a_stream_needs
     streaming_client = @stream_cmd.send(:streaming_client)
 
     assert_kind_of(X::StreamingClient, streaming_client)
-    assert_equal([20, Float::INFINITY], [streaming_client.read_timeout, streaming_client.max_reconnects])
+    assert_equal([30, Float::INFINITY], [streaming_client.read_timeout, streaming_client.max_reconnects])
     assert_same(streaming_client, @stream_cmd.send(:streaming_client))
   end
 
@@ -670,7 +670,7 @@ class TestStream < TTestCase
     stub_v2_get("tweets/search/stream/rules").to_return(body: '{"data":[]}', headers: V2_JSON_HEADERS)
     @stream_cmd.send(:client).app_only.get("tweets/search/stream/rules")
 
-    assert_requested(:post, X::AppOnlyAuthenticator::TOKEN_URL, body: "grant_type=client_credentials")
+    assert_requested(:post, APP_ONLY_TOKEN_URL, body: "grant_type=client_credentials")
     assert_requested(:get, v2_pattern("tweets/search/stream/rules"), headers: {"Authorization" => "Bearer AAAA%2FAAA%3DAAAAAAAA"})
   end
 

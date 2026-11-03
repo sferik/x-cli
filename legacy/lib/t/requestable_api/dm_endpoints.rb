@@ -20,8 +20,7 @@ module T
 
       def x_create_direct_message_event(recipient, message)
         recipient = user_hash(resolve_user(recipient)) unless recipient.is_a?(Hash)
-        sent = client.create_direct_message(recipient["id"], message.to_s)
-        {"id" => sent&.id, "text" => message.to_s, "full_text" => message.to_s,
+        {"id" => sent_direct_message_id(recipient["id"], message.to_s), "text" => message.to_s, "full_text" => message.to_s,
          "recipient_id" => recipient["id"], "recipient" => recipient}
       end
 
@@ -31,6 +30,12 @@ module T
       end
 
     private
+
+      def sent_direct_message_id(recipient_id, text)
+        client.create_direct_message(recipient_id, text).id
+      rescue X::MissingResource
+        nil
+      end
 
       def fetch_direct_messages(sent, opts)
         me = current_user
@@ -42,7 +47,8 @@ module T
 
       # Present messages with their other participants, looking up the ones the response did not expand in one batch
       def present_direct_messages(messages, user)
-        peers = X::User.hydrate_all(messages.filter_map { |message| message.peer(user) }, client:).to_h { |peer| [peer.id, peer] }
+        stubs, expanded = messages.filter_map { |message| message.peer(user) }.partition(&:stub?)
+        peers = (expanded + X::User.hydrate_all(stubs, client:)).to_h { |peer| [peer.id, peer] }
         messages.collect do |message|
           peer = message.peer(user)
           dm_hash(message, peer&.id, peers[peer&.id])

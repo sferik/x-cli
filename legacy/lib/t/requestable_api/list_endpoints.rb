@@ -18,7 +18,9 @@ module T
 
       def x_create_list(name, opts = {})
         list = client.create_list(name.to_s, description: opts[:description].to_s, private: opts[:mode].to_s == "private")
-        list_hash(list) || {}
+        list_hash(list)
+      rescue X::MissingResource
+        {}
       end
 
       def x_destroy_list(list)

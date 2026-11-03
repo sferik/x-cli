@@ -45,7 +45,7 @@ class TestRequestableAPI < TTestCase
     v1_client = @probe.send(:v1_client)
 
     assert_equal(T::RequestableAPI::BASE_URL_V1, v1_client.base_url)
-    assert_equal("7505382-cebdct6bwobn", v1_client.access_token)
+    assert_equal(["abc123", 7_505_382], [v1_client.authenticator.api_key, v1_client.authenticator.user_id])
   end
 
   # ---------- users ----------
@@ -80,7 +80,7 @@ class TestRequestableAPI < TTestCase
   def test_x_verify_credentials_raises_when_there_is_no_authenticated_user
     stub_v2_get("users/me").to_return(v2_return("v2/empty.json"))
 
-    assert_raises(X::ResourceNotFound) { @probe.x_verify_credentials }
+    assert_raises(X::MissingResource) { @probe.x_verify_credentials }
   end
 
   def test_x_user_looks_up_a_string_by_username
@@ -93,7 +93,7 @@ class TestRequestableAPI < TTestCase
     stub_v2_user_by_id(ME_ID)
 
     assert_equal("sferik", @probe.x_user(7_505_382)["screen_name"])
-    assert_requested(:get, %r{api\.twitter\.com/2/users/7505382\?})
+    assert_requested(:get, %r{api\.x\.com/2/users/7505382\?})
   end
 
   def test_x_user_presents_a_resource_without_a_request
@@ -105,7 +105,7 @@ class TestRequestableAPI < TTestCase
   def test_x_user_raises_when_the_user_is_not_found
     stub_v2_get("users/by/username/nobody").to_return(v2_return("v2/empty.json"))
 
-    error = assert_raises(X::ResourceNotFound) { @probe.x_user("nobody") }
+    error = assert_raises(X::MissingResource) { @probe.x_user("nobody") }
     assert_match(/nobody/, error.message)
   end
 
@@ -114,8 +114,8 @@ class TestRequestableAPI < TTestCase
     stub_v2_get("users/by?").to_return(v2_return("v2/users.json"))
     users = @probe.x_users([14_100_886, "@sferik"])
 
-    assert_requested(:get, %r{api\.twitter\.com/2/users\?.*ids=14100886})
-    assert_requested(:get, %r{api\.twitter\.com/2/users/by\?.*usernames=sferik})
+    assert_requested(:get, %r{api\.x\.com/2/users\?.*ids=14100886})
+    assert_requested(:get, %r{api\.x\.com/2/users/by\?.*usernames=sferik})
     assert_equal("pengwynn", users.first["screen_name"])
   end
 
@@ -128,7 +128,7 @@ class TestRequestableAPI < TTestCase
     @probe.x_user_search("ruby", page: 1)
     second = @probe.x_user_search("ruby", page: 2)
 
-    assert_requested(:get, %r{api\.twitter\.com/2/users/search\?.*next_token=abc})
+    assert_requested(:get, %r{api\.x\.com/2/users/search\?.*next_token=abc})
     assert_equal("a", second.first["screen_name"])
   end
 
@@ -158,7 +158,7 @@ class TestRequestableAPI < TTestCase
     stub_v2_get("users/7505382/followers").to_return(v2_return("v2/follower_ids.json"))
 
     assert_equal([14_100_886, 7_505_382], @probe.x_follower_ids(7_505_382))
-    assert_requested(:get, %r{api\.twitter\.com/2/users/7505382/followers\?max_results=1000&user\.fields=id$})
+    assert_requested(:get, %r{api\.x\.com/2/users/7505382/followers\?max_results=1000&user\.fields=id$})
   end
 
   # ---------- tweets ----------
@@ -322,7 +322,7 @@ class TestRequestableAPI < TTestCase
     stub_v2_post("media/upload/initialize").to_return(json_return({"data" => {"id" => "123"}}))
     stub_v2_post("media/upload/123/append").to_return(json_return({}))
     stub_v2_post("media/upload/123/finalize").to_return(json_return({"data" => {"id" => "123", "processing_info" => {"state" => "pending"}}}))
-    stub_request(:get, %r{api\.twitter\.com/2/media/upload\?command=STATUS&media_id=123}).to_return(json_return({"data" => {"id" => "123", "processing_info" => {"state" => "succeeded"}}}))
+    stub_request(:get, %r{api\.x\.com/2/media/upload\?command=STATUS&media_id=123}).to_return(json_return({"data" => {"id" => "123", "processing_info" => {"state" => "succeeded"}}}))
     Tempfile.create(["video", ".mp4"]) do |file|
       file.write("mp4")
       file.flush
@@ -348,7 +348,7 @@ class TestRequestableAPI < TTestCase
     stub_v2_get("users/by/username/nobody").to_return(v2_return("v2/empty.json"))
 
     assert_empty(@probe.x_follow(["nobody"]))
-    assert_match(/@nobody: Could not find X::User nobody/, $stderr.string)
+    assert_match(/@nobody: Could not find X::User @nobody/, $stderr.string)
   end
 
   def test_x_block_warns_and_skips_a_forbidden_user
@@ -357,7 +357,7 @@ class TestRequestableAPI < TTestCase
     stub_v2_post("users/7505382/blocking").to_return(status: 403, body: '{"errors":[{"message":"Forbidden"}]}', headers: V2_JSON_HEADERS)
 
     assert_empty(@probe.x_block(["pengwynn"]))
-    assert_match(/@pengwynn: Forbidden/, $stderr.string)
+    assert_match(%r{@pengwynn: POST /2/users/7505382/blocking: Forbidden}, $stderr.string)
   end
 
   def test_x_unmute_deletes_the_mute
@@ -375,8 +375,8 @@ class TestRequestableAPI < TTestCase
     stub_post("/1.1/users/report_spam.json").to_return(body: "{}", headers: V2_JSON_HEADERS)
     @probe.x_report_spam([14_100_886, "sferik"])
 
-    assert_requested(:post, "https://api.twitter.com/1.1/users/report_spam.json", body: "user_id=14100886")
-    assert_requested(:post, "https://api.twitter.com/1.1/users/report_spam.json", body: "screen_name=sferik")
+    assert_requested(:post, "https://api.x.com/1.1/users/report_spam.json", body: "user_id=14100886")
+    assert_requested(:post, "https://api.x.com/1.1/users/report_spam.json", body: "screen_name=sferik")
   end
 
   def test_x_favorite_returns_a_hash_for_a_single_identifier
@@ -534,7 +534,7 @@ class TestRequestableAPI < TTestCase
   def test_x_list_raises_when_the_identifier_is_not_found
     stub_v2_get("lists/1").to_return(v2_return("v2/empty.json"))
 
-    assert_raises(X::ResourceNotFound) { @probe.x_list(1) }
+    assert_raises(X::MissingResource) { @probe.x_list(1) }
   end
 
   def test_x_list_finds_a_list_by_slug_among_the_owned_lists
@@ -548,7 +548,7 @@ class TestRequestableAPI < TTestCase
     stub_v2_current_user
     stub_v2_get("users/7505382/owned_lists").to_return(v2_return("v2/list.json"))
 
-    assert_raises(X::ResourceNotFound) { @probe.x_list("vice-presidents") }
+    assert_raises(X::MissingResource) { @probe.x_list("vice-presidents") }
   end
 
   def test_x_lists_presents_the_lists_a_user_owns
@@ -613,7 +613,7 @@ class TestRequestableAPI < TTestCase
   end
 
   def stub_listed_count(id, count)
-    stub_request(:get, %r{api\.twitter\.com/2/users/#{id}\?}).to_return(json_return({"data" => {"id" => id.to_s, "public_metrics" => {"listed_count" => count}}}))
+    stub_request(:get, %r{api\.x\.com/2/users/#{id}\?}).to_return(json_return({"data" => {"id" => id.to_s, "public_metrics" => {"listed_count" => count}}}))
   end
 
   def test_x_list_timeline_presents_the_posts_of_the_list

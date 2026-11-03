@@ -19,43 +19,44 @@ require "minitest/strict"
 require "timecop"
 require "webmock/minitest"
 
+APP_ONLY_TOKEN_URL = "https://api.x.com/oauth2/token".freeze
 V2_JSON_HEADERS = {content_type: "application/json; charset=utf-8"}.freeze
 
 class TTestCase < Minitest::Test
   def setup
-    stub_request(:post, X::AppOnlyAuthenticator::TOKEN_URL).with(body: "grant_type=client_credentials").to_return(body: fixture("bearer_token.json"), headers: {content_type: "application/json; charset=utf-8"})
+    stub_request(:post, APP_ONLY_TOKEN_URL).with(body: "grant_type=client_credentials").to_return(body: fixture("bearer_token.json"), headers: {content_type: "application/json; charset=utf-8"})
   end
 end
 
-def a_delete(path, endpoint = "https://api.twitter.com")
+def a_delete(path, endpoint = "https://api.x.com")
   a_request(:delete, endpoint + path)
 end
 
-def a_get(path, endpoint = "https://api.twitter.com")
+def a_get(path, endpoint = "https://api.x.com")
   a_request(:get, endpoint + path)
 end
 
-def a_post(path, endpoint = "https://api.twitter.com")
+def a_post(path, endpoint = "https://api.x.com")
   a_request(:post, endpoint + path)
 end
 
-def a_put(path, endpoint = "https://api.twitter.com")
+def a_put(path, endpoint = "https://api.x.com")
   a_request(:put, endpoint + path)
 end
 
-def stub_delete(path, endpoint = "https://api.twitter.com")
+def stub_delete(path, endpoint = "https://api.x.com")
   stub_request(:delete, endpoint + path)
 end
 
-def stub_get(path, endpoint = "https://api.twitter.com")
+def stub_get(path, endpoint = "https://api.x.com")
   stub_request(:get, endpoint + path)
 end
 
-def stub_post(path, endpoint = "https://api.twitter.com")
+def stub_post(path, endpoint = "https://api.x.com")
   stub_request(:post, endpoint + path)
 end
 
-def stub_put(path, endpoint = "https://api.twitter.com")
+def stub_put(path, endpoint = "https://api.x.com")
   stub_request(:put, endpoint + path)
 end
 
@@ -85,16 +86,16 @@ def a_v2_delete(path)
 end
 
 def v2_pattern(path)
-  %r{api\.twitter\.com/2/#{Regexp.escape(path)}}
+  %r{api\.x\.com/2/#{Regexp.escape(path)}}
 end
 
 # A more specific pattern for multi-user lookup: matches /2/users? but NOT /2/users/me or /2/users/by/...
 def stub_v2_users_lookup
-  stub_request(:get, %r{api\.twitter\.com/2/users\?})
+  stub_request(:get, %r{api\.x\.com/2/users\?})
 end
 
 def a_v2_users_lookup
-  a_request(:get, %r{api\.twitter\.com/2/users\?})
+  a_request(:get, %r{api\.x\.com/2/users\?})
 end
 
 def v2_return(file)
@@ -113,7 +114,7 @@ end
 
 # Stub a user lookup by ID
 def stub_v2_user_by_id(id, fixture_file = "v2/sferik.json")
-  stub_request(:get, %r{api\.twitter\.com/2/users/#{id}\?}).to_return(v2_return(fixture_file))
+  stub_request(:get, %r{api\.x\.com/2/users/#{id}\?}).to_return(v2_return(fixture_file))
 end
 
 def project_path

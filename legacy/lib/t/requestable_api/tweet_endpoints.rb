@@ -2,7 +2,7 @@ module T
   module RequestableAPI
     module TweetEndpoints
       def x_retweets_of_me(opts = {})
-        tweets(current_user.reposts_of_me(**cursor_params(opts)), opts)
+        tweets(client.reposts_of_me(**cursor_params(opts)), opts)
       end
 
       def x_retweeted_by_me(opts = {})
@@ -48,7 +48,9 @@ module T
       end
 
       def x_update(status, opts = {})
-        tweet_hash(client.create_post(status.to_s, **opts.slice(:reply_to, :media_ids))) || {}
+        tweet_hash(client.create_post(status.to_s, **opts.slice(:reply_to, :media_ids)))
+      rescue X::MissingResource
+        {}
       end
 
       def x_update_with_media(status, file, opts = {})

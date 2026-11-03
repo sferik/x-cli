@@ -67,7 +67,7 @@ class TestCLI < TTestCase
       @cli.authorize
     end
 
-    assert_requested(:post, "https://api.twitter.com/oauth/request_token")
+    assert_requested(:post, "https://api.x.com/oauth/request_token")
   end
 
   def test_authorize_requests_oauth_access_token
@@ -76,7 +76,7 @@ class TestCLI < TTestCase
       @cli.authorize
     end
 
-    assert_requested(:post, "https://api.twitter.com/oauth/access_token")
+    assert_requested(:post, "https://api.x.com/oauth/access_token")
   end
 
   def test_authorize_verifies_credentials
@@ -85,7 +85,7 @@ class TestCLI < TTestCase
       @cli.authorize
     end
 
-    assert_requested(:get, "https://api.twitter.com/1.1/account/verify_credentials.json?skip_status=true")
+    assert_requested(:get, "https://api.x.com/1.1/account/verify_credentials.json?skip_status=true")
   end
 
   def test_authorize_does_not_raise_error
@@ -103,7 +103,7 @@ class TestCLI < TTestCase
       @cli.authorize
     end
 
-    assert_requested(:post, "https://api.twitter.com/oauth/request_token")
+    assert_requested(:post, "https://api.x.com/oauth/request_token")
   ensure
     FileUtils.rm_f(file_path)
   end
@@ -116,7 +116,7 @@ class TestCLI < TTestCase
       @cli.authorize
     end
 
-    assert_requested(:post, "https://api.twitter.com/oauth/access_token")
+    assert_requested(:post, "https://api.x.com/oauth/access_token")
   ensure
     FileUtils.rm_f(file_path)
   end
@@ -129,7 +129,7 @@ class TestCLI < TTestCase
       @cli.authorize
     end
 
-    assert_requested(:get, "https://api.twitter.com/1.1/account/verify_credentials.json?skip_status=true")
+    assert_requested(:get, "https://api.x.com/1.1/account/verify_credentials.json?skip_status=true")
   ensure
     FileUtils.rm_f(file_path)
   end
@@ -540,7 +540,7 @@ class TestCLI < TTestCase
   # does_follow
 
   # Every user in these fixtures is the authenticated user, so follows? reads the connection_status of one
-  CONNECTION_STATUS = %r{api\.twitter\.com/2/users/7505382\?user\.fields=connection_status}
+  CONNECTION_STATUS = %r{api\.x\.com/2/users/7505382\?user\.fields=connection_status}
 
   def stub_connection_status(*statuses)
     stub_request(:get, CONNECTION_STATUS).to_return(body: {data: {id: "7505382", connection_status: statuses}}.to_json, headers: V2_JSON_HEADERS)
@@ -2368,7 +2368,7 @@ class TestCLI < TTestCase
     stub_post("/1.1/users/report_spam.json").with(body: {screen_name: "sferik"}).to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
     @cli.report_spam("sferik")
 
-    assert_requested(:post, "https://api.twitter.com/1.1/users/report_spam.json", body: {screen_name: "sferik"})
+    assert_requested(:post, "https://api.x.com/1.1/users/report_spam.json", body: {screen_name: "sferik"})
   end
 
   def test_report_spam_has_the_correct_output
@@ -2385,7 +2385,7 @@ class TestCLI < TTestCase
     stub_post("/1.1/users/report_spam.json").with(body: {user_id: "7505382"}).to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
     @cli.report_spam("7505382")
 
-    assert_requested(:post, "https://api.twitter.com/1.1/users/report_spam.json", body: {user_id: "7505382"})
+    assert_requested(:post, "https://api.x.com/1.1/users/report_spam.json", body: {user_id: "7505382"})
   end
 
   # retweet
@@ -3058,7 +3058,7 @@ class TestCLI < TTestCase
     trend_locations_stubs
     @cli.trend_locations
 
-    assert_requested(:get, "https://api.twitter.com/1.1/trends/available.json")
+    assert_requested(:get, "https://api.x.com/1.1/trends/available.json")
   end
 
   def test_trend_locations_has_the_correct_output

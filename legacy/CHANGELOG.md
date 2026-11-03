@@ -9,20 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking:** Bump required Ruby version to >= 3.4, which the x gem 1.0 requires
 - Update the x gem dependency to ~> 1.0 and build on its object layer (`X::User`, `X::Post`, `X::List`, `X::DirectMessage`, and `X::Cursor`) instead of normalizing raw JSON
 - Use the client's `params:`, `form:`, and JSON-encoded Hash bodies instead of building query strings and request bodies by hand
 - Authenticate streaming with an app-only client, which fetches its bearer token itself, instead of requesting the token by hand
 - Use the gem's `search_users`, `home_timeline`, `reposts_of_me`, `blocking`, `muting`, `block`, `mute`, `create_list`, `delete_list`, `add_member`, `remove_member`, `delete_direct_message`, `peer`, `from_id`, `stub?`, and cursor `ids` instead of raw requests and hand-built stubs
-- Derive the v1.1 and app-only clients with `X::Client#copy`, raise the gem's `X::ResourceNotFound` through `find_user!` and `find_list!`, expand direct message peers with `X::User.hydrate_all`, and read `coordinates`, `url`, and `from?` from the gem instead of computing them
-- Upload profile images with `X::Uploader::Account`
+- Derive the v1.1 and app-only clients with `X::Client#with`, raise the gem's `X::MissingResource` through `find_user!` and `find_list!`, expand direct message peers with `X::User.hydrate_all`, and read `coordinates`, `url`, and `from?` from the gem instead of computing them
+- Upload profile images with `X::Client#update_profile_image`
 - Pass the gem's parameter names between commands and the request layer (`until_id`, `since_id`, `exclude`, and `reply_to`) instead of translating v1 names, and drop the `include_entities` option the v2 API ignores; links are expanded at print time from the gem's `expanded_text`
 - Check relationships with `follows?`, which takes one lookup when you are one of the two users, and `member?`, which stops at the first match, refer to users and posts without a request with `from_id`, and rely on `require "x"` to load media uploads
-- Upload media through the v2 `media/upload` endpoint with `X::Uploader::Media`, which infers the media category and uploads video in chunks, instead of the v1.1 upload endpoint
+- Upload media through the v2 `media/upload` endpoint with `X::Client#upload_media`, which infers the media category and uploads video in chunks, instead of the v1.1 upload endpoint
 - Look up a numeric argument as a username unless `--id` is given, as the x gem does, so an account whose username is all digits is found by name
 - Return integer IDs from follower, following, blocked, muted, and retweeter lookups
 - Read list members and list details from the list endpoints directly instead of fetching member IDs and then looking up the users
 - Page through followers, following, and list members until the last page instead of stopping after 51 pages
 - Fetch the app-only bearer token for streaming through `X::Client`
+- Send requests to `api.x.com` instead of `api.twitter.com`, as the x gem does
+- Leave retries to the commands, which try a failed request 3 times, rather than also letting the x gem retry each attempt
 
 ### Removed
 

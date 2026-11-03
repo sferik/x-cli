@@ -11,7 +11,7 @@ module T
 
       # Look up users by identifier (Integer) or username (String), in parallel batches
       def x_users(users)
-        client.find_users(Array(users).flatten.compact).collect { |user| user_hash(user) }
+        client.find_all_users(Array(users).flatten.compact).collect { |user| user_hash(user) }
       end
 
       # Search users one page at a time, as the users command collects pages

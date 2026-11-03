@@ -69,7 +69,7 @@ class TestSet < TTestCase
     stub_post("/1.1/account/update_profile.json").with(body: {description: "Vagabond."}).to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
     @set_cmd.bio("Vagabond.")
 
-    assert_requested(:post, "https://api.twitter.com/1.1/account/update_profile.json", body: {description: "Vagabond."})
+    assert_requested(:post, "https://api.x.com/1.1/account/update_profile.json", body: {description: "Vagabond."})
   end
 
   def test_bio_has_correct_output
@@ -87,7 +87,7 @@ class TestSet < TTestCase
     stub_post("/1.1/account/update_profile.json").with(body: {location: "San Francisco"}).to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
     @set_cmd.location("San Francisco")
 
-    assert_requested(:post, "https://api.twitter.com/1.1/account/update_profile.json", body: {location: "San Francisco"})
+    assert_requested(:post, "https://api.x.com/1.1/account/update_profile.json", body: {location: "San Francisco"})
   end
 
   def test_location_has_correct_output
@@ -105,7 +105,7 @@ class TestSet < TTestCase
     stub_post("/1.1/account/update_profile.json").with(body: {name: "Erik Michaels-Ober"}).to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
     @set_cmd.name("Erik Michaels-Ober")
 
-    assert_requested(:post, "https://api.twitter.com/1.1/account/update_profile.json", body: {name: "Erik Michaels-Ober"})
+    assert_requested(:post, "https://api.x.com/1.1/account/update_profile.json", body: {name: "Erik Michaels-Ober"})
   end
 
   def test_name_has_correct_output
@@ -141,7 +141,7 @@ class TestSet < TTestCase
     stub_post("/1.1/account/update_profile.json").with(body: {profile_link_color: "0084B4"}).to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
     @set_cmd.profile_link_color("0084B4")
 
-    assert_requested(:post, "https://api.twitter.com/1.1/account/update_profile.json", body: {profile_link_color: "0084B4"})
+    assert_requested(:post, "https://api.x.com/1.1/account/update_profile.json", body: {profile_link_color: "0084B4"})
   end
 
   def test_profile_link_color_has_correct_output
@@ -159,7 +159,7 @@ class TestSet < TTestCase
     stub_post("/1.1/account/update_profile.json").with(body: {url: "https://github.com/sferik"}).to_return(body: fixture("sferik.json"), headers: {content_type: "application/json; charset=utf-8"})
     @set_cmd.website("https://github.com/sferik")
 
-    assert_requested(:post, "https://api.twitter.com/1.1/account/update_profile.json", body: {url: "https://github.com/sferik"})
+    assert_requested(:post, "https://api.x.com/1.1/account/update_profile.json", body: {url: "https://github.com/sferik"})
   end
 
   def test_website_has_correct_output

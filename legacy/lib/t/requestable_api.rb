@@ -27,7 +27,7 @@ module T
     include ListEndpoints
     include AccountEndpoints
 
-    BASE_URL = "https://api.twitter.com"
+    BASE_URL = "https://api.x.com"
     BASE_URL_V1 = "#{BASE_URL}/1.1/".freeze
 
     DEFAULT_NUM_RESULTS = 20

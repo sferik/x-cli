@@ -5,7 +5,7 @@ module T
     private
 
       def current_user
-        client.current_user
+        @current_user ||= client.current_user!
       end
 
       # Look up a user, so the result holds every field
@@ -26,7 +26,7 @@ module T
         list = user_reference(owner).owned_lists.detect do |candidate|
           candidate.name.to_s.casecmp?(list_name.to_s) || slugify_list_name(candidate.name) == desired
         end
-        list || raise(X::ResourceNotFound.new("Could not find list #{list_name}"))
+        list || raise(X::MissingResource.new("Could not find list #{list_name}"))
       end
 
       def mutate_users(users)
@@ -34,7 +34,7 @@ module T
           user = resolve_user(entry)
           yield user
           user_hash(user)
-        rescue X::NotFound, X::Forbidden, X::ResourceNotFound => e
+        rescue X::NotFound, X::Forbidden, X::MissingResource => e
           warn "@#{entry}: #{e.message}"
           nil
         end

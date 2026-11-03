@@ -38,7 +38,7 @@ module T
           "text" => text,
           "full_text" => text,
           "created_at" => post.created_at,
-          "source" => post.source,
+          "source" => post.attrs["source"],
           "in_reply_to_status_id" => post.replied_to&.id,
           "expanded_text" => expanded_text(post),
           "retweet_count" => post.repost_count,
@@ -58,8 +58,6 @@ module T
       end
 
       def list_hash(list)
-        return if list.nil?
-
         hash = {
           "id" => list.id,
           "slug" => list.name,

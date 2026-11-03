@@ -17,7 +17,8 @@ module T
         access_token: @rcfile.active_token,
         access_token_secret: @rcfile.active_secret,
       }
-      @client = X::Client.new(**credentials)
+      # The commands retry failed requests themselves
+      @client = X::Client.new(**credentials, max_retries: 0)
     end
   end
 end

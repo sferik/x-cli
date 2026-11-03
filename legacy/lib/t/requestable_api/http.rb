@@ -5,7 +5,7 @@ module T
     private
 
       def v1_client
-        @v1_client ||= client.copy(base_url: BASE_URL_V1)
+        @v1_client ||= client.with(base_url: BASE_URL_V1)
       end
 
       # The client for the streaming endpoints, which reads and reconnects as a stream needs
@@ -14,7 +14,7 @@ module T
       end
 
       def upload_media(file)
-        X::Uploader::Media.upload(file.respond_to?(:path) ? file.path : file.to_s, client:)
+        client.upload_media(file.respond_to?(:path) ? file.path : file.to_s)
       end
     end
   end

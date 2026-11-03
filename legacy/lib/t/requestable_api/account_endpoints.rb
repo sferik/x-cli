@@ -28,7 +28,7 @@ module T
       end
 
       def x_update_profile_image(file)
-        X::Uploader::Account.update_profile_image(file.path, client:) || {}
+        client.update_profile_image(file.path) || {}
       end
     end
   end

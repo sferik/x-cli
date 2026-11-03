@@ -4,7 +4,7 @@ plugins:
   - rubocop-rake
 
 AllCops:
-  TargetRubyVersion: 3.2
+  TargetRubyVersion: 3.4
   NewCops: enable
 
 Layout/AccessModifierIndentation:
