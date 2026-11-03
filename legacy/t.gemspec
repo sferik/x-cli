@@ -1,8 +1,6 @@
 # coding: utf-8
 
-lib = File.expand_path("lib", __dir__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "t/version"
+require_relative "lib/t/version"
 
 Gem::Specification.new do |spec|
   spec.add_dependency "cgi", ">= 0.2"
